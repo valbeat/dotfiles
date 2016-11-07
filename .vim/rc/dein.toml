@@ -1,0 +1,236 @@
+[[plugins]]
+repo = 'shougo/dein.vim'
+
+[[plugins]]
+repo = 'Shougo/vimproc.vim'
+build = 'make'
+
+[[plugins]]
+repo = 'haya14busa/dein-command.vim'
+
+[[plugins]]
+repo = 'thinca/vim-quickrun' # 非同期でソースを実行
+
+[[plugins]]
+repo = 'thinca/vim-ref'
+
+[[plugins]]
+repo = 'townk/vim-autoclose' # カッコやクォーテーションを自動で閉じる
+
+[[plugins]]
+repo = 'jiangmiao/auto-pairs'
+
+[[plugins]]
+repo = 'junegunn/vim-easy-align' # コード整形ツール
+
+[[plugins]]
+repo = 'junegunn/fzf' # fzfのvimインターフェイス
+
+[[plugins]]
+repo = 'kana/vim-operator-user' #オペレーター拡張
+
+[[plugins]]
+repo = 'kana/vim-textobj-user' #テキストオブジェクト拡張
+
+[[plugins]]
+repo = 'kana/vim-operator-replace' # 貼り付け時に文字列を入れ替える 
+
+[[plugins]]
+repo = 'kana/vim-smartinput' #対応するカッコの自動入力等の設定
+
+[[plugins]]
+repo = 'rizzatti/dash.vim' # dash
+
+[[plugins]]
+repo = 'tmux-plugins/vim-tmux'
+
+[[plugins]]
+repo = 'knt45/jq-wrapper.vim'
+
+#----------------------------------
+# エディタの域を超えた物
+#----------------------------------
+[[plugins]]
+repo = 'itchyny/calendar.vim'
+
+[[plugins]]
+repo = 'itchyny/thumbnail.vim'
+
+[[plugins]] 
+repo = 'mattn/webapi-vim' #web-apiを叩く
+# ----------------------------------
+# カーソル移動
+# ----------------------------------
+[[plugins]]
+repo = 'easymotion/vim-easymotion'
+# ----------------------------------
+# 補完
+# ----------------------------------
+[[plugins]]
+repo = 'Shougo/neocomplete.vim'
+
+[[plugins]]
+repo = 'Shougo/neosnippet.vim' # snippet補完
+
+[[plugins]]
+repo = 'Shougo/neosnippet-snippets'
+
+[[plugins]]
+repo = 'junegunn/vim-emoji' # emojiの補完
+
+[[plugins]]
+repo = 'rhysd/github-complete.vim' # git関連の補完
+
+[[plugins]]
+repo = 'scrooloose/nerdcommenter' #コメント拡張
+
+[[plugins]]
+repo = 'ujihisa/neco-look' # 英単語の補完
+
+[[plugins]]
+repo = 'Shougo/neco-syntax' # 補完候補の抽出
+# ----------------------------------
+# テーマ
+# ----------------------------------
+[[plugins]] # hybrid
+repo = 'w0ng/vim-hybrid'
+
+[[plugins]] # solarized
+repo = 'altercation/vim-colors-solarized'
+# ----------------------------------
+# 表示
+# ----------------------------------
+[[plugins]]
+repo = 'nathanaelkane/vim-indent-guides' # インデントを見やすくしてくれる
+
+[[plugins]]
+repo    = 'vim-airline/vim-airline'
+depends = ['vim-airline/vim-airline-themes']
+
+[[plugins]]
+repo = 'vim-airline/vim-airline-themes'
+
+[[plugins]] # カーソル位置のコンテキストのftを判定するライブラリ
+repo = 'shougo/context_filetype.vim'
+
+[[plugins]] # カーソル位置のコンテキストに合わせてftを切り替える
+repo = 'osyo-manga/vim-precious'
+
+[[plugins]] # toml syntax
+repo = 'cespare/vim-toml'
+on_ft = 'toml'
+
+[[plugins]] # json syntax
+repo = 'elzr/vim-json'
+[[plugins]] # color visualize
+repo = 'lilydjwg/colorizer'
+# ----------------------------------
+# markdown
+# ----------------------------------
+[[plugins]] 
+repo = 'pocke/vim-textobj-markdown'
+
+[[plugins]]
+repo = 'joker1007/vim-markdown-quote-syntax'
+
+[[plugins]]
+repo = 'plasticboy/vim-markdown'
+
+[[plugins]]
+repo = 'kannokanno/previm' # markdownのプレビュー
+
+[[plugins]]
+repo = 'tyru/open-browser.vim' # vimからブラウザを開く
+# ----------------------------------
+# Unite 
+# ----------------------------------
+[[plugins]] # データの種類を問わず扱えるインターフェイス
+repo = 'shougo/unite.vim'
+
+[[plugins]] 
+repo = 'shougo/neomru.vim' # 最近開いたファイルを表示
+depends = 'unite.vim'
+
+[[plugins]] 
+repo = 'shougo/vimfiler.vim' # ファイラー
+depends = 'unite.vim'
+
+[[plugins]] 
+repo = 'shougo/unite-outline' # unite-outline
+depends = 'unite.vim'
+
+[[plugins]] #ctagsより便利っぽい
+repo = 'hewes/unite-gtags'
+depends = 'unite.vim'
+
+[[plugins]] # ide風のタグ表示 
+repo = 'majutsushi/tagbar'
+depends = 'unite.vim'
+
+[[plugins]]
+repo = 'pasela/unite-webcolorname'
+depends = 'unite.vim'
+# ----------------------------------
+# git
+# ----------------------------------
+[[plugins]] 
+repo = 'mattn/gist-vim' # gist
+#----------------------------------
+# プログラミング 
+# ----------------------------------
+[[plugins]] # 様々な言語のシンタックス拡張
+repo = 'sheerun/vim-polyglot'
+
+[[plugins]]
+repo = 'tikhomirov/vim-glsl'
+on_ft = 'glsl'
+
+[[plugins]] # elixir
+repo = 'elixir-lang/vim-elixir'
+
+[[plugins]] # go
+repo = 'fatih/vim-go.git'
+
+[[plugins]]
+repo = 'dgryski/vim-godef'
+
+[[plugins]]
+repo = 'vim-jp/vim-go-extra'
+
+[[plugins]]
+repo = 'lambdalisue/vim-django-support'
+on_ft = 'python'
+[[plugins]] #python
+repo = 'davidhalter/jedi-vim' # ide風に 
+on_ft = 'python'
+[[plugins]]
+repo = 'kevinw/pyflakes-vim'
+on_ft = 'python'
+[[plugins]] #python
+repo = 'andviro/flake8-vim' # ソースコード解析
+on_ft = 'python'
+[[plugins]] 
+repo = 'hynek/vim-python-pep8-indent' # インデントの調整
+on_ft = 'python'
+[[plugins]] 
+repo = 'jmcantrell/vim-virtualenv' # virtualenvとの連携
+on_ft = 'python'
+[[plugins]] 
+repo = 'hachibeedi/python_hl_lvar.vim' # ローカル変数のハイライト
+on_ft = 'python'
+
+[[plugins]]
+repo = 'derekwyatt/vim-scala'
+on_ft = 'scala'
+
+[[plugins]]
+repo = 'beyondmarc/hlsl.vim'
+on_ft = 'hlsl'
+
+[[plugins]]
+repo = 'vim-scripts/cg.vim'
+on_ft = 'cg'
+
+[[plugins]]
+repo = 'vim-scripts/ShaderHighLight'
+on_ft = 'shader'
