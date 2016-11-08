@@ -27,6 +27,9 @@ repo = 'junegunn/vim-easy-align' # コード整形ツール
 repo = 'junegunn/fzf' # fzfのvimインターフェイス
 
 [[plugins]]
+repo = 'tpope/vim-surround'
+
+[[plugins]]
 repo = 'kana/vim-operator-user' #オペレーター拡張
 
 [[plugins]]
