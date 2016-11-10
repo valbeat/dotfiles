@@ -178,6 +178,12 @@ depends = 'unite.vim'
 # ----------------------------------
 [[plugins]] 
 repo = 'mattn/gist-vim' # gist
+[[plugins]] 
+repo = 'idanarye/vim-merginal' # gist
+[[plugins]] 
+repo = 'AndrewRadev/gapply.vim' # gist
+[[plugins]] 
+repo = 'kmnk/vim-unite-giti' # gist
 #----------------------------------
 # プログラミング 
 # ----------------------------------

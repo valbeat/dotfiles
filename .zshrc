@@ -8,7 +8,6 @@ zplug "zplug/zplug"
 ## 拡張
 zplug "mollifier/anyframe"
 zplug "Tarrasch/zsh-functional"
-## oh-my-zsh系
 
 # テーマ
 ## Liquid prompt
@@ -30,8 +29,8 @@ PROMPT='%(?.%F{green}.%F{red}❯%F{green})❯%f '
 zplug "sindresorhus/pure", nice:12
 
 # 通知
-#zplug "marzocchi/zsh-notify"
-#export SYS_NOTIFIER="usr/local/bin/terminal-notifier"
+zplug "marzocchi/zsh-notify"
+export SYS_NOTIFIER="usr/local/bin/terminal-notifier"
 # cd 系
 zplug "knu/z"
 zplug "Tarrasch/zsh-bd"
@@ -296,7 +295,7 @@ alias ltr="ls -ltr"
 alias la="ls -la"
 alias l1="ls -1"
 
-alias cdu='cd-gitroot'
+alias cdg='cd-gitroot'
 alias cp='cp -i'
 alias rm='rm -i'
 alias back='pushd'

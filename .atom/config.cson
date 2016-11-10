@@ -4,6 +4,8 @@
       "language-gfm"
     ]
     telemetryConsent: "no"
+  editor:
+    fontSize: 11
   "exception-reporting":
     userId: "72f30a87-8fa2-0681-38f2-a5c66ebeb73f"
   minimap:
