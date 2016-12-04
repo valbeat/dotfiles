@@ -192,6 +192,9 @@ set updatetime=500
 
 " 自動保存は特定の場合にのみ適応
 function s:AutoWriteIfPossible()
+if &filetype == 'gitcommit'
+  return
+endif
 if &modified && !&readonly && bufname('%') !=# '' && &buftype ==# '' && expand("%") !=# ''
   write
 endif
