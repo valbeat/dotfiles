@@ -29,8 +29,8 @@ PROMPT='%(?.%F{green}.%F{red}❯%F{green})❯%f '
 zplug "sindresorhus/pure", nice:12
 
 # 通知
-zplug "marzocchi/zsh-notify"
-export SYS_NOTIFIER="usr/local/bin/terminal-notifier"
+#zplug "marzocchi/zsh-notify"
+#export SYS_NOTIFIER="usr/local/bin/terminal-notifier"
 # cd 系
 zplug "knu/z"
 zplug "Tarrasch/zsh-bd"
@@ -99,6 +99,8 @@ local PURPLE=$'%{^[[1;35m%}'$
 local LIGHT_BLUE=$'%{^[[1;36m%}'$
 local WHITE=$'%{^[[1;37m%}'$
 
+# vimモード
+set -o vi 
 # -------------------------------------
 # zshのオプション
 # -------------------------------------
@@ -235,6 +237,7 @@ autoload colors
 colors
 
 
+
 # vi mode
 #terminfo_down_sc=$terminfo[cud1]$terminfo[cuu1]$terminfo[sc]$terminfo[cud1]
 #left_down_prompt_preexec() {
@@ -303,6 +306,8 @@ alias diff='diff --unified1'
 alias tree="tree -NC" # N: 文字化け対策, C:色をつける
 alias aw=anyframe-widget-select-widget
 
+alias viRename=massren
+
 # vim
 export EDITOR=/Applications/MacVim.app/Contents/MacOS/Vim
 alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
@@ -312,6 +317,10 @@ alias zconf="vim ~/.zshrc"
 alias viconf="vim ~/.vimrc"
 alias sshconf="vim ~/.ssh/config"
 alias tmux="TERM=screen-256color-bce tmux"
+
+alias ssh="ssh-host-color"
+
+alias today="date '+%Y%m%d'"
 
 # -------------------------------------
 # キーバインド
@@ -397,15 +406,27 @@ has() {
     return $status
 }
 
-### リンゴマーク出すための関数
+# リンゴマーク出すための関数
 function toon {
   echo -n ""
 }
 
-## gitのrootへ移動
+# gitのrootへ移動
 function git-root() {
   if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
     cd $PWD/$(git rev-parse --show-cdup)
+  fi
+}
+
+# Finderのアクティブウィンドウのパスにターミナルで移動
+function cdf () {
+  target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
+  if [ "$target" != "" ]
+  then
+    cd "$target"
+    pwd
+  else
+    echo 'No Finder window found' >&2
   fi
 }
 #-------------------------------------
@@ -434,6 +455,9 @@ color-ssh() {
     ssh $*
 }
 compdef _ssh color-ssh=ssh
+
+# shell integration
+source ~/.iterm2_shell_integration.`basename $SHELL`
 
 #-------------------------------------
 # brew
