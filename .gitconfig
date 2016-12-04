@@ -7,17 +7,12 @@
 	st = status
 	br = branch
 	ci = commit
- 
   p = !git push origin `git rev-parse --abbrev-ref HEAD`
- 
   lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-
   lga = log --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-
   tr = log --graph --pretty='format:%C(yellow)%h%Creset %s %Cgreen(%an)%Creset %Cred%d%Creset'
-
   today = !git log --since=midnight --author="$(git config user.name)" --oneline
-
+  n  = now --all --stat
 [filter "media"]
 	clean = git-media-clean %f
 	smudge = git-media-smudge %f
@@ -36,4 +31,4 @@
 [commit]
 	verbose = true
 [rebase]
-	autosquash = true
+  autosquash = true
