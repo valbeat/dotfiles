@@ -25,10 +25,11 @@ zplug "Tarrasch/zsh-functional"
 zplug "mafredri/zsh-async"
 
 PURE_GIT_DELAY_DIRTY_CHECK=1000
-PROMPT='%(?.%F{green}.%F{red}❯%F{green})❯%f '
+PROMPT='%(?.%F{green}.%F{red}$%F{green})$%f '
 zplug "sindresorhus/pure", nice:12
 
-# 通知
+# 通知 
+# メモリ食うので一旦OFF
 #zplug "marzocchi/zsh-notify"
 #export SYS_NOTIFIER="usr/local/bin/terminal-notifier"
 # cd 系
@@ -322,6 +323,7 @@ alias ssh="ssh-host-color"
 
 alias today="date '+%Y%m%d'"
 
+alias updatedb='sudo /usr/libexec/locate.updatedb'
 # -------------------------------------
 # キーバインド
 # -------------------------------------
@@ -470,3 +472,4 @@ export PATH="$PATH:/Applications/android-sdk/sdk/platform-tools"
 export PATH="$PATH:/Applications/android-sdk/sdk/platform-tools"
 export PATH="$PATH:/Users/t-kajikawa/Library/Android/sdk"
 export PATH="$PATH:/Users/t-kajikawa/Library/Android/sdk/platform-tools"
+
