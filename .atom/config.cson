@@ -7,15 +7,18 @@
       "language-gfm"
       "minimap"
       "minimap-git-diff"
+      "markdown-preview-opener"
     ]
     telemetryConsent: "no"
   editor:
-    fontSize: 11
+    fontSize: 10
   "exception-reporting":
     userId: "72f30a87-8fa2-0681-38f2-a5c66ebeb73f"
   "markdown-preview":
     breakOnSingleNewline: true
     useGitHubStyle: true
+  "markdown-preview-opener":
+    closePreviewWhenClosingEditor: true
   "markdown-writer": {}
   minimap:
     displayCodeHighlights: false

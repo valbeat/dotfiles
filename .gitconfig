@@ -6,16 +6,17 @@
 	co = checkout
 	st = status
 	br = branch
-	ci = commit
+  ci = commit
   p = !git push origin `git rev-parse --abbrev-ref HEAD`
   lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
   lga = log --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
   tr = log --graph --pretty='format:%C(yellow)%h%Creset %s %Cgreen(%an)%Creset %Cred%d%Creset'
   today = !git log --since=midnight --author="$(git config user.name)" --oneline
   n  = now --all --stat
+  d = "!git branch --merged|egrep -v '\\*|develop|master'|xargs git branch -d"
 [filter "media"]
-	clean = git-media-clean %f
-	smudge = git-media-smudge %f
+	clean = !git-media-clean %f
+	smudge = !git-media-smudge %f
 [core]
 	excludesfile = /Users/t-kajikawa/.gitignore_global
 	editor = /Applications/MacVim.app/Contents/MacOS/Vim
