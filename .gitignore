@@ -27,3 +27,5 @@ Temporary Items
 # ignore dotfiles
 .ssh
 
+# ignore app settings
+library
