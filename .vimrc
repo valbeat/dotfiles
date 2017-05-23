@@ -542,6 +542,24 @@ command! -nargs=1 ChatworkSay :call s:ChatworkSay(<f-args>)
 
 
 "----------------------------------------------
+" kobito 連携
+"----------------------------------------------
+function! s:open_kobito(...)
+    if a:0 == 0
+        call system('open -a Kobito '.expand('%:p'))
+    else
+        call system('open -a Kobito '.join(a:000, ' '))
+    endif
+endfunction
+" 引数のファイル(複数指定可)を Kobitoで開く
+" （引数無しのときはカレントバッファを開く
+command! -nargs=* Kobito call s:open_kobito(<f-args>)
+" Kobito を閉じる
+command! -nargs=0 KobitoClose call system("osascript -e 'tell application \"Kobito\" to quit'")
+" Kobito にフォーカスを移す
+command! -nargs=0 KobitoFocus call system("osascript -e 'tell application \"Kobito\" to activate'")
+
+"----------------------------------------------
 " 最後に読み込む設定
 "----------------------------------------------
 " カレントディレクトリ内の.vimrcを読まない
