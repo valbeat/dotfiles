@@ -14,6 +14,8 @@
   today = !git log --since=midnight --author="$(git config user.name)" --oneline
   n  = now --all --stat
   d = "!git branch --merged|egrep -v '\\*|develop|master'|xargs git branch -d"
+  modified = diff --diff-filter=M
+  deleted = diff --diff-filter=D
 [filter "media"]
 	clean = !git-media-clean %f
 	smudge = !git-media-smudge %f
