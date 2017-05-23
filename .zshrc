@@ -461,6 +461,22 @@ compdef _ssh color-ssh=ssh
 # shell integration
 source ~/.iterm2_shell_integration.`basename $SHELL`
 
+
+
+# title
+function chpwd() { ls; echo -ne "\033]0;$(pwd | rev | awk -F \/ '{print "/"$1"/"$2}'| rev)\007"}
+
+# color
+tab-color() {
+    echo -ne "\033]6;1;bg;red;brightness;$1\a"
+    echo -ne "\033]6;1;bg;green;brightness;$2\a"
+    echo -ne "\033]6;1;bg;blue;brightness;$3\a"
+}
+
+tab-reset() {
+    echo -ne "\033]6;1;bg;*;default\a"
+}
+alias top='tab-color 134 200 0; top; tab-reset'
 #-------------------------------------
 # brew
 #-------------------------------------
