@@ -71,7 +71,6 @@ export LANG=ja_JP.UTF-8
 # 環境変数
 # -------------------------------------
 export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
-
 # SSHで接続した先で日本語が使えるようにする
 export LANG=ja_JP.UTF-8
 
@@ -207,6 +206,9 @@ export PATH="$PATH:/usr/local/git/bin"
 export PATH="$PATH:/Applications/MacVim.app/Contents/MacOS"
 export PATH="$PATH:/opt/ImageMagick/bin"
 export PATH="/usr/local/opt/openssl/bin:$PATH"
+export PATH="$HOME:/.composer/vendor/bin:$PATH"
+# coreutilsのシンボリックリンク
+export PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
 # 重複する要素を自動的に削除
 typeset -U path cdpath fpath manpath
 
