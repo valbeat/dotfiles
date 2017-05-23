@@ -484,8 +484,6 @@ alias top='tab-color 134 200 0; top; tab-reset'
 # CaskのシンボリックリンクをApplicationsに
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export PATH="$PATH:/Applications/android-sdk/sdk/platform-tools"
-export PATH="$PATH:/Applications/android-sdk/sdk/platform-tools"
-export PATH="$PATH:/Applications/android-sdk/sdk/platform-tools"
 export PATH="$PATH:/Users/t-kajikawa/Library/Android/sdk"
 export PATH="$PATH:/Users/t-kajikawa/Library/Android/sdk/platform-tools"
 
