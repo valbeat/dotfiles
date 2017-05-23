@@ -24,10 +24,12 @@ zplug "Tarrasch/zsh-functional"
 ## pure
 zplug "mafredri/zsh-async"
 
-PURE_GIT_DELAY_DIRTY_CHECK=1000
-PROMPT='%(?.%F{green}.%F{red}$%F{green})$%f '
-zplug "sindresorhus/pure", nice:12
-
+zplug "sindresorhus/pure", nice:12, \
+  hook-load:"{
+    PROMPT='%(?.%F{green}.%F{red})$%f '
+    PURE_GIT_DELAY_DIRTY_CHECK=1000
+  }
+  "
 # 通知 
 # メモリ食うので一旦OFF
 #zplug "marzocchi/zsh-notify"
