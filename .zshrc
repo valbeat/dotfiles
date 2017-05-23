@@ -304,7 +304,6 @@ alias cdg='cd-gitroot'
 alias cp='cp -i'
 alias rm='rm -i'
 alias back='pushd'
-alias diff='diff --unified1'
 alias tree="tree -NC" # N: 文字化け対策, C:色をつける
 alias aw=anyframe-widget-select-widget
 
