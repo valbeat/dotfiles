@@ -32,4 +32,8 @@
 [commit]
 	verbose = true
 [rebase]
-  autosquash = true
+	autosquash = true
+[merge]
+	ff = false
+[pull]
+	ff = only
