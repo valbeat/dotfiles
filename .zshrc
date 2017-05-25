@@ -8,6 +8,8 @@ zplug "zplug/zplug"
 ## 拡張
 zplug "mollifier/anyframe"
 zplug "Tarrasch/zsh-functional"
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
+zplug "b4b4r07/zsh-vimode-visual", defer:2
 
 # テーマ
 ## Liquid prompt
@@ -24,12 +26,13 @@ zplug "Tarrasch/zsh-functional"
 ## pure
 zplug "mafredri/zsh-async"
 
-zplug "sindresorhus/pure", nice:12, \
+zplug "sindresorhus/pure", defer:3, \
   hook-load:"{
     PROMPT='%(?.%F{green}.%F{red})$%f '
     PURE_GIT_DELAY_DIRTY_CHECK=1000
   }
   "
+  
 # 通知 
 # メモリ食うので一旦OFF
 #zplug "marzocchi/zsh-notify"
@@ -42,8 +45,6 @@ zplug "mollifier/cd-gitroot"
 # githubをブラウザで開く
 zplug "peterhurford/git-it-on.zsh"
 
-# compinit 以降に読み込むようにロードの優先度を変更する（10~19にすれば良い）
-zplug "zsh-users/zsh-syntax-highlighting", nice:11
 zplug "ascii-soup/zsh-url-highlighter"
 
 # 補完
