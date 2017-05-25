@@ -9,7 +9,7 @@ zplug "zplug/zplug"
 zplug "mollifier/anyframe"
 zplug "Tarrasch/zsh-functional"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
-zplug "b4b4r07/zsh-vimode-visual", defer:2
+zplug "b4b4r07/zsh-vimode-visual", defer:3
 
 # テーマ
 ## Liquid prompt
@@ -24,9 +24,8 @@ zplug "b4b4r07/zsh-vimode-visual", defer:2
 #zplug 'nojhan/liquidprompt'
 
 ## pure
-zplug "mafredri/zsh-async"
-
-zplug "sindresorhus/pure", defer:3, \
+zplug "mafredri/zsh-async", defer:1
+zplug "sindresorhus/pure", defer:2, \
   hook-load:"{
     PROMPT='%(?.%F{green}.%F{red})$%f '
     PURE_GIT_DELAY_DIRTY_CHECK=1000
