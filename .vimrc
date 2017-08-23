@@ -45,13 +45,18 @@ let g:hybrid_use_iTerm_colors = 1
 set background=dark
 colorscheme hybrid
 syntax on
+" 背景色上書き防止
+hi Normal ctermbg=none
+hi LineNr ctermbg=none
+hi SignColumn ctermbg=none
+hi VertSplit ctermbg=none 
+hi NonText ctermbg=none
 
 " 行番号とカーソルラインの設定
 set number
 set cursorline
-set ruler
-hi LineNr ctermbg=0 ctermfg=8
-hi CursorLineNr ctermbg=4 ctermfg=0
+hi LineNr ctermfg=14
+hi CursorLineNr ctermbg=14 ctermfg=0
 hi clear CursorLine
 
 " 不可視文字の可視化
