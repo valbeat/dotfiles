@@ -52,6 +52,14 @@ zplug "zsh-users/zsh-completions"
 # 絵文字の補完
 zplug "stedolan/jq", from:gh-r, as:command
 
+# git br用
+zplug "jhawthorn/fzy", \
+    as:command, \
+    hook-build:'make'
+zplug "b4b4r07/git-br", \
+    as:command, \
+    use:'git-br'
+
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
