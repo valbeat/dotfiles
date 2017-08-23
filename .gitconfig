@@ -3,10 +3,10 @@
 [color]
 	ui = auto
 [alias]
-	co = checkout
+  c = commit -v
+  co = !git branch | peco | xargs git checkout
 	st = status
 	br = branch
-  ci = commit
   p = !git push origin `git rev-parse --abbrev-ref HEAD`
   lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
   lga = log --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
