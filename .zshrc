@@ -215,6 +215,8 @@ export PATH="$PATH:/Applications/MacVim.app/Contents/MacOS"
 export PATH="$PATH:/opt/ImageMagick/bin"
 export PATH="/usr/local/opt/openssl/bin:$PATH"
 export PATH="$HOME:/.composer/vendor/bin:$PATH"
+export PATH=$PATH:$GOPATH/bin
+
 # coreutilsのシンボリックリンク
 export PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
 # 重複する要素を自動的に削除
