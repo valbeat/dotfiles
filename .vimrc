@@ -205,8 +205,8 @@ if &modified && !&readonly && bufname('%') !=# '' && &buftype ==# '' && expand("
 endif
 endfunction
 " 一定時間操作をしなかったりフォーカスを外した時に自動保存
-autocmd CursorHold * call s:AutoWriteIfPossible() 
-autocmd CursorHoldI * call s:AutoWriteIfPossible() 
+"autocmd CursorHold * call s:AutoWriteIfPossible() 
+"autocmd CursorHoldI * call s:AutoWriteIfPossible() 
 autocmd FocusLost * call s:AutoWriteIfPossible()
 
 " :e などでファイルを開く際にフォルダが存在しない場合は自動作成
