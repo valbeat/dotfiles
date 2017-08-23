@@ -30,3 +30,9 @@
 # If you are unfamiliar with CSON, you can read more about it in the
 # Atom Flight Manual:
 # https://atom.io/docs/latest/using-atom-basic-customization#cson
+'atom-text-editor':
+  'cmd-shift-D': 'pane:split-right-and-copy-active-item'
+  'cmd-shift-left': 'pane:move-item-left'
+
+'atom-text-editor.vim-mode-plus.insert-mode':
+  'j j': 'vim-mode-plus:activate-normal-mode'
