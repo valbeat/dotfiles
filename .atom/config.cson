@@ -3,19 +3,59 @@
     plugins:
       playAudio: true
       screenShake: true
+<<<<<<< HEAD
+=======
+  autosave:
+    enabled: true
+>>>>>>> b684f61... [update] config change
   core:
     disabledPackages: [
       "language-gfm"
+<<<<<<< HEAD
     ]
     telemetryConsent: "no"
+=======
+      "minimap"
+      "minimap-git-diff"
+      "markdown-preview-opener"
+      "minimap-split-diff"
+      "activate-power-mode"
+      "github"
+      "data-atom"
+      "tidy-markdown"
+      "markdown-scroll-sync"
+      "markdown-toolbar"
+      "api-workbench"
+      "plantuml-viewer"
+      "qolor"
+    ]
+    telemetryConsent: "no"
+    titleBar: "custom"
+  editor:
+    fontFamily: "ricty discord"
+>>>>>>> b684f61... [update] config change
   "exception-reporting":
     userId: "72f30a87-8fa2-0681-38f2-a5c66ebeb73f"
   minimap:
     plugins:
       "git-diff": true
       "git-diffDecorationsZIndex": 0
+<<<<<<< HEAD
       "split-diff": true
       "split-diffDecorationsZIndex": 0
+=======
+  "plantuml-viewer":
+    charset: "utf-8"
+    grammars: [
+      "plantuml"
+      "source.plantuml"
+      "text.plain"
+      "text.plain.null-grammar"
+      "pu"
+    ]
+  "split-diff":
+    ignoreWhitespace: true
+>>>>>>> b684f61... [update] config change
   "sync-settings":
     _analyticsUserId: "bc1a5b96-8415-4f03-a62b-e5e07d851ab8"
     _lastBackupHash: "2705ee2008395442707f401d1ed5bd364bb4c011"
