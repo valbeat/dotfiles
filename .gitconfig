@@ -47,4 +47,10 @@
 [merge]
 	ff = false
 [pull]
-	ff = only
+  ff = only
+[tig "bind"]
+  generic = g move-first-line
+  generic = G move-last-line
+ [ghq]
+  root = ~/.ghq
+  root = ~/.go/src
