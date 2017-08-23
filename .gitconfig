@@ -23,12 +23,17 @@
 	clean = !git-media-clean %f
 	smudge = !git-media-smudge %f
 [core]
-	excludesfile = /Users/t-kajikawa/.gitignore_global
+	excludesfile = ~/.gitignore_global
 	editor = /Applications/MacVim.app/Contents/MacOS/Vim
-	pager = less
+  pager = less
+[diff]
+	tool = diffphp
+[difftool "diffphp"]
+  # 動いてない
+  cmd = \"colordiff\" -wBI \"^\\s*\\/\" \"$LOCAL\" \"$REMOTE\"
+  prompt = false
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
 [mergetool "sourcetree"]
 	cmd = /opt/homebrew-cask/Caskroom/sourcetree/2.2.4/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
