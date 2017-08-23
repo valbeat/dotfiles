@@ -40,7 +40,8 @@
 [credential]
 	helper = osxkeychain
 [commit]
-	verbose = true
+  #重いので -vする
+  #verbose = true
 [rebase]
 	autosquash = true
 [merge]
