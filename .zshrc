@@ -61,8 +61,6 @@ zplug "b4b4r07/git-br", \
     use:'git-br'
 # open git hub
 zplug "paulirish/git-open", as:command
-# git resent branch
-zplug "paulirish/git-recent" as:command
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
