@@ -28,6 +28,7 @@
       "api-workbench"
       "plantuml-viewer"
       "qolor"
+      "keybinding-resolver"
     ]
     telemetryConsent: "no"
     titleBar: "custom"
