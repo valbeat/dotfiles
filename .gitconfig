@@ -53,17 +53,21 @@
 [credential]
 	helper = osxkeychain
 [commit]
-  #重いので -vする
+  # 常にやるのは重いのでエイリアスで明示的にcommit -vする
   #verbose = true
 [rebase]
 	autosquash = true
 [merge]
+  # トピックブランチで行った変更を見やすくするため常にno-ff
 	ff = false
 [pull]
+  # マージコミットを作らないようにno-ffのマージを禁止
   ff = only
+  # マージコミットを作らないようにrebaseでpull
+  rebase = true
 [tig "bind"]
   generic = g move-first-line
   generic = G move-last-line
- [ghq]
+[ghq]
   root = ~/.ghq
   root = ~/.go/src
