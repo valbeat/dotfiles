@@ -306,6 +306,19 @@ alias ssh="ssh-iterm-profile-setting"
 alias today="date '+%Y%m%d'"
 
 alias updatedb='sudo /usr/libexec/locate.updatedb'
+
+# windowsのNASのパスをmacのsmb://に変換
+alias to-smb="tr '\' '/' | xargs -I {} echo 'smb:'{}"
+
+# 左に指定した入力にのみ存在する行を出力
+alias diffl='diff --old-line-format="%L" --unchanged-line-format="" --new-line-format=""'
+# 右に指定した入力にのみ存在する行を出力
+alias diffr='diff --old-line-format="" --unchanged-line-format="" --new-line-format="%L"'
+# 両方に存在する行にみを出力
+alias diffc='diff --old-line-format="" --unchanged-line-format="%L" --new-line-format=""'
+
+alias cdserver="cd /Library/WebServer"
+alias cdwork="cd ~/Projects/github.com/valbeat"
 # -------------------------------------
 # キーバインド
 # -------------------------------------
