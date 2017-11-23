@@ -484,7 +484,6 @@ set rtp+=$GOROOT/misc/vim
 "----------------------------------------------
 " 1 が設定されていれば有効になる
 let g:enable_highlight_cursor_word = 0
-" let g:enable_highlight_cursor_word = 1
 
 
 augroup highlight-cursor-word
