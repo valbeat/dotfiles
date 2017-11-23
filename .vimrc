@@ -467,13 +467,18 @@ inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function()
   return pumvisible() ? "\<C-y>" : "\<CR>"
 endfunction
+
 inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
 inoremap <expr><C-y> neocomplete#close_popup() :"<ESC>$i"
 inoremap <expr><C-e> neocomplete#cancel_popup()
 
-inoremap <expr><CR>  pumvisible() ? neocomplcache#close_popup() : "<CR>"
+"----------------------------------------------
+" コーディング設定 
+"----------------------------------------------
+" Go言語のリポジトリに含まれる misc/vim にランタイムパスを追加
+set rtp+=$GOROOT/misc/vim
 "----------------------------------------------
 " 実験的な場所 
 "----------------------------------------------
