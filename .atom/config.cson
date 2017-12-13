@@ -1,37 +1,25 @@
 "*":
-  autosave:
-    enabled: true
+  "activate-power-mode":
+    plugins:
+      playAudio: true
+      screenShake: true
   core:
     disabledPackages: [
-      "welcome"
       "language-gfm"
-      "minimap"
-      "minimap-git-diff"
-      "markdown-preview-opener"
     ]
     telemetryConsent: "no"
-  editor:
-    fontSize: 10
   "exception-reporting":
     userId: "72f30a87-8fa2-0681-38f2-a5c66ebeb73f"
-  "markdown-preview":
-    breakOnSingleNewline: true
-    useGitHubStyle: true
-  "markdown-preview-opener":
-    closePreviewWhenClosingEditor: true
-  "markdown-writer": {}
   minimap:
-    displayCodeHighlights: false
     plugins:
-      "git-diff": false
+      "git-diff": true
       "git-diffDecorationsZIndex": 0
+      "split-diff": true
+      "split-diffDecorationsZIndex": 0
   "sync-settings":
     _analyticsUserId: "bc1a5b96-8415-4f03-a62b-e5e07d851ab8"
-    _lastBackupHash: "b5a4be7591f44ba0229131558db0f24e8dcb45b7"
+    _lastBackupHash: "2705ee2008395442707f401d1ed5bd364bb4c011"
     gistId: "bf5dbf6e6745ad8f7b23bc47ff770020"
-    personalAccessToken: "13563506c3e38a0dbe3093c5942fa76e62c1be19"
+    personalAccessToken: "34805d1a4247c942c056ae5075840e09dd38f4a0"
   welcome:
     showOnStartup: false
-".md.text":
-  editor:
-    showIndentGuide: true
