@@ -322,6 +322,9 @@ alias diffc='diff --old-line-format="" --unchanged-line-format="%L" --new-line-f
 
 alias cdserver="cd /Library/WebServer"
 alias cdwork="cd ~/Projects/github.com/valbeat"
+
+# 拡張子列挙
+alias ext-list="find . -type f -not -iwholename '*/.git/*' | sed -e 's/^.*\///' | grep '\.' | sed -e 's/^.*\.//' | sort | uniq -c | sort -nr"
 # -------------------------------------
 # キーバインド
 # -------------------------------------
