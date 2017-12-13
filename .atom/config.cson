@@ -6,6 +6,7 @@
   autosave:
     enabled: true
   core:
+    destroyEmptyPanes: false
     disabledPackages: [
       "language-gfm"
     ]
@@ -25,11 +26,27 @@
       "keybinding-resolver"
     ]
     telemetryConsent: "no"
+    themes: [
+      "one-dark-ui"
+      "solarized-dark-syntax"
+    ]
     titleBar: "custom"
   editor:
     fontFamily: "ricty discord"
+    fontSize: 13
+    lineHeight: 1.1
   "exception-reporting":
     userId: "72f30a87-8fa2-0681-38f2-a5c66ebeb73f"
+  "git-diff":
+    showIconsInEditorGutter: true
+  "linter-ui-default":
+    showPanel: true
+  "markdown-preview":
+    breakOnSingleNewline: true
+    useGitHubStyle: true
+  "markdown-preview-opener":
+    closePreviewWhenClosingEditor: true
+  "markdown-writer": {}
   minimap:
     plugins:
       "git-diff": true
