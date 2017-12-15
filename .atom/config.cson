@@ -11,21 +11,6 @@
       "language-gfm"
     ]
     telemetryConsent: "no"
-      "minimap"
-      "minimap-git-diff"
-      "markdown-preview-opener"
-      "minimap-split-diff"
-      "activate-power-mode"
-      "github"
-      "tidy-markdown"
-      "markdown-scroll-sync"
-      "markdown-toolbar"
-      "api-workbench"
-      "plantuml-viewer"
-      "qolor"
-      "keybinding-resolver"
-    ]
-    telemetryConsent: "no"
     themes: [
       "one-dark-ui"
       "solarized-dark-syntax"
@@ -36,7 +21,7 @@
     fontSize: 13
     lineHeight: 1.1
   "exception-reporting":
-    userId: "72f30a87-8fa2-0681-38f2-a5c66ebeb73f"
+    userId: "69bc8a50-8e7a-41f2-8024-d089c45b63b8"
   "git-diff":
     showIconsInEditorGutter: true
   "linter-ui-default":
@@ -68,7 +53,6 @@
     _analyticsUserId: "bc1a5b96-8415-4f03-a62b-e5e07d851ab8"
     _lastBackupHash: "2705ee2008395442707f401d1ed5bd364bb4c011"
     gistId: "bf5dbf6e6745ad8f7b23bc47ff770020"
-    personalAccessToken: "13563506c3e38a0dbe3093c5942fa76e62c1be19"
   "vim-mode-plus": {}
   welcome:
     showOnStartup: false
