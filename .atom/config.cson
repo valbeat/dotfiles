@@ -49,10 +49,6 @@
     ]
   "split-diff":
     ignoreWhitespace: true
-  "sync-settings":
-    _analyticsUserId: "bc1a5b96-8415-4f03-a62b-e5e07d851ab8"
-    _lastBackupHash: "2705ee2008395442707f401d1ed5bd364bb4c011"
-    gistId: "bf5dbf6e6745ad8f7b23bc47ff770020"
   "vim-mode-plus": {}
   welcome:
     showOnStartup: false
