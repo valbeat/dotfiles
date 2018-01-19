@@ -220,7 +220,10 @@ export PATH="$PATH:/Applications/MacVim.app/Contents/MacOS"
 export PATH="$PATH:/opt/ImageMagick/bin"
 export PATH="/usr/local/opt/openssl/bin:$PATH"
 export PATH="$HOME:/.composer/vendor/bin:$PATH"
+# go
 export PATH=$PATH:$GOPATH/bin
+export GOENVTARGET=$HOME/.goenvtarget
+export PATH=$GOENVTARGET:$PATH
 
 # coreutilsのシンボリックリンク
 export PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
