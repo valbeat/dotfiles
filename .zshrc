@@ -285,6 +285,7 @@ alias ltr="ls -ltr"
 alias ll="ls -l"
 alias la="ls -la"
 alias l1="ls -1"
+alias lly="ls -l --time-style=long-iso"
 
 alias cdg='cd-gitroot'
 alias cp='cp -i'
