@@ -5,6 +5,7 @@
 [alias]
   c = commit -v
   co = !git branch | peco | xargs git checkout
+  cb = checkout -b
 	st = status
 	br = branch
   p = !git push origin `git rev-parse --abbrev-ref HEAD`
