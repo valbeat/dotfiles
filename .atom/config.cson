@@ -31,8 +31,7 @@
     onChanges: true
   "git-diff":
     showIconsInEditorGutter: true
-  "linter-ui-default":
-    showPanel: true
+  "linter-ui-default": {}
   "markdown-preview":
     breakOnSingleNewline: true
     useGitHubStyle: true
