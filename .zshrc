@@ -221,6 +221,7 @@ export PATH="$PATH:/opt/ImageMagick/bin"
 export PATH="/usr/local/opt/openssl/bin:$PATH"
 export PATH="$HOME:/.composer/vendor/bin:$PATH"
 # go
+export GOPATH=$HOME
 export PATH=$PATH:$GOPATH/bin
 export GOENVTARGET=$HOME/.goenvtarget
 export PATH=$GOENVTARGET:$PATH
