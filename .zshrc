@@ -495,3 +495,22 @@ export PATH="$PATH:/Applications/android-sdk/sdk/platform-tools"
 export PATH="$PATH:/Users/t-kajikawa/Library/Android/sdk"
 export PATH="$PATH:/Users/t-kajikawa/Library/Android/sdk/platform-tools"
 
+
+#-------------------------------------
+# peco
+#-------------------------------------
+
+# exp: ls | p cd
+p() { peco | while read LINE; do $@ $LINE; done }
+
+# Ctrl + ] => ghq
+function peco-src () {
+  local selected_dir=$(ghq list -p | peco --prompt "REPOSITORY >" --query "$LBUFFER")
+  if [ -n "$selected_dir" ]; then
+    BUFFER="cd ${selected_dir}"
+    zle accept-line
+  fi
+  zle clear-screen
+}
+zle -N peco-src
+bindkey '^]' peco-src
