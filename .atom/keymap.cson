@@ -36,3 +36,9 @@
 
 'atom-text-editor.vim-mode-plus.insert-mode':
   'j j': 'vim-mode-plus:activate-normal-mode'
+
+'body':
+  'cmd-0': 'tree-view:toggle-focus'
+
+'.platform-darwin atom-workspace atom-text-editor:not([mini])':
+  'cmd-d': 'pane:split-down'
