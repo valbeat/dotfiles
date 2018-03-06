@@ -1,5 +1,7 @@
 [include]
   path = ~/.gitconfig.local
+[includeIf "gitdir:~/src/github.com"]
+  path = ~/src/github.com/.gitconfig
 [color]
 	ui = auto
 [alias]
