@@ -6,7 +6,6 @@
   autosave:
     enabled: true
   core:
-    destroyEmptyPanes: false
     disabledPackages: [
       "language-gfm"
       "keybinding-resolver"
