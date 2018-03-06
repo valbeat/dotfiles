@@ -22,7 +22,6 @@
     titleBar: "custom"
   editor:
     fontFamily: "ricty discord"
-    fontSize: 12
     lineHeight: 1.1
   "exception-reporting":
     userId: "69bc8a50-8e7a-41f2-8024-d089c45b63b8"
