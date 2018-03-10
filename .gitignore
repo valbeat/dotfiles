@@ -27,6 +27,7 @@ Temporary Items
 # ignore dotfiles
 .ssh
 .oh-my-zsh
+.Rhistory
 # ignore app settings
 library
 
