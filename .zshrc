@@ -350,8 +350,6 @@ dstop() { docker stop $(docker ps -a -q); }
 drm() { docker rm $(docker ps -a -q); }
 # Remove all images
 dri() { docker rmi $(docker images -q); }
-# Remove all images
-dri() { docker rmi $(docker images -q); }
 
 # -------------------------------------
 # キーバインド
