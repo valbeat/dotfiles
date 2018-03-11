@@ -334,6 +334,25 @@ alias cdwork="cd ~/src/github.com/valbeat"
 
 # 拡張子列挙
 alias ext-list="find . -type f -not -iwholename '*/.git/*' | sed -e 's/^.*\///' | grep '\.' | sed -e 's/^.*\.//' | sort | uniq -c | sort -nr"
+
+# docker
+# Show all alias related docker
+dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
+# Get container process
+alias dps="docker ps -a"
+# Execute interactive container, e.g., $dex base /bin/bash
+alias dex="docker exec -i -t"
+# get container ip address
+alias dip="docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
+# Stop all containers
+dstop() { docker stop $(docker ps -a -q); }
+# Remove all containers
+drm() { docker rm $(docker ps -a -q); }
+# Remove all images
+dri() { docker rmi $(docker images -q); }
+# Remove all images
+dri() { docker rmi $(docker images -q); }
+
 # -------------------------------------
 # キーバインド
 # -------------------------------------
