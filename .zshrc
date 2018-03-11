@@ -312,6 +312,7 @@ alias viconf="vim ~/.vimrc"
 alias sshconf="vim ~/.ssh/config"
 alias tmux="TERM=screen-256color-bce tmux"
 
+# iterm
 alias ssh="ssh-iterm-profile-setting"
 
 alias today="date '+%Y%m%d'"
