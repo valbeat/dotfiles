@@ -346,7 +346,15 @@ alias dex="docker exec -i -t"
 alias dip="docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
 # Stop all containers
 dstop() { docker stop $(docker ps -a -q); }
-# Remove all containers
+# Stop select container
+dsstop() {
+  local line=`docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"| awk 'NR != 1 {print}' | peco`
+  if [ "$line" != "" ]; then
+    id=`echo $line | awk '{print $1}'`
+    docker stop ${id}
+  fi
+}
+# Remove all containers (only stopped)
 drm() { docker rm $(docker ps -a -q); }
 # Remove all images
 dri() { docker rmi $(docker images -q); }
