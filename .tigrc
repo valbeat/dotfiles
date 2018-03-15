@@ -1,0 +1,14 @@
+# interactive rebaseをバインド
+bind main R !git rebase -i %(commit)
+bind diff R !git rebase -i %(commit)
+
+bind diff F ?!git commit --fixup %(commit)
+bind diff S ?!git commit --squash %(commit)
+bind main F ?!git commit --fixup %(commit)
+
+bind blob B @hub browse -- tree/%(commit)/%(file)
+bind diff B @hub browse -- commit/%(commit)
+bind tree B @hub browse -- tree/%(commit)/%(directory) main = S ?!git commit --squash %(commit)
+
+# main viewでコミットIDを表示
+set main-view = id date author commit-title:graph=yes,refs=yes
