@@ -1,6 +1,9 @@
+# OS generated files
 *.DS_Store
 .AppleDouble
 .LSOverride
+ehthumbs.db
+Thumbs.db
 
 # Icon must end with two \r
 Icon
