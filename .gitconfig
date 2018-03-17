@@ -33,6 +33,8 @@
   fetch-pulls = fetch origin +refs/pull/*:refs/remotes/pull/*
   # pullする前に変更を調べる
   pull-dry-run  = !"git fetch origin; B=$(git rev-parse --abbrev-ref HEAD); git diff --stat --summary ${B}..origin/${B}"
+  # diff only extension
+  diffe = !git diff HEAD --name-only | sed 's/.*\\.//' | sort | uniq
   # 現在のブランチ名
   current = symbolic-ref --short HEAD
   # alias一覧 TODO:動いてない
