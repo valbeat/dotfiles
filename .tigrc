@@ -12,9 +12,13 @@ bind diff F ?!git commit --fixup %(commit)
 bind diff S ?!git commit --squash %(commit)
 bind main F ?!git commit --fixup %(commit)
 
+# open commit at github
 bind blob B @hub browse -- tree/%(commit)/%(file)
 bind diff B @hub browse -- commit/%(commit)
 bind tree B @hub browse -- tree/%(commit)/%(directory) main = S ?!git commit --squash %(commit)
+bind main o !@hub browse -- commit/%(commit)
+bind diff o !@hub browse -- commit/%(commit)
+bind log o !@hub browse -- commit/%(commit)
 
 # main viewでコミットIDを表示
 set main-view = id date author commit-title:graph=yes,refs=yes
