@@ -1,3 +1,9 @@
+# 画面分割を垂直にする
+set vertical-split = yes
+
+# 行を折り返さない
+set wrap-lines = no
+
 # interactive rebaseをバインド
 bind main R !git rebase -i %(commit)
 bind diff R !git rebase -i %(commit)
