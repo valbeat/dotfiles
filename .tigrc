@@ -22,3 +22,7 @@ bind log o !@hub browse -- commit/%(commit)
 
 # main viewでコミットIDを表示
 set main-view = id date author commit-title:graph=yes,refs=yes
+
+# copy commit_id (osx)
+bind main C !@git pbcopy %(commit)
+
