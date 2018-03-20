@@ -541,3 +541,19 @@ function peco-src () {
 }
 zle -N peco-src
 bindkey '^]' peco-src
+
+
+#-------------------------------------
+# fzf
+#-------------------------------------
+# fuzzy grep open via ag
+vg() {
+  local file
+
+  file="$(ag --nobreak --noheading $@ | fzf -0 -1 | awk -F: '{print $1 " +" $2}')"
+
+  if [[ -n $file ]]
+  then
+     vim $file
+  fi
+}
