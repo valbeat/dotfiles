@@ -519,8 +519,8 @@ alias top='tab-color 134 200 0; top; tab-reset'
 # CaskのシンボリックリンクをApplicationsに
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 export PATH="$PATH:/Applications/android-sdk/sdk/platform-tools"
-export PATH="$PATH:/Users/t-kajikawa/Library/Android/sdk"
-export PATH="$PATH:/Users/t-kajikawa/Library/Android/sdk/platform-tools"
+export PATH="$PATH:$HOME/Library/Android/sdk"
+export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 
 
 #-------------------------------------
@@ -559,7 +559,7 @@ vg() {
 }
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '~/google-cloud-sdk/path.zsh.inc' ]; then source '~/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then source "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '~/google-cloud-sdk/completion.zsh.inc' ]; then source '~/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then source "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
