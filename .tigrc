@@ -1,5 +1,5 @@
-# 画面分割を垂直にする
-set vertical-split = yes
+# 画面分割を水平にする
+set vertical-split = no
 
 # 行を折り返さない
 set wrap-lines = no
