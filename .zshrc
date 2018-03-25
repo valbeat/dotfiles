@@ -226,7 +226,8 @@ export GOPATH=$HOME
 export PATH=$PATH:$GOPATH/bin
 export GOENVTARGET=$HOME/.goenvtarget
 export PATH=$GOENVTARGET:$PATH
-
+# dotnet
+export PATH=$PATH:$HOME/dotnet
 # coreutilsのシンボリックリンク
 export PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
 # 重複する要素を自動的に削除
