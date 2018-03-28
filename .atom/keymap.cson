@@ -33,6 +33,7 @@
 'atom-text-editor':
   'cmd-shift-D': 'pane:split-right-and-copy-active-item'
   'cmd-shift-left': 'pane:move-item-left'
+  'ctrl-shift-M': 'unset!'
 
 'atom-text-editor.vim-mode-plus.insert-mode':
   'j j': 'vim-mode-plus:activate-normal-mode'
