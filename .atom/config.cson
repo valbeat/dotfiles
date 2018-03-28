@@ -13,6 +13,8 @@
       "linter-sass-lint"
       "minimap"
       "file-icons"
+      "markdown-preview-opener"
+      "markdown-scroll-sync"
     ]
     telemetryConsent: "no"
     themes: [
