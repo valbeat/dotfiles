@@ -347,7 +347,9 @@ alias dex="docker exec -i -t"
 # get container ip address
 alias dip="docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
 # get ip address all containers
-dipa() { docker ps -a -q | xargs docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' }
+dipa() {
+  docker ps -a -q | xargs docker inspect --format '{{.Name}}  {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
+}
 # Stop all containers
 dstop() { docker stop $(docker ps -a -q); }
 # Stop select container
