@@ -362,7 +362,13 @@ dsstop() {
 drm() { docker rm $(docker ps -a -q); }
 # Remove all images
 dri() { docker rmi $(docker images -q); }
-
+# exec select
+dsh() { 
+  local line=`docker ps --format "table {{.Names}}" | awk 'NR != 1 {print}' | fzf`
+  if [ "$line" != "" ]; then
+    docker exec -it ${line} sh
+  fi
+}
 # -------------------------------------
 # キーバインド
 # -------------------------------------
