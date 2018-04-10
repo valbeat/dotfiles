@@ -14,7 +14,8 @@
       "minimap"
       "file-icons"
       "markdown-preview-opener"
-      "markdown-scroll-sync"
+      "hey-pane"
+      "markdown-preview"
     ]
     telemetryConsent: "no"
     themes: [
@@ -35,6 +36,13 @@
   "markdown-preview":
     breakOnSingleNewline: true
     useGitHubStyle: true
+  "markdown-preview-enhanced":
+    automaticallyShowPreviewOfMarkdownBeingEdited: false
+    codeBlockTheme: "solarized-dark.css"
+    enableTypographer: true
+    mermaidTheme: "mermaid.dark.css"
+    openPreviewPaneAutomatically: false
+    previewTheme: "solarized-dark.css"
   "markdown-preview-opener":
     closePreviewWhenClosingEditor: true
   "markdown-writer": {}
