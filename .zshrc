@@ -371,6 +371,9 @@ dsh() {
     docker exec -it ${line} sh
   fi
 }
+
+# vagrant
+alias vgkey="vagrant ssh-config | grep IdentityFile | sed -e 's/IdentityFile//' | sed -e 's/^[ ]*//'"
 # -------------------------------------
 # キーバインド
 # -------------------------------------
