@@ -137,13 +137,7 @@ repo = 'pocke/vim-textobj-markdown'
 repo = 'joker1007/vim-markdown-quote-syntax'
 
 [[plugins]]
-repo = 'plasticboy/vim-markdown'
-
-[[plugins]]
-repo = 'kannokanno/previm' # markdownのプレビュー
-
-[[plugins]]
-repo = 'tyru/open-browser.vim' # vimからブラウザを開く
+repo = 'tpope/vim-markdown'
 # ----------------------------------
 # Unite 
 # ----------------------------------
