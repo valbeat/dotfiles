@@ -374,6 +374,7 @@ dsh() {
 
 # vagrant
 alias vgkey="vagrant ssh-config | grep IdentityFile | sed -e 's/IdentityFile//' | sed -e 's/^[ ]*//'"
+
 # -------------------------------------
 # キーバインド
 # -------------------------------------
@@ -573,8 +574,6 @@ vg() {
   fi
 }
 
-
-
 #-------------------------------------
 # google cloud sdk
 #-------------------------------------
@@ -583,3 +582,10 @@ if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then source "$HOME/google-cloud
 
 # The next line enables shell command completion for gcloud.
 if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then source "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
+
+#-------------------------------------
+# load local settings
+#-------------------------------------
+if [[ -f ~/.zshrc.local ]]; then
+  source ~/.zshrc.local
+fi
