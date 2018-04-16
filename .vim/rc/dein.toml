@@ -138,6 +138,7 @@ repo = 'joker1007/vim-markdown-quote-syntax'
 
 [[plugins]]
 repo = 'tpope/vim-markdown'
+
 # ----------------------------------
 # Unite 
 # ----------------------------------
