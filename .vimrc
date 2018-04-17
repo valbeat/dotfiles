@@ -308,14 +308,14 @@ autocmd BufRead,BufNewFile *.{mkd,md} set filetype=markdown
 autocmd! FileType markdown hi! def link markdownItalic Normal
 autocmd FileType markdown set commentstring=<\!--\ %s\ -->
 " for kannokanno/previm
-let g:previm_open_cmd = 'open -a Safari'
-nnoremap <silent> <C-p> :PrevimOpen<CR>
+" let g:previm_open_cmd = 'open -a Safari'
+" nnoremap <silent> <C-p> :PrevimOpen<CR>
 " for plasticboy/vim-markdown
-let g:vim_markdown_no_default_key_mappings = 1
-let g:vim_markdown_math = 1
-let g:vim_markdown_frontmatter = 1
-let g:vim_markdown_toc_autofit = 1
-let g:vim_markdown_folding_style_pythonic = 1
+" let g:vim_markdown_no_default_key_mappings = 1
+" let g:vim_markdown_math = 1
+" let g:vim_markdown_frontmatter = 1
+" let g:vim_markdown_toc_autofit = 1
+" let g:vim_markdown_folding_style_pythonic = 1
 
 " html
 hi link htmlItalic LineNr
