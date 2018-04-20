@@ -38,6 +38,8 @@
   diffe = !git diff HEAD --name-only | sed 's/.*\\.//' | sort | uniq
   # 現在のブランチ名
   current = symbolic-ref --short HEAD
+  # set-upstream
+  setupst=!"git branch --set-upstream-to=origin/$(git current) $(git current)"
   # alias一覧 TODO:動いてない
   alias = !"if test -z $1; then loop=; for k in `git config --get-regexp ^alias\\. | sort | sed -e 's/^alias\\.\\(\\S*\\).*/\\1/g'`; do echo -n $k; loop="${loop}1"; if test ${#loop} -lt 5; then echo -n '\t'; else echo; loop=; fi; done; exit; fi; git config --list | grep ^alias\\.$1= | sed -e s/^alias\\.//; exit;"
 [filter "media"]
