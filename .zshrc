@@ -226,6 +226,7 @@ export GOPATH=$HOME
 export PATH=$PATH:$GOPATH/bin
 export GOENVTARGET=$HOME/.goenvtarget
 export PATH=$GOENVTARGET:$PATH
+export GO15VENDOREXPERIMENT=1
 # dotnet
 export PATH=$PATH:$HOME/dotnet
 # coreutilsのシンボリックリンク
