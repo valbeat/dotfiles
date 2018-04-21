@@ -582,11 +582,19 @@ vg() {
 #-------------------------------------
 # google cloud sdk
 #-------------------------------------
+## Set path for GoogleCloudSDK
+export GCLOUD_SDK="$HOME/google-cloud-sdk"
+export PATH="$PATH:$GCLOUD_SDK/bin"
+
+## Set path for App Engine SDK for GO
+export APPENGINE_SDK="$GCLOUD_SDK/platform/google_appengine"
+export PATH="$PATH:$APPENGINE_SDK"
+
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then source "$HOME/google-cloud-sdk/path.zsh.inc"; fi
+if [ -f "$GCLOUD_SDK/path.zsh.inc" ]; then source "$GCLOUD_SDK/path.zsh.inc"; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then source "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
+if [ -f "$GCLOUD_SDK/completion.zsh.inc" ]; then source "$GCLOUD_SDK/completion.zsh.inc"; fi
 
 #-------------------------------------
 # load local settings
