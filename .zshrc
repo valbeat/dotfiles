@@ -311,6 +311,7 @@ alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 
 alias zconf="vim ~/.zshrc"
+alias zlconf="vim ~/.zshrc.local"
 alias viconf="vim ~/.vimrc"
 alias sshconf="vim ~/.ssh/config"
 alias tmux="TERM=screen-256color-bce tmux"
