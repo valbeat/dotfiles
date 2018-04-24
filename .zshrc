@@ -365,7 +365,7 @@ dsstop() {
 # Remove all containers (only stopped)
 drm() { docker rm $(docker ps -a -q); }
 # Remove all images
-dri() { docker rmi $(docker images -q); }
+drmi() { docker rmi $(docker images -q); }
 # exec select
 dsh() { 
   local line=`docker ps --format "table {{.Names}}" | awk 'NR != 1 {print}' | fzf`
