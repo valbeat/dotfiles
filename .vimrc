@@ -31,6 +31,7 @@ if dein#check_install(['vimproc'])
   call dein#install(['vimproc'])
 endif
 
+" 不足プラグインのインストール
 if has('vim_starting') && dein#check_install()
     call dein#install()
 endif
