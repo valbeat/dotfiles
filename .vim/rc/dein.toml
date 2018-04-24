@@ -182,6 +182,9 @@ repo = 'kmnk/vim-unite-giti' # gist
 #----------------------------------
 # プログラミング 
 # ----------------------------------
+[[plugins]] # テンプレート :Template
+repo = 'mattn/sonictemplate-vim'
+
 [[plugins]] # 様々な言語のシンタックス拡張
 repo = 'sheerun/vim-polyglot'
 
