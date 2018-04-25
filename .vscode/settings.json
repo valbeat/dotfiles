@@ -27,7 +27,7 @@
     },
     "workbench.iconTheme": "material-icon-theme",
     "material-icon-theme.showUpdateMessage": false,
-    "go.gopath": "/Users/t-kajikawa",
+    "go.gopath": "$GOPATH",
     "go.goroot": "/usr/local/opt/go/libexec",
     "csharp.format.enable": false,
     "markdown-preview-enhanced.previewTheme": "github-dark.css",
