@@ -12,4 +12,13 @@
 	// 	],
 	// 	"description": "Log output to console"
 	// }
+	"For_Public_Type_Interface": {
+		"prefix": "pubtyi",
+		"body": [
+			"// $1 is",
+			"type $1 interface {",
+			"}"
+		],
+		"description": "snippet for public type interface"
+	}
 }
