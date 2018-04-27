@@ -158,14 +158,6 @@
 		"when": "editorHasReferenceProvider && editorTextFocus && !inReferenceSearchEditor"
 	},
 	{
-		"key": "alt+f12",
-		"command": "workbench.action.tasks.build"
-	},
-	{
-		"key": "shift+cmd+b",
-		"command": "-workbench.action.tasks.build"
-	},
-	{
 		"key": "alt+cmd+n",
 		"command": "workbench.action.files.newUntitledFile"
 	},
@@ -180,5 +172,30 @@
 	{
 		"key": "alt+cmd+n",
 		"command": "-newFile.createNewFile"
+	},
+	{
+		"key": "cmd+2",
+		"command": "workbench.action.terminal.focus",
+		"when": "!terminalFocus"
+	},
+	{
+		"key": "alt+f12",
+		"command": "-workbench.action.terminal.focus",
+		"when": "!terminalFocus"
+	},
+	{
+		"key": "alt+f12",
+		"command": "-workbench.action.terminal.focus",
+		"when": "!terminalFocus"
+	},
+	{
+		"key": "alt+f12",
+		"command": "-workbench.action.terminal.focus",
+		"when": "!terminalFocus"
+	},
+	{
+		"key": "alt+f12",
+		"command": "-workbench.action.terminal.focus",
+		"when": "!terminalFocus"
 	}
 ]
