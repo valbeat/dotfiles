@@ -613,3 +613,4 @@ if [ -f "$GCLOUD_SDK/completion.zsh.inc" ]; then source "$GCLOUD_SDK/completion.
 if [[ -f ~/.zshrc.local ]]; then
   source ~/.zshrc.local
 fi
+export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
