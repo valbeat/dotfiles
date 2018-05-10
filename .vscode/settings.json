@@ -94,4 +94,5 @@
     "files.associations": {
         ".zshrc.*": "shellscript"
     },
+    "extensions.ignoreRecommendations": true,
 }
