@@ -179,23 +179,17 @@
 		"when": "!terminalFocus"
 	},
 	{
-		"key": "alt+f12",
-		"command": "-workbench.action.terminal.focus",
-		"when": "!terminalFocus"
+    "key": "cmd+shift+enter", 
+    "command": "workbench.action.toggleMaximizedPanel",
 	},
 	{
 		"key": "alt+f12",
-		"command": "-workbench.action.terminal.focus",
-		"when": "!terminalFocus"
+		"command": "workbench.action.terminal.focus",
+		"when": "editorFocus"
 	},
 	{
 		"key": "alt+f12",
-		"command": "-workbench.action.terminal.focus",
-		"when": "!terminalFocus"
-	},
-	{
-		"key": "alt+f12",
-		"command": "-workbench.action.terminal.focus",
-		"when": "!terminalFocus"
+		"command": "workbench.action.focusActiveEditorGroup",
+		"when": "terminalFocus"
 	}
 ]
