@@ -116,6 +116,14 @@ local WHITE=$'%{^[[1;37m%}'$
 
 # vimモード
 set -o vi 
+
+# for brew dotnet
+# ref: http://monry.hatenablog.com/entry/2018/01/20/235901
+# system-wide environment settings for zsh(1)
+if [ -x /usr/libexec/path_helper ]; then
+  eval `/usr/libexec/path_helper -s`
+fi
+
 # -------------------------------------
 # zshのオプション
 # -------------------------------------
