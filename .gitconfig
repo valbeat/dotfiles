@@ -23,9 +23,9 @@
   diff = diff --color | diff-so-fancy
   sorttime = "!git for-each-ref --sort='-authordate:iso8601' --format=' %(authordate:iso8601)%09%(refname)' refs/heads"
   # TODOコメント表示
-  todo = !"f() { for fn in `git diff --name-only master`;do if [ -f $fn ];then git grep -i todo $fn;fi done };f"
-  # FIXMEコメント表示
-  fixme = !"f() { for fn in `git diff --name-only master`;do if [ -f $fn ];then git grep -i fixme $fn;fi done };f"
+  todo = !"git diff origin/master...HEAD | grep -E 'TODO' -C5"
+  # FIXMEコメント表示(TODOも表示)
+  fixme = !"git diff origin/master...HEAD | grep -E 'TODO|FIXME' -C5"
   # 最近コミットしたブランチを表示
   recent = for-each-ref --format='%(refname:short)' --sort=-committerdate refs/heads
   # カレントブランチ
