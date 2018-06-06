@@ -9,8 +9,8 @@
   co = !git branch | peco | xargs git checkout
   co-remote = '! f() { git fetch --depth=1 origin $1 && git checkout -b $1 FETCH_HEAD; }; f '
   cb = checkout -b
-	st = status
-	br = branch
+  st = status
+  br = branch
   p = !git push origin `git rev-parse --abbrev-ref HEAD`
   lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
   lga = log --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
