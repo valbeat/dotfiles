@@ -158,7 +158,7 @@
 		"when": "editorHasReferenceProvider && editorTextFocus && !inReferenceSearchEditor"
 	},
 	{
-		"key": "alt+cmd+n",
+		"key": "cmd+n",
 		"command": "workbench.action.files.newUntitledFile"
 	},
 	{
@@ -166,7 +166,7 @@
 		"command": "-workbench.action.files.newUntitledFile"
 	},
 	{
-		"key": "cmd+n",
+		"key": "alt+cmd+n",
 		"command": "newFile.createNewFile"
 	},
 	{
