@@ -38,6 +38,8 @@
   diffe = !git diff HEAD --name-only | sed 's/.*\\.//' | sort | uniq
   # 現在のブランチ名
   current = symbolic-ref --short HEAD
+  # show conflict files
+  conflicts = '!git ls-files -u | cut -f 2 | sort -u'
   # set-upstream
   setupst=!"git branch --set-upstream-to=origin/$(git current) $(git current)"
   # alias一覧 TODO:動いてない
