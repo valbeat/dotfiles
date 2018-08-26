@@ -82,3 +82,7 @@
   generic = G move-last-line
 [ghq]
   root = ~/src
+[init]
+	templatedir = $HOME/.git_template/
+[http]
+	postBuffer = 524288000
