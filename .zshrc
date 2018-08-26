@@ -129,6 +129,17 @@ fi
 # -------------------------------------
 # ファイル補完の高速化
 __git_files() { _files }
+
+# ssh host
+autoload -U compinit && compinit
+
+function print_known_hosts (){
+    if [ -f $HOME/.ssh/known_hosts ]; then
+        cat $HOME/.ssh/known_hosts | tr ',' ' ' | cut -d' ' -f1
+    fi
+}
+_cache_hosts=($( print_known_hosts ))
+
 # cdr
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
