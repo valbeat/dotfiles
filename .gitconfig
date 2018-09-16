@@ -83,6 +83,6 @@
 [ghq]
   root = ~/src
 [init]
-	templatedir = $HOME/.git_template/
+#	templatedir = $HOME/.git_template/
 [http]
 	postBuffer = 524288000
