@@ -359,6 +359,7 @@ alias cdwork="cd ~/src/github.com/valbeat"
 alias ext-list="find . -type f -not -iwholename '*/.git/*' | sed -e 's/^.*\///' | grep '\.' | sed -e 's/^.*\.//' | sort | uniq -c | sort -nr"
 
 # docker
+alias d=docker
 # Show all alias related docker
 dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
 # Get container process
@@ -392,6 +393,15 @@ dsh() {
     docker exec -it ${line} sh
   fi
 }
+
+# kubectl
+alias kc=kubectl
+
+# minikube
+alias mk=minikube
+
+# gcloud
+alias gcl=gcloud
 
 # vagrant
 alias vgkey="vagrant ssh-config | grep IdentityFile | sed -e 's/IdentityFile//' | sed -e 's/^[ ]*//'"
