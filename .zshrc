@@ -633,3 +633,12 @@ if [[ -f ~/.zshrc.local ]]; then
   source ~/.zshrc.local
 fi
 export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
+
+
+
+#---------------------------------------
+# kubectl
+#---------------------------------------
+if [ $commands[kubectl] ]; then
+  source <(kubectl completion zsh)
+fi
