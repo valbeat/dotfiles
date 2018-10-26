@@ -551,28 +551,24 @@ export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 
 
 #-------------------------------------
-# peco
+# fzf
 #-------------------------------------
 
 # exp: ls | p cd
-p() { peco | while read LINE; do $@ $LINE; done }
+p() { fzf | while read LINE; do $@ $LINE; done }
 
 # Ctrl + ] => ghq
-function peco-src () {
-  local selected_dir=$(ghq list -p | peco --prompt "REPOSITORY >" --query "$LBUFFER")
+function fzf-src () {
+  local selected_dir=$(ghq list -p | fzf --select-1 -e --reverse --prompt "REPOSITORY >" --query "$LBUFFER")
   if [ -n "$selected_dir" ]; then
     BUFFER="cd ${selected_dir}"
     zle accept-line
   fi
   zle clear-screen
 }
-zle -N peco-src
-bindkey '^]' peco-src
+zle -N fzf-src
+bindkey '^]' fzf-src
 
-
-#-------------------------------------
-# fzf
-#-------------------------------------
 # fuzzy grep open via ag
 vg() {
   local file
@@ -653,3 +649,5 @@ export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 if [ $commands[kubectl] ]; then
   source <(kubectl completion zsh)
 fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
