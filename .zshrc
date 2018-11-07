@@ -405,7 +405,20 @@ _docker_exec_sh() {
 alias dsh=_docker_exec_sh
 
 # kubectl
-alias kc=kubectl
+alias k=kubectl
+alias kx=kubectx
+alias kn=kubens
+
+alias ktail=kubetail
+
+function _fzf_kubetail_namespace() {
+  local ns=$(kubectl get namespaces | fzf | awk '{print $1}')
+  if [[ -n $ns ]]; then
+    kubetail $ns
+    return $?
+  fi
+}
+alias ktailn=_fzf_kubetail_namespace
 
 # minikube
 alias mk=minikube
