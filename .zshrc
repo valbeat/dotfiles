@@ -424,7 +424,17 @@ alias ktailn=_fzf_kubetail_namespace
 alias mk=minikube
 
 # gcloud
-alias gcl=gcloud
+alias gpl="gcloud projects list"
+alias gcl="gcloud config list"
+
+function _gcloud_change_project() {
+  local proj=$(gcloud projects list | fzf-tmux --header-lines=1 --multi --cycle | awk '{print $1}')
+  if [[ -n $proj ]]; then
+    gcloud config set project $proj
+    return $?
+  fi
+}
+alias gcp=_gcloud_change_project
 
 # vagrant
 alias vgkey="vagrant ssh-config | grep IdentityFile | sed -e 's/IdentityFile//' | sed -e 's/^[ ]*//'"
