@@ -365,35 +365,44 @@ alias dc=docker-compose
 dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
 # Get container process
 alias dps="docker ps -a"
+
 # Execute interactive container, e.g., $dex base /bin/bash
 alias dex="docker exec -i -t"
+
 # get container ip address
 alias dip="docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
+
 # get ip address all containers
-dipa() {
+_docker_show_ip_all() {
   docker ps -a -q | xargs docker inspect --format '{{.Name}}  {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'
 }
+alias dipa=_docker_show_ip_all
 # Stop all containers
-dstop() { docker stop $(docker ps -a -q); }
+_docker_stop_all() { docker stop $(docker ps -a -q); }
+alias dstop=_docker_stop_all
+
 # Stop select container
-dsstop() {
-  local line=`docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"| awk 'NR != 1 {print}' | peco`
+_docker_fzf_stop() {
+  local line=`docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"| awk 'NR != 1 {print}' | fzf`
   if [ "$line" != "" ]; then
     id=`echo $line | awk '{print $1}'`
     docker stop ${id}
   fi
 }
+alias dfstop=_docker_fzf_stop
+
 # Remove all containers (only stopped)
 drm() { docker rm $(docker ps -a -q); }
 # Remove all images
 drmi() { docker rmi $(docker images -q); }
 # exec select
-dsh() { 
+_docker_exec_sh() { 
   local line=`docker ps --format "table {{.Names}}" | awk 'NR != 1 {print}' | fzf`
   if [ "$line" != "" ]; then
     docker exec -it ${line} sh
   fi
 }
+alias dsh=_docker_exec_sh
 
 # kubectl
 alias kc=kubectl
