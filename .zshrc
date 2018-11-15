@@ -621,6 +621,7 @@ vg() {
   fi
 }
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 #-------------------------------------
 # todolist
@@ -681,13 +682,14 @@ if [[ -f ~/.zshrc.local ]]; then
 fi
 export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 
+#-------------------------------------
+# load
+#-------------------------------------
 
-
-#---------------------------------------
-# kubectl
-#---------------------------------------
 if [ $commands[kubectl] ]; then
   source <(kubectl completion zsh)
 fi
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+if [ $commands[helm] ]; then
+  source <(helm completion zsh)
+fi
