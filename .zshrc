@@ -124,6 +124,14 @@ if [ -x /usr/libexec/path_helper ]; then
   eval `/usr/libexec/path_helper -s`
 fi
 
+
+
+# -------------------------------------
+# prompt
+# -------------------------------------
+source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
+PS1='$(kube_ps1)'$PS1
+
 # -------------------------------------
 # zshのオプション
 # -------------------------------------
