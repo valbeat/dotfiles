@@ -86,3 +86,6 @@
 #	templatedir = $HOME/.git_template/
 [http]
 	postBuffer = 524288000
+	cookiefile = ${HOME}/.gitcookies
+[credential "https://source.developers.google.com"]
+	helper = gcloud.sh
