@@ -368,7 +368,7 @@ alias ext-list="find . -type f -not -iwholename '*/.git/*' | sed -e 's/^.*\///' 
 
 # docker
 alias d=docker
-alias dc=docker-compose
+alias fig=docker-compose
 # Show all alias related docker
 dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
 # Get container process
