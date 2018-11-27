@@ -30,7 +30,6 @@ zplug "b4b4r07/zsh-vimode-visual", defer:3
 zplug "mafredri/zsh-async", defer:1
 zplug "sindresorhus/pure", defer:2, \
   hook-load:"{
-    PROMPT='%(?.%F{green}.%F{red})$%f '
     PURE_GIT_DELAY_DIRTY_CHECK=1000
   }
   "
@@ -130,7 +129,7 @@ fi
 # prompt
 # -------------------------------------
 source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
-PS1='$(kube_ps1)'$PS1
+setopt transient_rprompt
 
 # -------------------------------------
 # zshのオプション
