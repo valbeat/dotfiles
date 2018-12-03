@@ -129,6 +129,7 @@ fi
 # prompt
 # -------------------------------------
 source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
+RPROMPT='$(kube_ps1)'
 setopt transient_rprompt
 
 # -------------------------------------
