@@ -447,9 +447,6 @@ alias gcp=_gcloud_change_project
 # vagrant
 alias vgkey="vagrant ssh-config | grep IdentityFile | sed -e 's/IdentityFile//' | sed -e 's/^[ ]*//'"
 
-# memo
-alias diary=memo new
-
 # -------------------------------------
 # キーバインド
 # -------------------------------------
