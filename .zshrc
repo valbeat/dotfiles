@@ -9,7 +9,7 @@ source ~/.zplug/init.zsh
 ## zplug
 zplug "zplug/zplug"
 ## 拡張
-zplug "mollifier/anyframe"
+#zplug "mollifier/anyframe"
 zplug "Tarrasch/zsh-functional"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 zplug "b4b4r07/zsh-vimode-visual", defer:3
@@ -44,7 +44,7 @@ zplug "Tarrasch/zsh-bd"
 # gitルートへcd
 zplug "mollifier/cd-gitroot"
 # githubをブラウザで開く
-zplug "peterhurford/git-it-on.zsh"
+#zplug "peterhurford/git-it-on.zsh"
 
 zplug "ascii-soup/zsh-url-highlighter"
 
@@ -55,14 +55,14 @@ zplug "zsh-users/zsh-completions"
 zplug "stedolan/jq", from:gh-r, as:command
 
 # git br用
-zplug "jhawthorn/fzy", \
-    as:command, \
-    hook-build:'make'
-zplug "b4b4r07/git-br", \
-    as:command, \
-    use:'git-br'
+#zplug "jhawthorn/fzy", \
+#    as:command, \
+#    hook-build:'make'
+#zplug "b4b4r07/git-br", \
+#    as:command, \
+#    use:'git-br'
 # open git hub
-zplug "paulirish/git-open", as:command
+#zplug "paulirish/git-open", as:command
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
