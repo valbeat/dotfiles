@@ -89,3 +89,5 @@
 	cookiefile = ${HOME}/.gitcookies
 [credential "https://source.developers.google.com"]
 	helper = gcloud.sh
+[url "git@gitlab.com:"]
+	insteadOf = https://gitlab.com/
