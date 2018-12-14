@@ -605,11 +605,11 @@ p() { fzf | while read LINE; do $@ $LINE; done }
 
 # Ctrl + ] => ghq
 function fzf-src () {
-  local selected_dir=$(ghq root)/$(ghq list | fzf --select-1 -e --reverse --prompt "REPOSITORY >" --query "$LBUFFER")
-  if [ -n "$selected_dir" ]; then
-    BUFFER="cd ${selected_dir}"
-    zle accept-line
+  local dir=$(ghq root)/$(ghq list | fzf -e --prompt "REPO >")
+  if [ ! -n "$dir" ]; then
+    return 0
   fi
+  cd ${dir}
   zle clear-screen
 }
 zle -N fzf-src
