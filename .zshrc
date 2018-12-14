@@ -416,6 +416,8 @@ alias dsh=_docker_exec_sh
 alias k=kubectl
 alias kx=kubectx
 alias kn=kubens
+alias keit='kubectl exec -it'
+alias kdp='kubectl describe pod'
 
 alias ktail=kubetail
 
