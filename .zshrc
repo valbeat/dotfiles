@@ -134,24 +134,14 @@ setopt transient_rprompt
 # -------------------------------------
 # zshのオプション
 # -------------------------------------
-# ファイル補完の高速化
-__git_files() { _files }
-
-# ssh host
-autoload -U compinit && compinit
-
-function print_known_hosts (){
-    if [ -f $HOME/.ssh/known_hosts ]; then
-        cat $HOME/.ssh/known_hosts | tr ',' ' ' | cut -d' ' -f1
-    fi
-}
-_cache_hosts=($( print_known_hosts ))
 
 # cdr
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
 
 # 補完
+autoload -Uz compinit && compinit
+
 ## 補完候補をキャッシュする。
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path ~/.zsh/cache
@@ -179,6 +169,21 @@ setopt magic_equal_subst
 setopt complete_in_word
 # カーソル位置は保持したままファイル名一覧を順次その場で表示
 setopt always_last_prompt
+# 補完開始時に絞り込み開始
+# zstyle ':completion:*' menu select interactive
+# zstyle ':completion:*:default' menu select=2
+# setopt menu_complete
+
+# ファイル補完の高速化
+__git_files() { _files }
+
+# ssh host
+function print_known_hosts (){
+    if [ -f $HOME/.ssh/known_hosts ]; then
+        cat $HOME/.ssh/known_hosts | tr ',' ' ' | cut -d' ' -f1
+    fi
+}
+_cache_hosts=($( print_known_hosts ))
 
 # cd ls
 # タブによるファイルの順番切り替えをしない
