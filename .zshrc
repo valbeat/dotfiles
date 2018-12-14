@@ -428,11 +428,18 @@ alias kdp='kubectl describe pod'
 alias mk=minikube
 
 # gcloud
-alias gpl="gcloud projects list"
-alias gcl="gcloud config list"
+
+function _gcloud_change_account() {
+  local account=$(gcloud auth list --format="value(account)" | fzf | awk '{print $1}')
+  if [[ -n $account ]]; then
+    gcloud config set account $account
+    return $?
+  fi
+}
+alias gca=_gcloud_change_account
 
 function _gcloud_change_project() {
-  local proj=$(gcloud projects list | fzf-tmux --header-lines=1 --multi --cycle | awk '{print $1}')
+  local proj=$(gcloud projects list | fzf --header-lines=1 | awk '{print $1}')
   if [[ -n $proj ]]; then
     gcloud config set project $proj
     return $?
