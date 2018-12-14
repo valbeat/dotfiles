@@ -693,3 +693,7 @@ fi
 if [ $commands[helm] ]; then
   source <(helm completion zsh)
 fi
+
+if [ $commands[stern] ]; then
+  source <(stern --completion=zsh)
+fi
