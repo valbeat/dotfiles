@@ -534,11 +534,6 @@ has() {
     return $status
 }
 
-# リンゴマーク出すための関数
-function toon {
-  echo -n ""
-}
-
 # gitのrootへ移動
 function git-root() {
   if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
