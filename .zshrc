@@ -419,16 +419,6 @@ alias kn=kubens
 alias keit='kubectl exec -it'
 alias kdp='kubectl describe pod'
 
-alias ktail=kubetail
-
-function _fzf_kubetail_namespace() {
-  local ns=$(kubectl get namespaces | fzf | awk '{print $1}')
-  if [[ -n $ns ]]; then
-    kubetail $ns
-    return $?
-  fi
-}
-alias ktailn=_fzf_kubetail_namespace
 
 # minikube
 alias mk=minikube
