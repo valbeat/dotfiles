@@ -367,7 +367,6 @@ alias diffc='diff --old-line-format="" --unchanged-line-format="%L" --new-line-f
 alias ext-list="find . -type f -not -iwholename '*/.git/*' | sed -e 's/^.*\///' | grep '\.' | sed -e 's/^.*\.//' | sort | uniq -c | sort -nr"
 
 # docker
-alias d=docker
 alias fig=docker-compose
 # Show all alias related docker
 dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
