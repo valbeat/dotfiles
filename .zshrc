@@ -7,12 +7,11 @@ source ~/.zplug/init.zsh
 
 
 ## zplug
-zplug "zplug/zplug"
 ## 拡張
 #zplug "mollifier/anyframe"
-zplug "Tarrasch/zsh-functional"
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
-zplug "b4b4r07/zsh-vimode-visual", defer:3
+#zplug "Tarrasch/zsh-functional"
+zplug "zsh-users/zsh-syntax-highlighting", defer:2, lazy:true
+#zplug "b4b4r07/zsh-vimode-visual", defer:3
 
 # テーマ
 ## Liquid prompt
@@ -33,26 +32,22 @@ zplug "sindresorhus/pure", defer:2, \
     PURE_GIT_DELAY_DIRTY_CHECK=1000
   }
   "
-  
 # 通知 
 # メモリ食うので一旦OFF
 #zplug "marzocchi/zsh-notify"
 #export SYS_NOTIFIER="usr/local/bin/terminal-notifier"
 # cd 系
-zplug "knu/z"
-zplug "Tarrasch/zsh-bd"
+#zplug "knu/z"
+#zplug "Tarrasch/zsh-bd"
 # gitルートへcd
-zplug "mollifier/cd-gitroot"
+zplug "mollifier/cd-gitroot", lazy:true
 # githubをブラウザで開く
 #zplug "peterhurford/git-it-on.zsh"
 
-zplug "ascii-soup/zsh-url-highlighter"
+#zplug "ascii-soup/zsh-url-highlighter"
 
 # 補完
-zplug "zsh-users/zsh-completions"
-
-# 絵文字の補完
-zplug "stedolan/jq", from:gh-r, as:command
+zplug "zsh-users/zsh-completions", lazy:true
 
 # git br用
 #zplug "jhawthorn/fzy", \
@@ -64,16 +59,18 @@ zplug "stedolan/jq", from:gh-r, as:command
 # open git hub
 #zplug "paulirish/git-open", as:command
 
+# 遅いのでコメントアウト
 # Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
-    fi
-fi
+#if ! zplug check --verbose; then
+#    printf "Install? [y/N]: "
+#    if read -q; then
+#        echo; zplug install
+#    fi
+#fi
 
 # Then, source plugins and add commands to $PATH
 zplug load --verbose
+
 #--------------------------------------
 # 言語設定
 #--------------------------------------
@@ -140,7 +137,8 @@ autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
 
 # 補完
-autoload -Uz compinit && compinit
+# zplug内でloadしてるので不要
+# autoload -Uz compinit && compinit
 
 ## 補完候補をキャッシュする。
 zstyle ':completion:*' use-cache yes
@@ -364,8 +362,6 @@ alias diffr='diff --old-line-format="" --unchanged-line-format="" --new-line-for
 # 両方に存在する行にみを出力
 alias diffc='diff --old-line-format="" --unchanged-line-format="%L" --new-line-format=""'
 
-alias cdserver="cd /Library/WebServer"
-alias cdwork="cd ~/src/github.com/valbeat"
 
 # 拡張子列挙
 alias ext-list="find . -type f -not -iwholename '*/.git/*' | sed -e 's/^.*\///' | grep '\.' | sed -e 's/^.*\.//' | sort | uniq -c | sort -nr"
@@ -424,8 +420,6 @@ alias keit='kubectl exec -it'
 alias kdp='kubectl describe pod'
 
 
-# minikube
-alias mk=minikube
 
 # gcloud
 
@@ -689,7 +683,7 @@ fi
 export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 
 #-------------------------------------
-# load
+# completion
 #-------------------------------------
 
 if [ $commands[kubectl] ]; then
