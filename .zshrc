@@ -332,7 +332,7 @@ alias viRename=massren
 # git
 alias g='git'
 alias tg='tig'
-alias tgc='git branch | peco | xargs tig'
+alias tgc='git branch | fzf | xargs tig'
 
 # vim
 export EDITOR=/Applications/MacVim.app/Contents/MacOS/Vim
@@ -627,7 +627,7 @@ vg() {
 # ref: https://qiita.com/sachaos/items/ed06f09375b2cef55dda
 #-------------------------------------
 function toggl-start-todoist () {
-    local selected_item_id=`todoist --project-namespace --namespace list | peco | cut -d ' ' -f 1`
+    local selected_item_id=`todoist --project-namespace --namespace list | fzf | cut -d ' ' -f 1`
     if [ ! -n "$selected_item_id" ]; then
         return 0
     fi
