@@ -339,10 +339,6 @@ export EDITOR=/Applications/MacVim.app/Contents/MacOS/Vim
 alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 
-alias zconf="vim ~/.zshrc"
-alias zlconf="vim ~/.zshrc.local"
-alias viconf="vim ~/.vimrc"
-alias sshconf="vim ~/.ssh/config"
 alias tmux="TERM=screen-256color-bce tmux"
 
 # iterm
@@ -470,62 +466,6 @@ kterm*|xterm)
     }
     ;;
 esac
-
-# mvimで開くときに新しいタブで開く
-case ${OSTYPE} in
-darwin*) # Mac OS X
-  function macvim () {
-    if [ -d /Applications/MacVim.app ]
-    then
-      [ ! -f $1 ] && touch $1
-      open -a MacVim $1
-    else
-      mvim $1
-    fi
-  }
-  ;;
-esac
-
-# has_command returns true if $1 as a shell command exists
-has.command() {
-    (( $+commands[${1:?too few argument}] ))
-    return $status
-}
-
-# has_command returns true if $1 as a shell function exists
-has.function() {
-    (( $+functions[${1:?too few argument}] ))
-    return $status
-}
-
-# has_command returns true if $1 as a builtin command exists
-has.builtin() {
-    (( $+builtins[${1:?too few argument}] ))
-    return $status
-}
-
-# has_command returns true if $1 as an alias exists
-has.alias() {
-    (( $+aliases[${1:?too few argument}] ))
-    return $status
-}
-
-# has_command returns true if $1 as an alias exists
-has.galias() {
-    (( $+galiases[${1:?too few argument}] ))
-    return $status
-}
-
-# has returns true if $1 exists
-has() {
-    has.function "$1" || \
-        has.command "$1" || \
-        has.builtin "$1" || \
-        has.alias "$1" || \
-        has.galias "$1"
-
-    return $status
-}
 
 # gitのrootへ移動
 function git-root() {
