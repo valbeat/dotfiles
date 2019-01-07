@@ -414,27 +414,35 @@ alias kn=kubens
 alias keit='kubectl exec -it'
 alias kdp='kubectl describe pod'
 
-
-
 # gcloud
 
-function _gcloud_change_account() {
+function _gcloud_set_account() {
   local account=$(gcloud auth list --format="value(account)" | fzf | awk '{print $1}')
   if [[ -n $account ]]; then
     gcloud config set account $account
     return $?
   fi
 }
-alias gca=_gcloud_change_account
+alias gsa=_gcloud_set_account
 
-function _gcloud_change_project() {
+function _gcloud_set_project() {
   local proj=$(gcloud projects list | fzf --header-lines=1 | awk '{print $1}')
   if [[ -n $proj ]]; then
     gcloud config set project $proj
     return $?
   fi
 }
-alias gcp=_gcloud_change_project
+alias gsp=_gcloud_set_project
+
+function _gcloud_activate_configuration() {
+  local config=$(gcloud config configurations list | fzf --header-lines=1 | awk '{print $1}' )
+  if [[ -n $config ]]; then
+    gcloud config configurations activate $config
+    return $?
+  fi
+}
+alias gac=_gcloud_activate_configuration
+
 
 # vagrant
 alias vgkey="vagrant ssh-config | grep IdentityFile | sed -e 's/IdentityFile//' | sed -e 's/^[ ]*//'"
