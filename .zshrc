@@ -411,8 +411,10 @@ alias dsh=_docker_exec_sh
 alias k=kubectl
 alias kx=kubectx
 alias kn=kubens
-alias keit='kubectl exec -it'
+
+alias kgp='kubectl get pod'
 alias kdp='kubectl describe pod'
+alias keit='kubectl exec -it'
 
 # gcloud
 
@@ -442,7 +444,6 @@ function _gcloud_activate_configuration() {
   fi
 }
 alias gac=_gcloud_activate_configuration
-
 
 # vagrant
 alias vgkey="vagrant ssh-config | grep IdentityFile | sed -e 's/IdentityFile//' | sed -e 's/^[ ]*//'"
