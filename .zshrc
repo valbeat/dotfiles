@@ -557,54 +557,7 @@ function fzf-src () {
 zle -N fzf-src
 bindkey '^]' fzf-src
 
-# fuzzy grep open via ag
-vg() {
-  local file
-
-  file="$(ag --nobreak --noheading $@ | fzf -0 -1 | awk -F: '{print $1 " +" $2}')"
-
-  if [[ -n $file ]]
-  then
-     vim $file
-  fi
-}
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-#-------------------------------------
-# todolist
-# ref: https://qiita.com/sachaos/items/ed06f09375b2cef55dda
-#-------------------------------------
-function toggl-start-todoist () {
-    local selected_item_id=`todoist --project-namespace --namespace list | fzf | cut -d ' ' -f 1`
-    if [ ! -n "$selected_item_id" ]; then
-        return 0
-    fi
-    local selected_item_content=`todoist --csv show ${selected_item_id} | grep Content | cut -d',' -f2- | sed s/\"//g`
-    if [ -n "$selected_item_content" ]; then
-        BUFFER="toggl start \"${selected_item_content}\""
-        CURSOR=$#BUFFER
-        zle accept-line
-    fi
-}
-zle -N toggl-start-todoist
-bindkey '^xts' toggl-start-todoist
-
-
-toggl_current() {
-  local tgc=$(toggl --cache --csv current)
-  local tgc_time=$(echo $tgc | grep Duration | cut -d ',' -f 2)
-  local tgc_dsc=$(echo $tgc | grep Description | cut -d ',' -f 2 | cut -c 1-20)
-  local short_tgc_dsc=$(if [ $(echo $tgc_dsc | wc -m) -lt 20 ]; then echo $tgc_dsc; else echo "${tgc_dsc}.."; fi)
-  if [ ! -n "$tgc_time" ]; then
-      echo "NoTimeEntry"
-  else
-      echo "[$tgc_time $short_tgc_dsc]"
-  fi
-}
-
-alias tl='todoist --project-namespace --namespace --color list'
-alias tge='toggl stop'
 #-------------------------------------
 # google cloud sdk
 #-------------------------------------
