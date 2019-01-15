@@ -548,7 +548,7 @@ p() { fzf | while read LINE; do $@ $LINE; done }
 # Ctrl + ] => ghq
 function fzf-src () {
   local dir=$(ghq root)/$(ghq list | fzf -e --prompt "REPO >")
-  if [ ! -n "$dir" ]; then
+  if [ "$dir" == "" ]; then
     return 0
   fi
   cd ${dir}
