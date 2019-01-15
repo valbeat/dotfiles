@@ -231,16 +231,6 @@ setopt no_nomatch
 setopt transient_rprompt
 # sudoの際にコマンドを探す
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin
-
-# markdownをw3mで見る
-ress() {
-    FILENAME=$1
-    if [ $# -lt 1 ]; then
-        echo "Usage: $0 FILENAME"
-    else
-        github-markup $FILENAME | w3m -T text/html
-    fi
-}
 # -------------------------------------
 # パス
 # -------------------------------------
