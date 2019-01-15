@@ -416,6 +416,15 @@ alias kgp='kubectl get pod'
 alias kdp='kubectl describe pod'
 alias keit='kubectl exec -it'
 
+function _kubectl_exec_it_fzf() {
+  local pod=$(kubectl get po | fzf --header-lines=1 | awk '{print $1}')
+  if [[ -n $pod ]]; then
+    print -z "kubectl exec -it $pod "
+  fi
+}
+
+alias keitf=_kubectl_exec_it_fzf
+
 # gcloud
 
 function _gcloud_set_account() {
