@@ -497,7 +497,7 @@ function cdf () {
 
 function _fzf_ssh() {
   local host="$(command egrep -i '^Host\s+.+' $HOME/.ssh/config $(find $HOME/.ssh/conf.d -type f 2>/dev/null) | command egrep -v '[*?]' | awk '{print $2}'| sort | fzf --select-1 -e --prompt "HOST >" --query "$LBUFFER")"
-  if [ ! -z "$host"]; then
+  if [ "$host" == "" ]; then
     exit
   fi
   ssh $host 
