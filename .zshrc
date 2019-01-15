@@ -14,17 +14,6 @@ zplug "zsh-users/zsh-syntax-highlighting", defer:2, lazy:true
 #zplug "b4b4r07/zsh-vimode-visual", defer:3
 
 # テーマ
-## Liquid prompt
-#LP_ENABLE_TIME=1
-#LP_USER_ALWAYS=1
-#LP_ENABLE_GIT=0
-#LP_ENABLE_SVN=0
-#LP_ENABLE_HG=0
-# 改行
-#LP_PS1_POSTFIX="
-#$ "
-#zplug 'nojhan/liquidprompt'
-
 ## pure
 zplug "mafredri/zsh-async", defer:1
 zplug "sindresorhus/pure", defer:2, \
