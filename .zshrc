@@ -368,7 +368,7 @@ alias kn=kubens
 
 alias kgp='kubectl get pod'
 alias kdp='kubectl describe pod'
-alias keit='kubectl exec -it'
+alias kds='kubectl describe svc'
 
 function _kubectl_exec_it_fzf() {
   local pod=$(kubectl get po | fzf --header-lines=1 | awk '{print $1}')
@@ -377,9 +377,19 @@ function _kubectl_exec_it_fzf() {
   fi
 }
 
-alias keitf=_kubectl_exec_it_fzf
+alias keit=_kubectl_exec_it_fzf
 
 # gcloud
+function _gcloud_set_credential() {
+  local cluster=$(gcloud container clusters list | fzf --header-lines=1 | awk '{print $1}')
+  local name=$cluster[0]
+  local zone=$cluster[1]
+  if [[ -n $account ]]; then
+    gcloud container clusters get-credentials $name --zone $zone
+    return $?
+  fi
+}
+alias gsc=_gcloud_set_credential
 
 function _gcloud_set_account() {
   local account=$(gcloud auth list --format="value(account)" | fzf | awk '{print $1}')
