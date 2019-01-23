@@ -251,7 +251,7 @@ set clipboard=unnamed
 endif
 
 " インサートモードから抜けた時にIMEを無効化
-set iminsert=2
+set iminsert=0
 
 " マウスの有効化
 set mouse=a
