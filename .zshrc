@@ -520,11 +520,11 @@ p() { fzf | while read LINE; do $@ $LINE; done }
 
 # Ctrl + ] => ghq
 function fzf-src () {
-  local dir=$(ghq root)/$(ghq list | fzf -e --prompt "REPO >")
-  if [ "$dir" == "" ]; then
+  local project=$(ghq list | fzf -e --prompt "REPO >")
+  if [ "$project" == "" ]; then
     return 0
   fi
-  cd ${dir}
+  cd $(ghq root)/${project}
   zle clear-screen
 }
 zle -N fzf-src
