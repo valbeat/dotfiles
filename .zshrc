@@ -367,17 +367,39 @@ alias kx=kubectx
 alias kn=kubens
 
 alias kgp='kubectl get pod'
+alias kgn='kubectl get node'
 alias kdp='kubectl describe pod'
 alias kds='kubectl describe svc'
+alias kdn='kubectl describe node'
+alias keit='kubectl exec -it'
 
-function _kubectl_exec_it_fzf() {
+
+function _fzf_kubectl_describe_node() {
+  local node=$(kubectl get node | fzf --header-lines=1 -m | awk '{print $1}')
+  if [[ -n $node ]]; then
+    print -z "kubectl describe node $node "
+  fi
+}
+
+alias fkdn=_fzf_kubectl_describe_node
+
+function _fzf_kubectl_describe_pod() {
+  local pod=$(kubectl get po | fzf --header-lines=1 -m | awk '{print $1}')
+  if [[ -n $pod ]]; then
+    print -z "kubectl describe pod $pod "
+  fi
+}
+
+alias fkdp=_fzf_kubectl_describe_pod
+
+function _fzf_kubectl_exec_it() {
   local pod=$(kubectl get po | fzf --header-lines=1 | awk '{print $1}')
   if [[ -n $pod ]]; then
     print -z "kubectl exec -it $pod "
   fi
 }
 
-alias keit=_kubectl_exec_it_fzf
+alias fkeit=_fzf_kubectl_exec_it
 
 # gcloud
 function _gcloud_set_credential() {
