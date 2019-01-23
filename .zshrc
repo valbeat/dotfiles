@@ -52,6 +52,11 @@ export EDITOR=/usr/local/bin/vim
 #export PAGER=vimpager
 #export MANPAGER=vimpager
 
+# ncurses
+export PATH="/usr/local/opt/ncurses/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/ncurses/lib"
+export CPPFLAGS="-I/usr/local/opt/ncurses/include"
+export PKG_CONFIG_PATH="/usr/local/opt/ncurses/lib/pkgconfig"
 
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
