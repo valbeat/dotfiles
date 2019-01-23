@@ -6,10 +6,9 @@ source ~/.zplug/init.zsh
 
 ## zplug
 ## 拡張
-#zplug "mollifier/anyframe"
-#zplug "Tarrasch/zsh-functional"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2, lazy:true
-#zplug "b4b4r07/zsh-vimode-visual", defer:3
+# 補完
+zplug "zsh-users/zsh-completions", lazy:true
 
 # テーマ
 ## pure
@@ -19,41 +18,14 @@ zplug "sindresorhus/pure", defer:2, \
     PURE_GIT_DELAY_DIRTY_CHECK=1000
   }
   "
-# 通知 
-# メモリ食うので一旦OFF
-#zplug "marzocchi/zsh-notify"
-#export SYS_NOTIFIER="usr/local/bin/terminal-notifier"
-# cd 系
-#zplug "knu/z"
-#zplug "Tarrasch/zsh-bd"
-# gitルートへcd
-zplug "mollifier/cd-gitroot", lazy:true
-# githubをブラウザで開く
-#zplug "peterhurford/git-it-on.zsh"
 
-#zplug "ascii-soup/zsh-url-highlighter"
-
-# 補完
-zplug "zsh-users/zsh-completions", lazy:true
-
-# git br用
-#zplug "jhawthorn/fzy", \
-#    as:command, \
-#    hook-build:'make'
-#zplug "b4b4r07/git-br", \
-#    as:command, \
-#    use:'git-br'
-# open git hub
-#zplug "paulirish/git-open", as:command
-
-# 遅いのでコメントアウト
 # Install plugins if there are plugins that have not been installed
-#if ! zplug check --verbose; then
-#    printf "Install? [y/N]: "
-#    if read -q; then
-#        echo; zplug install
-#    fi
-#fi
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
 
 # Then, source plugins and add commands to $PATH
 zplug load --verbose
