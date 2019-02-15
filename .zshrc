@@ -286,7 +286,7 @@ alias viRename=massren
 # git
 alias g='git'
 alias tg='tig'
-alias tgc='git branch | fzf | xargs tig'
+alias tgc='git branch | fzf | xargs tig --stdin'
 
 # vim
 export EDITOR=/Applications/MacVim.app/Contents/MacOS/Vim
