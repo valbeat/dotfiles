@@ -352,14 +352,25 @@ alias dfstop=_docker_fzf_stop
 drm() { docker rm $(docker ps -a -q); }
 # Remove all images
 drmi() { docker rmi $(docker images -q); }
-# exec select
-_docker_exec_sh() { 
-  local line=`docker ps --format "table {{.Names}}" | awk 'NR != 1 {print}' | fzf`
-  if [ "$line" != "" ]; then
-    docker exec -it ${line} sh
+
+
+# fzf docker run
+_fzf_docker_run() {
+  local image=`docker images | fzf --header-lines=1 | awk '{print $1}'`
+  if [ "$image" != "" ]; then
+    docker run ${image}
   fi
 }
-alias dsh=_docker_exec_sh
+alias fdrun=_fzf_docker_run
+
+# fzf docker exec -it
+_fzf_docker_exec_it() { 
+  local line=`docker ps --format "table {{.Names}}" | awk 'NR != 1 {print}' | fzf`
+  if [ "$line" != "" ]; then
+    print -z docker exec -it ${line}
+  fi
+}
+alias fdeit=_fzf_docker_exec_it
 
 # kubectl
 alias k=kubectl
@@ -392,14 +403,94 @@ function _fzf_kubectl_describe_pod() {
 
 alias fkdp=_fzf_kubectl_describe_pod
 
-function _fzf_kubectl_exec_it() {
-  local pod=$(kubectl get po | fzf --header-lines=1 | awk '{print $1}')
+function _fzf_kubectl_describe() {
+  local pod=$(kubectl get all | grep '^NAME' | fzf | awk '{print $1}')
   if [[ -n $pod ]]; then
     print -z "kubectl exec -it $pod "
   fi
 }
 
+alias fkdp=_fzf_kubectl_describe
+
+
+function _fzf_kubectl_exec_it() {
+  local selection=`kubectl get pods --all-namespaces | fzf --header-lines=1`
+  if [ $selection == "" ]; then
+    return 0
+  fi
+
+  local namespace=`echo $selection | awk '{ print $1 }'`
+  local pod=`echo $selection | awk '{ print $2 }'`
+  local containers=`kubectl -n $namespace get pods $pod -o jsonpath='{range .spec.containers[*]}{@.name}{"\n"}{end}'`
+  if [ $containers == "" ]; then
+    return 0
+  fi
+  
+  local container_count=$((`echo "$containers" | wc -l`))
+  if [ ${container_count} -gt "1" ]; then
+    container=`echo "$containers" | fzf --header "Select a container..."`
+  else
+    container=$containers
+  fi
+
+  if [ $containers == "" ]; then
+    return 0
+  fi
+
+  print -z "kubectl exec -n ${namespace} -it ${pod} -c ${container} "
+}
 alias fkeit=_fzf_kubectl_exec_it
+
+# ref: https://gist.github.com/jondlm/35cbf0363eb925e2eff6ff86c0a30992
+function _fzf_kubectl_exec_it_sh() {
+  local selection=`kubectl get pods --all-namespaces | fzf --header-lines=1`
+  if [ $selection == "" ]; then
+    return 0
+  fi
+  local namespace=`echo $selection | awk '{ print $1 }'`
+  local pod=`echo $selection | awk '{ print $2 }'`
+  local containers=`kubectl -n $namespace get pods $pod -o jsonpath='{range .spec.containers[*]}{@.name}{"\n"}{end}'`
+  if [ $containers == "" ]; then
+    return 0
+  fi
+  local container_count=$((`echo "$containers" | wc -l`))
+  
+  if [ ${container_count} -gt "1" ]; then
+    container=`echo "$containers" | fzf --header "Select a container..."`
+  else
+    container=$containers
+  fi
+  
+  kubectl exec -n $namespace -it $pod -c $container ash ||\
+  kubectl exec -n $namespace -it $pod -c $container bash ||\
+  kubectl exec -n $namespace -it $pod -c $container sh
+}
+
+alias fkeitsh=_fzf_kubectl_exec_it_sh
+
+function _fzf_kubectl_logs() {
+  local selection=`kubectl get pods --all-namespaces | fzf --header-lines=1`
+  if [ $selection == "" ]; then
+    return 0
+  fi
+  local namespace=`echo $selection | awk '{ print $1 }'`
+  local pod=`echo $selection | awk '{ print $2 }'`
+  local containers=`kubectl -n $namespace get pods $pod -o jsonpath='{range .spec.containers[*]}{@.name}{"\n"}{end}'`
+  local container_count=$((`echo "$containers" | wc -l`))
+
+  if [ ${container_count} -gt "1" ]; then
+    container=`echo "$containers" | fzf --header "Select a container..."`
+  else
+    container=$containers
+  fi
+
+  if [ $container == "" ]; then
+    return 0
+  fi
+
+  kubectl logs -n $namespace $pod -c $container
+}
+alias fkl=_fzf_kubectl_logs
 
 # gcloud
 function _gcloud_set_credential() {
