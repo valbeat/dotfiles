@@ -324,7 +324,7 @@ dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/[
 alias dps="docker ps -a"
 
 # Execute interactive container, e.g., $dex base /bin/bash
-alias dex="docker exec -i -t"
+alias deit="docker exec -i -t"
 
 # get container ip address
 alias dip="docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
