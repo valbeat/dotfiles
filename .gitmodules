@@ -2,3 +2,6 @@
     path = .vim/bundle/neobundle.vim
     url = git://github.com/Shougo/neobundle.vim.git
     ignore = dirty
+[submodule ".atom"]
+	path = .atom
+	url = git@github.com:valbeat/atom-config.git
