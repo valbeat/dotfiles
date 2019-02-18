@@ -388,7 +388,7 @@ alias keit='kubectl exec -it'
 function _fzf_kubectl_describe_node() {
   local node=$(kubectl get node | fzf --header-lines=1 -m | awk '{print $1}')
   if [[ -n $node ]]; then
-    print -z "kubectl describe node $node "
+    print -z "kubectl describe node ${node} "
   fi
 }
 
@@ -397,7 +397,7 @@ alias fkdn=_fzf_kubectl_describe_node
 function _fzf_kubectl_describe_pod() {
   local pod=$(kubectl get po | fzf --header-lines=1 -m | awk '{print $1}')
   if [[ -n $pod ]]; then
-    print -z "kubectl describe pod $pod "
+    print -z "kubectl describe pod ${pod} "
   fi
 }
 
@@ -406,7 +406,7 @@ alias fkdp=_fzf_kubectl_describe_pod
 function _fzf_kubectl_describe() {
   local pod=$(kubectl get all | grep '^NAME' | fzf | awk '{print $1}')
   if [[ -n $pod ]]; then
-    print -z "kubectl exec -it $pod "
+    print -z "kubectl describe pod ${pod} "
   fi
 }
 
@@ -494,11 +494,11 @@ alias fkl=_fzf_kubectl_logs
 
 # gcloud
 function _gcloud_set_credential() {
-  local cluster=$(gcloud container clusters list | fzf --header-lines=1 | awk '{print $1}')
-  local name=$cluster[0]
-  local zone=$cluster[1]
-  if [[ -n $account ]]; then
-    gcloud container clusters get-credentials $name --zone $zone
+  local selection=`gcloud container clusters list | fzf --header-lines=1`
+  local cluster=`echo $selection | awk '{print $1}'`
+  local zone=`echo $selection | awk '{print $2}'`
+  if [[ -n $selection ]]; then
+    gcloud container clusters get-credentials $cluster --zone $zone
     return $?
   fi
 }
@@ -582,7 +582,7 @@ function cdf () {
 }
 
 function _fzf_ssh() {
-  local host="$(command egrep -i '^Host\s+.+' $HOME/.ssh/config $(find $HOME/.ssh/conf.d -type f 2>/dev/null) | command egrep -v '[*?]' | awk '{print $2}'| sort | fzf --select-1 -e --prompt "HOST >" --query "$LBUFFER")"
+  local host="$(egrep -i '^Host\s+.+' $HOME/.ssh/config $(find $HOME/.ssh/conf.d -type f 2>/dev/null) | egrep -v '[*?]' | awk '{print $2}'| sort | fzf --select-1 --prompt "HOST >" --query "$LBUFFER")"
   if [ "$host" == "" ]; then
     return
   fi
