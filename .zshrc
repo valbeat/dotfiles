@@ -404,14 +404,13 @@ function _fzf_kubectl_describe_pod() {
 alias fkdp=_fzf_kubectl_describe_pod
 
 function _fzf_kubectl_describe() {
-  local pod=$(kubectl get all | grep '^NAME' | fzf | awk '{print $1}')
+  local pod=$(kubectl get all | grep -v '^NAME' | fzf | awk '{print $1}')
   if [[ -n $pod ]]; then
     print -z "kubectl describe pod ${pod} "
   fi
 }
 
 alias fkdp=_fzf_kubectl_describe
-
 
 function _fzf_kubectl_exec_it() {
   local selection=`kubectl get pods --all-namespaces | fzf --header-lines=1`
