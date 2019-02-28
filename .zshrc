@@ -13,7 +13,7 @@ source ~/.zplug/init.zsh
 ## zplug
 ## 拡張
 zplug "zsh-users/zsh-syntax-highlighting", defer:2, lazy:true
-# 補完
+## 補完
 zplug "zsh-users/zsh-completions", lazy:true
 
 # テーマ
@@ -36,15 +36,9 @@ fi
 # Then, source plugins and add commands to $PATH
 zplug load --verbose
 
-#--------------------------------------
-# 言語設定
-#--------------------------------------
-export LANG=ja_JP.UTF-8
-
 # -------------------------------------
 # 環境変数
 # -------------------------------------
-export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
 # SSHで接続した先で日本語が使えるようにする
 export LANG=ja_JP.UTF-8
 
@@ -96,7 +90,6 @@ fi
 # prompt
 # -------------------------------------
 source "$HOME/bin/zsh-gkeadm-prompt"
-setopt transient_rprompt
 
 # -------------------------------------
 # zshのオプション
@@ -106,9 +99,6 @@ setopt transient_rprompt
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
 
-# 補完
-# zplug内でloadしてるので不要
-# autoload -Uz compinit && compinit
 
 ## 補完候補をキャッシュする。
 zstyle ':completion:*' use-cache yes
@@ -160,8 +150,6 @@ unsetopt auto_menu
 setopt auto_pushd
 # ディレクトリ名を入力するだけでcdできるようにする
 setopt auto_cd
-# 自動でpushdを実行
-setopt auto_pushd
 # pushdから重複を削除
 setopt pushd_ignore_dups
 
