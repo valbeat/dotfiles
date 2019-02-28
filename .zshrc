@@ -397,7 +397,13 @@ function _fzf_kubectl_describe_node() {
 alias fkdn=_fzf_kubectl_describe_node
 
 function _fzf_kubectl_describe_pod() {
-  local pod=$(kubectl get po | fzf --header-lines=1 -m | awk '{print $1}')
+  local selection=`kubectl get pods --all-namespaces | fzf --header-lines=1`
+  if [ $selection == "" ]; then
+    return 0
+  fi
+
+  local namespace=`echo $selection | awk '{ print $1 }'`
+  local pod=`echo $selection | awk '{ print $2 }'`
   if [[ -n $pod ]]; then
     print -z "kubectl describe pod ${pod} "
   fi
@@ -406,13 +412,13 @@ function _fzf_kubectl_describe_pod() {
 alias fkdp=_fzf_kubectl_describe_pod
 
 function _fzf_kubectl_describe() {
-  local pod=$(kubectl get all | grep -v '^NAME' | fzf | awk '{print $1}')
+  local selection=$(kubectl get all | grep -v '^NAME' | fzf | awk '{print $1}')
   if [[ -n $pod ]]; then
-    print -z "kubectl describe pod ${pod} "
+    print -z "kubectl describe pod ${selection} "
   fi
 }
 
-alias fkdp=_fzf_kubectl_describe
+alias fkd=_fzf_kubectl_describe
 
 function _fzf_kubectl_exec_it() {
   local selection=`kubectl get pods --all-namespaces | fzf --header-lines=1`
