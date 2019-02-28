@@ -512,6 +512,30 @@ function _gcloud_set_account() {
 }
 alias gsa=_gcloud_set_account
 
+function _fzf_gce_ssh() {
+  local select=$(gcloud compute instances list --filter="STATUS:RUNNING" | /usr/local/bin/peco | awk '{print $1,$2}')
+  local host=$(echo $select | awk '{print $1}')
+  local zone=$(echo $select | awk '{print $2}')
+  gcloud compute ssh ${host} --internal-ip --zone ${zone}
+}
+alias fgssh=_fzf_gce_ssh
+
+function _fzf_kubectl_get_pod_with_node() {
+  local node=$(kubectl get nodes -o wide | fzf --header-lines=1 | awk '{print $1}')
+  print -z kubectl get po --all-namespaces --template '{{range .items}}{{if eq .spec.nodeName "${node}"}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}'
+}
+alias fkgpn=_fzf_kubectl_get_pod_with_node
+
+function _open_gcp_console() {
+  local proj=$(gcloud projects list | fzf --header-lines=1 | awk '{print $1}')
+  if [[ -n $proj ]]; then
+    open https://console.cloud.google.com/home/dashboard?project=${proj}
+    return $?
+  fi
+}
+alias opengcp=_open_gcp_console
+
+
 function _gcloud_set_project() {
   local proj=$(gcloud projects list | fzf --header-lines=1 | awk '{print $1}')
   if [[ -n $proj ]]; then
