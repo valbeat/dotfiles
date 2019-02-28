@@ -192,22 +192,28 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin /usr/s
 # -------------------------------------
 # パス
 # -------------------------------------
-export PATH="$PATH:/usr/local/git/bin"
-export PATH="$PATH:/Applications/MacVim.app/Contents/MacOS"
-export PATH="$PATH:/opt/ImageMagick/bin"
-export PATH="/usr/local/opt/openssl/bin:$PATH"
-export PATH="$HOME:/.composer/vendor/bin:$PATH"
+PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
+PATH="$PATH:/usr/local/git/bin"
+PATH="$PATH:/Applications/MacVim.app/Contents/MacOS"
+PATH="$PATH:/opt/ImageMagick/bin"
+PATH="/usr/local/opt/openssl/bin:$PATH"
+PATH="$HOME:/.composer/vendor/bin:$PATH"
 # go
 export GOROOT=/usr/local/opt/go/libexec
 export GOPATH=$HOME
-export PATH=$PATH:$GOPATH/bin
 export GOENVTARGET=$HOME/.goenvtarget
-export PATH=$GOENVTARGET:$PATH
 export GO15VENDOREXPERIMENT=1
+
+PATH=$PATH:$GOPATH/bin
+PATH=$GOENVTARGET:$PATH
+
 # dotnet
-export PATH=$PATH:$HOME/dotnet
+PATH=$PATH:$HOME/dotnet
 # coreutilsのシンボリックリンク
-export PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
+PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
+
+PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
+
 # 重複する要素を自動的に削除
 typeset -U path cdpath fpath manpath
 
@@ -636,9 +642,9 @@ alias top='tab-color 134 200 0; top; tab-reset'
 
 # CaskのシンボリックリンクをApplicationsに
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
-export PATH="$PATH:/Applications/android-sdk/sdk/platform-tools"
-export PATH="$PATH:$HOME/Library/Android/sdk"
-export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
+PATH="$PATH:/Applications/android-sdk/sdk/platform-tools"
+PATH="$PATH:$HOME/Library/Android/sdk"
+PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 
 
 #-------------------------------------
@@ -666,11 +672,11 @@ bindkey '^]' fzf-src
 #-------------------------------------
 ## Set path for GoogleCloudSDK
 export GCLOUD_SDK="$HOME/google-cloud-sdk"
-export PATH="$PATH:$GCLOUD_SDK/bin"
+PATH="$PATH:$GCLOUD_SDK/bin"
 
 ## Set path for App Engine SDK for GO
 export APPENGINE_SDK="$GCLOUD_SDK/platform/google_appengine"
-export PATH="$PATH:$APPENGINE_SDK"
+PATH="$PATH:$APPENGINE_SDK"
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f "$GCLOUD_SDK/path.zsh.inc" ]; then source "$GCLOUD_SDK/path.zsh.inc"; fi
@@ -684,7 +690,6 @@ if [ -f "$GCLOUD_SDK/completion.zsh.inc" ]; then source "$GCLOUD_SDK/completion.
 if [[ -f ~/.zshrc.local ]]; then
   source ~/.zshrc.local
 fi
-export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 
 #-------------------------------------
 # completion
@@ -701,3 +706,6 @@ fi
 if [ $commands[stern] ]; then
   source <(stern --completion=zsh)
 fi
+
+
+export PATH
