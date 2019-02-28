@@ -530,7 +530,7 @@ alias fgssh=_fzf_gce_ssh
 
 function _fzf_kubectl_get_pod_with_node() {
   local node=$(kubectl get nodes -o wide | fzf --header-lines=1 | awk '{print $1}')
-  print -z kubectl get po --all-namespaces --template '{{range .items}}{{if eq .spec.nodeName "${node}"}}{{.metadata.name}}{{"\n"}}{{end}}{{end}}'
+  print -z  "kubectl get pods -o wide --all-namespaces | awk 'NR == 1 || /\\${node}/'" 
 }
 alias fkgpn=_fzf_kubectl_get_pod_with_node
 
