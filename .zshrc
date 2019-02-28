@@ -384,6 +384,8 @@ alias kds='kubectl describe svc'
 alias kdn='kubectl describe node'
 alias keit='kubectl exec -it'
 
+alias wkgp='watch -n1 kubectl get pod'
+alias wkgn='watch -n1 kubectl get node'
 
 function _fzf_kubectl_describe_node() {
   local node=$(kubectl get node | fzf --header-lines=1 -m | awk '{print $1}')
