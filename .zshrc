@@ -367,7 +367,7 @@ alias fdrun=_fzf_docker_run
 _fzf_docker_exec_it() { 
   local line=`docker ps --format "table {{.Names}}" | awk 'NR != 1 {print}' | fzf`
   if [ "$line" != "" ]; then
-    print -z docker exec -it ${line}
+    print -z "docker exec -it ${line}"
   fi
 }
 alias fdeit=_fzf_docker_exec_it
