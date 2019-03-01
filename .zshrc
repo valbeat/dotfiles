@@ -194,6 +194,8 @@ PATH="$PATH:/Applications/MacVim.app/Contents/MacOS"
 PATH="$PATH:/opt/ImageMagick/bin"
 PATH="/usr/local/opt/openssl/bin:$PATH"
 PATH="$HOME:/.composer/vendor/bin:$PATH"
+PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
 # go
 export GOROOT=/usr/local/opt/go/libexec
 export GOPATH=$HOME
