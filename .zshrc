@@ -9,29 +9,25 @@ fi
 #--------------------------------------
 source ~/.zplug/init.zsh
 
-
-## zplug
-## 拡張
-zplug "zsh-users/zsh-syntax-highlighting", defer:2, lazy:true
-## 補完
 zplug "zsh-users/zsh-completions", lazy:true
+zplug "zsh-users/zsh-syntax-highlighting", lazy:true
 
-# テーマ
-## pure
-zplug "mafredri/zsh-async", defer:1
-zplug "sindresorhus/pure", defer:2, \
+# Theme
+## for pure
+zplug "mafredri/zsh-async", lazy:true
+zplug "sindresorhus/pure", lazy:true, \
   hook-load:"{
     PURE_GIT_DELAY_DIRTY_CHECK=1000
   }
   "
 
 # Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
-    fi
-fi
+# if ! zplug check --verbose; then
+#     printf "Install? [y/N]: "
+#     if read -q; then
+#         echo; zplug install
+#     fi
+# fi
 
 # Then, source plugins and add commands to $PATH
 zplug load --verbose
@@ -241,7 +237,7 @@ eval "$(direnv hook zsh)"
 # プロンプト
 # -------------------------------------
 #テーマで設定しているため不要
-autoload -U promptinit; promptinit
+# autoload -U promptinit; promptinit
 
 # 間違えたときに出るコマンド
 SPROMPT="%{${fg[red]}%}Did you mean?: %R -> %r [nyae]? %{${reset_color}%}"
