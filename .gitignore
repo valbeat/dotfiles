@@ -27,10 +27,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# ignore dotfiles
-.ssh
-.oh-my-zsh
-.Rhistory
 # ignore app settings
 library
 
