@@ -621,7 +621,7 @@ function _fzf_ssh() {
   if [ "$host" == "" ]; then
     return
   fi
-  ssh $host 
+  ssh -A $host
 }
 alias fssh=_fzf_ssh
 
