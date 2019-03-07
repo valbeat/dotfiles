@@ -216,6 +216,8 @@ PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
 
 PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 
+PATH="$HOME/.yarn/bin:$PATH"
+
 # 重複する要素を自動的に削除
 typeset -U path cdpath fpath manpath
 
