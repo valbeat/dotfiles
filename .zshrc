@@ -489,6 +489,7 @@ function _fzf_kubectl_logs() {
   local containers=`kubectl -n $namespace get pods $pod -o jsonpath='{range .spec.containers[*]}{@.name}{"\n"}{end}'`
   local container_count=$((`echo "$containers" | wc -l`))
 
+  local container
   if [ ${container_count} -gt "1" ]; then
     container=`echo "$containers" | fzf --header "Select a container..."`
   else
