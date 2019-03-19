@@ -1,4 +1,10 @@
 #--------------------------------------
+# Auto compile
+#--------------------------------------
+if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
+   zcompile ~/.zshrc
+fi 
+#--------------------------------------
 # プラグイン
 #--------------------------------------
 source ~/.zplug/init.zsh
@@ -7,7 +13,7 @@ source ~/.zplug/init.zsh
 ## zplug
 ## 拡張
 zplug "zsh-users/zsh-syntax-highlighting", defer:2, lazy:true
-# 補完
+## 補完
 zplug "zsh-users/zsh-completions", lazy:true
 
 # テーマ
@@ -30,15 +36,9 @@ fi
 # Then, source plugins and add commands to $PATH
 zplug load --verbose
 
-#--------------------------------------
-# 言語設定
-#--------------------------------------
-export LANG=ja_JP.UTF-8
-
 # -------------------------------------
 # 環境変数
 # -------------------------------------
-export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
 # SSHで接続した先で日本語が使えるようにする
 export LANG=ja_JP.UTF-8
 
@@ -90,7 +90,6 @@ fi
 # prompt
 # -------------------------------------
 source "$HOME/bin/zsh-gkeadm-prompt"
-setopt transient_rprompt
 
 # -------------------------------------
 # zshのオプション
@@ -100,9 +99,6 @@ setopt transient_rprompt
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
 
-# 補完
-# zplug内でloadしてるので不要
-# autoload -Uz compinit && compinit
 
 ## 補完候補をキャッシュする。
 zstyle ':completion:*' use-cache yes
@@ -154,8 +150,6 @@ unsetopt auto_menu
 setopt auto_pushd
 # ディレクトリ名を入力するだけでcdできるようにする
 setopt auto_cd
-# 自動でpushdを実行
-setopt auto_pushd
 # pushdから重複を削除
 setopt pushd_ignore_dups
 
@@ -198,22 +192,32 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin /usr/s
 # -------------------------------------
 # パス
 # -------------------------------------
-export PATH="$PATH:/usr/local/git/bin"
-export PATH="$PATH:/Applications/MacVim.app/Contents/MacOS"
-export PATH="$PATH:/opt/ImageMagick/bin"
-export PATH="/usr/local/opt/openssl/bin:$PATH"
-export PATH="$HOME:/.composer/vendor/bin:$PATH"
+PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
+PATH="$PATH:/usr/local/git/bin"
+PATH="$PATH:/Applications/MacVim.app/Contents/MacOS"
+PATH="$PATH:/opt/ImageMagick/bin"
+PATH="/usr/local/opt/openssl/bin:$PATH"
+PATH="$HOME:/.composer/vendor/bin:$PATH"
+PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
 # go
 export GOROOT=/usr/local/opt/go/libexec
 export GOPATH=$HOME
-export PATH=$PATH:$GOPATH/bin
 export GOENVTARGET=$HOME/.goenvtarget
-export PATH=$GOENVTARGET:$PATH
 export GO15VENDOREXPERIMENT=1
+
+PATH=$PATH:$GOPATH/bin
+PATH=$GOENVTARGET:$PATH
+
 # dotnet
-export PATH=$PATH:$HOME/dotnet
+PATH=$PATH:$HOME/dotnet
 # coreutilsのシンボリックリンク
-export PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
+PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
+
+PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
+
+PATH="$HOME/.yarn/bin:$PATH"
+
 # 重複する要素を自動的に削除
 typeset -U path cdpath fpath manpath
 
@@ -228,7 +232,7 @@ path=(
 # anyenv
 if [ -d $HOME/.anyenv ] ; then
     export PATH="$HOME/.anyenv/bin:$PATH"
-    eval "$(anyenv init -)"
+    eval "$(anyenv init --no-rehash -)"
     # tmux対応
     for D in `\ls $HOME/.anyenv/envs`
     do
@@ -367,7 +371,7 @@ alias fdrun=_fzf_docker_run
 _fzf_docker_exec_it() { 
   local line=`docker ps --format "table {{.Names}}" | awk 'NR != 1 {print}' | fzf`
   if [ "$line" != "" ]; then
-    print -z docker exec -it ${line}
+    print -z "docker exec -it ${line}"
   fi
 }
 alias fdeit=_fzf_docker_exec_it
@@ -384,6 +388,8 @@ alias kds='kubectl describe svc'
 alias kdn='kubectl describe node'
 alias keit='kubectl exec -it'
 
+alias wkgp='watch -n1 kubectl get pod'
+alias wkgn='watch -n1 kubectl get node'
 
 function _fzf_kubectl_describe_node() {
   local node=$(kubectl get node | fzf --header-lines=1 -m | awk '{print $1}')
@@ -395,7 +401,13 @@ function _fzf_kubectl_describe_node() {
 alias fkdn=_fzf_kubectl_describe_node
 
 function _fzf_kubectl_describe_pod() {
-  local pod=$(kubectl get po | fzf --header-lines=1 -m | awk '{print $1}')
+  local selection=`kubectl get pods --all-namespaces | fzf --header-lines=1`
+  if [ $selection == "" ]; then
+    return 0
+  fi
+
+  local namespace=`echo $selection | awk '{ print $1 }'`
+  local pod=`echo $selection | awk '{ print $2 }'`
   if [[ -n $pod ]]; then
     print -z "kubectl describe pod ${pod} "
   fi
@@ -404,13 +416,13 @@ function _fzf_kubectl_describe_pod() {
 alias fkdp=_fzf_kubectl_describe_pod
 
 function _fzf_kubectl_describe() {
-  local pod=$(kubectl get all | grep -v '^NAME' | fzf | awk '{print $1}')
+  local selection=$(kubectl get all | grep -v '^NAME' | fzf | awk '{print $1}')
   if [[ -n $pod ]]; then
-    print -z "kubectl describe pod ${pod} "
+    print -z "kubectl describe pod ${selection} "
   fi
 }
 
-alias fkdp=_fzf_kubectl_describe
+alias fkd=_fzf_kubectl_describe
 
 function _fzf_kubectl_exec_it() {
   local selection=`kubectl get pods --all-namespaces | fzf --header-lines=1`
@@ -468,7 +480,7 @@ function _fzf_kubectl_exec_it_sh() {
 alias fkeitsh=_fzf_kubectl_exec_it_sh
 
 function _fzf_kubectl_logs() {
-  local selection=`kubectl get pods --all-namespaces | fzf --header-lines=1`
+  local selection=`kubectl get pods --all-namespaces -o wide | fzf --header-lines=1`
   if [ $selection == "" ]; then
     return 0
   fi
@@ -477,6 +489,7 @@ function _fzf_kubectl_logs() {
   local containers=`kubectl -n $namespace get pods $pod -o jsonpath='{range .spec.containers[*]}{@.name}{"\n"}{end}'`
   local container_count=$((`echo "$containers" | wc -l`))
 
+  local container
   if [ ${container_count} -gt "1" ]; then
     container=`echo "$containers" | fzf --header "Select a container..."`
   else
@@ -487,7 +500,7 @@ function _fzf_kubectl_logs() {
     return 0
   fi
 
-  kubectl logs -n $namespace $pod -c $container
+  print -z "kubectl logs -n ${namespace} ${pod} -c ${container}"
 }
 alias fkl=_fzf_kubectl_logs
 
@@ -511,6 +524,30 @@ function _gcloud_set_account() {
   fi
 }
 alias gsa=_gcloud_set_account
+
+function _fzf_gce_ssh() {
+  local select=$(gcloud compute instances list --filter="STATUS:RUNNING" | /usr/local/bin/peco | awk '{print $1,$2}')
+  local host=$(echo $select | awk '{print $1}')
+  local zone=$(echo $select | awk '{print $2}')
+  gcloud compute ssh ${host} --internal-ip --zone ${zone}
+}
+alias fgssh=_fzf_gce_ssh
+
+function _fzf_kubectl_get_pod_with_node() {
+  local node=$(kubectl get nodes -o wide | fzf --header-lines=1 | awk '{print $1}')
+  print -z  "kubectl get pods -o wide --all-namespaces | awk 'NR == 1 || /\\${node}/'" 
+}
+alias fkgpn=_fzf_kubectl_get_pod_with_node
+
+function _open_gcp_console() {
+  local proj=$(gcloud projects list | fzf --header-lines=1 | awk '{print $1}')
+  if [[ -n $proj ]]; then
+    open https://console.cloud.google.com/home/dashboard?project=${proj}
+    return $?
+  fi
+}
+alias opengcp=_open_gcp_console
+
 
 function _gcloud_set_project() {
   local proj=$(gcloud projects list | fzf --header-lines=1 | awk '{print $1}')
@@ -585,7 +622,7 @@ function _fzf_ssh() {
   if [ "$host" == "" ]; then
     return
   fi
-  ssh $host 
+  ssh -A $host
 }
 alias fssh=_fzf_ssh
 
@@ -618,9 +655,9 @@ alias top='tab-color 134 200 0; top; tab-reset'
 
 # CaskのシンボリックリンクをApplicationsに
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
-export PATH="$PATH:/Applications/android-sdk/sdk/platform-tools"
-export PATH="$PATH:$HOME/Library/Android/sdk"
-export PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
+PATH="$PATH:/Applications/android-sdk/sdk/platform-tools"
+PATH="$PATH:$HOME/Library/Android/sdk"
+PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 
 
 #-------------------------------------
@@ -648,11 +685,11 @@ bindkey '^]' fzf-src
 #-------------------------------------
 ## Set path for GoogleCloudSDK
 export GCLOUD_SDK="$HOME/google-cloud-sdk"
-export PATH="$PATH:$GCLOUD_SDK/bin"
+PATH="$PATH:$GCLOUD_SDK/bin"
 
 ## Set path for App Engine SDK for GO
 export APPENGINE_SDK="$GCLOUD_SDK/platform/google_appengine"
-export PATH="$PATH:$APPENGINE_SDK"
+PATH="$PATH:$APPENGINE_SDK"
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f "$GCLOUD_SDK/path.zsh.inc" ]; then source "$GCLOUD_SDK/path.zsh.inc"; fi
@@ -666,7 +703,6 @@ if [ -f "$GCLOUD_SDK/completion.zsh.inc" ]; then source "$GCLOUD_SDK/completion.
 if [[ -f ~/.zshrc.local ]]; then
   source ~/.zshrc.local
 fi
-export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 
 #-------------------------------------
 # completion
@@ -683,3 +719,6 @@ fi
 if [ $commands[stern] ]; then
   source <(stern --completion=zsh)
 fi
+
+
+export PATH
