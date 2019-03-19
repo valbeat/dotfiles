@@ -480,7 +480,7 @@ function _fzf_kubectl_exec_it_sh() {
 alias fkeitsh=_fzf_kubectl_exec_it_sh
 
 function _fzf_kubectl_logs() {
-  local selection=`kubectl get pods --all-namespaces | fzf --header-lines=1`
+  local selection=`kubectl get pods --all-namespaces -o wide | fzf --header-lines=1`
   if [ $selection == "" ]; then
     return 0
   fi
