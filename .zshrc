@@ -500,7 +500,7 @@ function _fzf_kubectl_logs() {
     return 0
   fi
 
-  kubectl logs -n $namespace $pod -c $container
+  print -z "kubectl logs -n ${namespace} ${pod} -c ${container}"
 }
 alias fkl=_fzf_kubectl_logs
 
