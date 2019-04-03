@@ -1,0 +1,71 @@
+set clipboard=unnamed
+
+"----------------------------------------------
+" カーソル移動関連 
+"----------------------------------------------
+" オートインデント，改行，インサートモード開始時にバックスペースで削除
+set backspace=indent,eol,start 
+set whichwrap=b,s,h,l,<,>,[,]
+set scrolloff=8
+set sidescrolloff=16
+set sidescroll=1
+
+nnoremap <Space>h  ^
+nnoremap <Space>l  $
+
+" 改行挿入
+nnoremap <Space>o  :<C-u>for i in range(v:count1) \| call append(line('.'), '') \| endfor<CR>
+nnoremap <Space>O  :<C-u>for i in range(v:count1) \| call append(line('.')-1, '') \| endfor<CR>
+
+"Enterでいつでも一行挿入
+" <Enter> always means inserting line.
+map <S-Enter> O<ESC>
+map <Enter> o<ESC>
+
+" 括弧を入力した際に対応する括弧へ飛ぶ
+set showmatch
+set matchtime=1
+
+" 行末までヤンク
+nnoremap Y y$
+
+" 入力モード中にj連打でESCに
+inoremap jj <ESC>
+
+"----------------------------------------------
+" 検索／置換
+"----------------------------------------------
+set hlsearch
+set incsearch
+" 大文字小文字の区別をしない。混在時は区別する
+set ignorecase
+set smartcase
+set wrapscan
+
+"検索結果のハイライトをEsc連打でクリアする
+nnoremap <ESC><ESC> :nohlsearch<CR>
+
+" grep検索の設定
+set grepformat=%f:%l:%m,%f:%l%m,%f\ \ %l%m,%f
+set grepprg=grep\ -nh
+
+" カーソル位置の単語で前方検索
+nnoremap <Space>/ *<C-o>
+nnoremap g<Space>/ g*<C-o>
+
+" Ctrl + hjkl でウィンドウ間を移動
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Shift + 矢印でウィンドウサイズを変更
+nnoremap <S-Left>  <C-w><<CR>
+nnoremap <S-Right> <C-w><CR>
+nnoremap <S-Up>    <C-w>-<CR>
+nnoremap <S-Down>  <C-w>+<CR>
+
+" 画面送り
+noremap <Space>j <c-f><cr><cr>
+noremap <Space>k <c-b><cr><cr>
+
