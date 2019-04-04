@@ -7,9 +7,10 @@ if [ -z "${HOME}" ]; then
 fi
 
 # link dotfiles
-for f in $HOME/.??*; do
-  if [[ "$f" =~ ^\.* ]]; then
-     cp -rn $f ./
+for f in ${DOTPATH}/.??*; do
+  dotfile=$(basename $f)
+  [ "${dotfile}" == ".git" ] && continue
+  if [[ "${dotfile}" =~ ^\.* ]]; then
+     cp -rn "${HOME}/${dotfile}" ${DOTPATH}
   fi
 done
-
