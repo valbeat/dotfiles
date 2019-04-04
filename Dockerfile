@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-ARG USERNAME=dotfile-tester
+ARG USERNAME=dotfiles-sandbox
 
 # Install apt packages
 # Instead of `apt-get clean` to make it more effective
@@ -33,7 +33,4 @@ RUN echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}/
 
-COPY . /home/${USERNAME}/dotfiles
-RUN ./dotfiles/install.sh
-
-CMD ["/bin/zsh"]
+CMD ["/bin/bash"]
