@@ -8,3 +8,6 @@
 [submodule ".atom"]
 	path = .atom
 	url = https://github.com/valbeat/atom-config
+[submodule ".vscode"]
+	path = .vscode
+	url = git@github.com:valbeat/vscode-config.git
