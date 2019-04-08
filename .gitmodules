@@ -8,6 +8,6 @@
 [submodule ".vscode"]
 	path = .vscode
 	url = git@github.com:valbeat/vscode-config.git
-[submodule "karabiner"]
+[submodule ".config/karabiner"]
 	path = .config/karabiner
 	url = git@github.com:valbeat/karabiner-config.git
