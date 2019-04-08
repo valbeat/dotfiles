@@ -45,24 +45,22 @@ export LANG=ja_JP.UTF-8
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-# エディタ
-export EDITOR=/usr/local/bin/vim
 
+# エディタ
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='mvim'
+fi
 # ページャ
-#export PAGER=vimpager
-#export MANPAGER=vimpager
+export PAGER=vimpager
+export MANPAGER=vimpager
 
 # ncurses
 export PATH="/usr/local/opt/ncurses/bin:$PATH"
 export LDFLAGS="-L/usr/local/opt/ncurses/lib"
 export CPPFLAGS="-I/usr/local/opt/ncurses/include"
 export PKG_CONFIG_PATH="/usr/local/opt/ncurses/lib/pkgconfig"
-
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='mvim'
-fi
 
 #色の定義
 local DEFAULT=$'%{^[[m%}'$
@@ -291,11 +289,6 @@ alias viRename=massren
 alias g='git'
 alias tg='tig'
 alias tgc='git branch | fzf | xargs tig --stdin'
-
-# vim
-export EDITOR=/Applications/MacVim.app/Contents/MacOS/Vim
-alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
-alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 
 alias tmux="TERM=screen-256color-bce tmux"
 
