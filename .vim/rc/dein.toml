@@ -2,10 +2,6 @@
 repo = 'shougo/dein.vim'
 
 [[plugins]]
-repo = 'Shougo/vimproc.vim'
-build = 'make'
-
-[[plugins]]
 repo = 'haya14busa/dein-command.vim'
 
 [[plugins]]
@@ -47,20 +43,6 @@ repo = 'rizzatti/dash.vim' # dash
 [[plugins]]
 repo = 'tmux-plugins/vim-tmux'
 
-[[plugins]]
-repo = 'knt45/jq-wrapper.vim'
-
-#----------------------------------
-# エディタの域を超えた物
-#----------------------------------
-[[plugins]]
-repo = 'itchyny/calendar.vim'
-
-[[plugins]]
-repo = 'itchyny/thumbnail.vim'
-
-[[plugins]] 
-repo = 'mattn/webapi-vim' #web-apiを叩く
 # ----------------------------------
 # カーソル移動
 # ----------------------------------
