@@ -17,7 +17,7 @@ deploy: ## Create symlink to home directory
 
 .PHONY: init
 init: ## Setup environment settings
-	@echo "init is inactive temporarily"
+	@brew bundle --file=~/.brewfile
 
 .PHONY: test
 test: ## Test dotfiles and init scripts
