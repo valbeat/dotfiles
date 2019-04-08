@@ -3,23 +3,23 @@ startup_message off
 vbell off
 
 # 文字コード
-defutf8 on↲
-defkanji utf-8↲
-encoding utf-8 utf-8↲
-defencoding utf-8↲
+defutf8 on
+defkanji utf-8
+encoding utf-8 utf-8
+defencoding utf-8
 
 # マウススクロール
-scrollback 10000↲
-defscrollback 10000↲
-termcapinfo xterm* ti@:te@↲
-altscreen on↲↲
-↲
-caption always '%?%F%{= cW}%:%{= Kk}%?%2n%f%07=%t%='↲
-hardstatus alwayslastline '[%m/%d %02c:%s] %{= .c}%H%{-} %L=%-w%45L>%{= ck}%n %t%{-}%+w %-17<%=%{= .y} LoadAVG[%l]'↲
-↲
-windowlist title  '%{u .c}Num Flags Title%='↲
-windowlist string '%{.c}%3n %{.y}%f%09=%{-} %t %='↲
-↲
+scrollback 10000
+defscrollback 10000
+termcapinfo xterm* ti@:te@
+altscreen on
+
+caption always '%?%F%{= cW}%:%{= Kk}%?%2n%f%07=%t%='
+hardstatus alwayslastline '[%m/%d %02c:%s] %{= .c}%H%{-} %L=%-w%45L>%{= ck}%n %t%{-}%+w %-17<%=%{= .y} LoadAVG[%l]'
+
+windowlist title  '%{u .c}Num Flags Title%='
+windowlist string '%{.c}%3n %{.y}%f%09=%{-} %t %='
+
 bind s  # 無効:入力を受け付けない
 bind x  # 無効:ロック
 
