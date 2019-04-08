@@ -50,7 +50,6 @@ export LC_ALL=en_US.UTF-8
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
-  PATH="$PATH:/Applications/MacVim.app/Contents/MacOS"
   export EDITOR='mvim'
 fi
 # ページャ
