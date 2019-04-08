@@ -50,6 +50,7 @@ export LC_ALL=en_US.UTF-8
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
+  PATH="$PATH:/Applications/MacVim.app/Contents/MacOS"
   export EDITOR='mvim'
 fi
 # ページャ
@@ -192,7 +193,6 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin /usr/s
 # -------------------------------------
 PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
 PATH="$PATH:/usr/local/git/bin"
-PATH="$PATH:/Applications/MacVim.app/Contents/MacOS"
 PATH="$PATH:/opt/ImageMagick/bin"
 PATH="/usr/local/opt/openssl/bin:$PATH"
 PATH="$HOME:/.composer/vendor/bin:$PATH"
