@@ -5,30 +5,32 @@ endif
 "----------------------------------------------
 " dein.vim 設定
 "----------------------------------------------
-let g:rc_dir = expand('~/.vim')
-let s:dein_dir = expand('~/.vim/dein')
-let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
-
-" dein.vim がなければ github から落としてくる
-if &runtimepath !~# '/dein.vim'
-  if !isdirectory(s:dein_repo_dir)
-      execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
-    endif
-  execute 'set runtimepath^=' . fnamemodify(s:dein_repo_dir, ':p')
-endif
-
-" プラグインの管理
-if dein#load_state(s:dein_dir)
-  call dein#begin(s:dein_dir)
-  let s:toml      = g:rc_dir . '/rc/dein.toml'
-  call dein#load_toml(s:toml)
-  call dein#end()
-  call dein#save_state()
-endif
-
-" 不足プラグインのインストール
-if has('vim_starting') && dein#check_install()
-    call dein#install()
+if v:version >= 800
+  let g:rc_dir = expand('~/.vim')
+  let s:dein_dir = expand('~/.vim/dein')
+  let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
+  
+  " dein.vim がなければ github から落としてくる
+  if &runtimepath !~# '/dein.vim'
+    if !isdirectory(s:dein_repo_dir)
+        execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
+      endif
+    execute 'set runtimepath^=' . fnamemodify(s:dein_repo_dir, ':p')
+  endif
+  
+  " プラグインの管理
+  if dein#load_state(s:dein_dir)
+    call dein#begin(s:dein_dir)
+    let s:toml      = g:rc_dir . '/rc/dein.toml'
+    call dein#load_toml(s:toml)
+    call dein#end()
+    call dein#save_state()
+  endif
+  
+  " 不足プラグインのインストール
+  if has('vim_starting') && dein#check_install()
+      call dein#install()
+  endif
 endif
 
 "----------------------------------------------
