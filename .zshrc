@@ -526,7 +526,7 @@ function _gcloud_set_account() {
 alias gsa=_gcloud_set_account
 
 function _fzf_gce_ssh() {
-  local select=$(gcloud compute instances list --filter="STATUS:RUNNING" | /usr/local/bin/peco | awk '{print $1,$2}')
+  local select=$(gcloud compute instances list --filter="STATUS:RUNNING" | fzf | awk '{print $1,$2}')
   local host=$(echo $select | awk '{print $1}')
   local zone=$(echo $select | awk '{print $2}')
   gcloud compute ssh ${host} --internal-ip --zone ${zone}
