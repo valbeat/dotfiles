@@ -7,7 +7,16 @@ ARG USERNAME=dotfiles-sandbox
 RUN set -eux \
    && apt-get update \
    && apt-get dist-upgrade -y \
-   && apt-get install -y sudo git zsh software-properties-common build-essential curl file python-setuptools ruby \
+   && apt-get install -y \
+     sudo \
+     git \
+     zsh \
+     software-properties-common \
+     build-essential \
+     curl \
+     file \
+     python-setuptools \
+     ruby \
    && rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
 # For jp_JP.UTF-8 and JST(Asia/Tokyo)
