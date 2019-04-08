@@ -13,7 +13,7 @@ list: ## Show dot files in this repo
 deploy: ## Create symlink to home directory
 	@echo "Start to deploy dotfiles to home directory."
 	@echo ""
-	@$(foreach val, $(DOTFILES), ln -sfnv $(abspath $(DOTPATH)/$(val) $(HOME)/$(val));)
+	@$(foreach dotfile, $(DOTFILES), ln -sfnv $(abspath $(DOTPATH)/$(dotfile) $(HOME)/$(dotfile));)
 
 .PHONY: init
 init: ## Setup environment settings
