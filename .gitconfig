@@ -12,17 +12,6 @@
 	excludesfile = ~/.gitignore_global
   editor = vim
   pager = less
-[diff]
-	tool = diffphp
-[difftool "diffphp"]
-  # 動いてない
-  cmd = \"colordiff\" -wBI \"^\\s*\\/\" \"$LOCAL\" \"$REMOTE\"
-  prompt = false
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-[mergetool "sourcetree"]
-	cmd = /opt/homebrew-cask/Caskroom/sourcetree/2.2.4/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
 [credential]
 	helper = osxkeychain
 [commit]
@@ -43,8 +32,6 @@
   generic = G move-last-line
 [ghq]
   root = ~/src
-[init]
-#	templatedir = $HOME/.git_template/
 [http]
 	postBuffer = 524288000
 	cookiefile = ${HOME}/.gitcookies
