@@ -7,7 +7,7 @@ DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 
 .PHONY: list
 list: ## Show dot files in this repo
-	@$(foreach val, $(DOTFILES), /bin/ls -dF $(val);)
+	@$(foreach val, $(DOTFILES), ls -dF $(val);)
 
 .PHONY: deploy
 deploy: ## Create symlink to home directory
