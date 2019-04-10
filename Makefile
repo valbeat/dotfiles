@@ -28,9 +28,9 @@ test: ## Test dotfiles and init scripts
 
 .PHONY: update
 update: ## Fetch changes for this repo
-	git pull origin master
-	git submodule update --init
-	git submodule foreach git pull origin master
+	@git pull origin master
+	@git submodule update --init
+	@git submodule foreach git pull origin master
 
 .PHONY: install
 install: update deploy init ## Run make update, deploy, init
