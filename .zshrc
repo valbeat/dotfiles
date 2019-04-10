@@ -22,13 +22,13 @@ esac
 source $ZPLUG_HOME/init.zsh
 
 ## 拡張
-zplug "zsh-users/zsh-syntax-highlighting", defer:2, lazy:true
+zplug "zsh-users/zsh-syntax-highlighting"
 ## 補完
-zplug "zsh-users/zsh-completions", lazy:true
-
+zplug "zsh-users/zsh-completions"
+zplug "zsh-users/zsh-autosuggestions"  
 # テーマ
 ## pure
-zplug "mafredri/zsh-async", defer:1
+zplug "mafredri/zsh-async"
 zplug "sindresorhus/pure", defer:2, \
   hook-load:"{
     PURE_GIT_DELAY_DIRTY_CHECK=1000
@@ -107,7 +107,6 @@ source "$HOME/bin/zsh-gkeadm-prompt"
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
 
-
 ## 補完候補をキャッシュする。
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path ~/.zsh/cache
@@ -115,6 +114,30 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 zstyle ':completion:*' verbose no
 #ファイル補完候補に色を付ける
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# 補完開始時に絞り込み開始
+zstyle ':completion:*' menu select interactive
+
+#LS_COLORSを設定しておく
+export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+# use fzf
+#zstyle ':completion:*:(processes|jobs)' menu yes select=2
+
+#setopt menu_complete
+# 入力された文字そのままで補完
+# マッチするものがなければ，小文字を大文字に変えつつ補完
+# マッチするものがなければ，大文字を小文字に変えるルールを追加（`+'）して補完
+#⁠a-zをそれぞれ対応するA-Zに置き換えて，A-Zもそれぞれ対応するa-zに置き換えて補完してみるのと同時に，右側にハイフンかアンダースコアかピリオドが来る場所には * を補ったかのように補完してみる
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z} r:|[-_.]=**' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}' 
+#zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
+# 中間ファイルを補完しない
+zstyle ':completion:*:*files' ignored-patterns '*?.o' '*?~' '*\#'
+# カレントディレクトリに候補がない場合のみ cdpath 上のディレクトリを候補に出す
+zstyle ':completion:*:cd:*' tag-order local-directories path-directories
+# 親ディレクトリからカレントディレクトを表示させないようにする (例: cd ../<TAB>):
+zstyle ':completion:*:cd:*' ignore-parents parent pwd
+# sudoの際にコマンドを探す
+zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin
+
 # 入力しているコマンド名が間違っている場合にもしかして：を出す。
 setopt correct
 # ディレクトリ名の補完で末尾の / を自動的に付加し、次の補完に備える
@@ -135,21 +158,6 @@ setopt magic_equal_subst
 setopt complete_in_word
 # カーソル位置は保持したままファイル名一覧を順次その場で表示
 setopt always_last_prompt
-# 補完開始時に絞り込み開始
-# zstyle ':completion:*' menu select interactive
-# zstyle ':completion:*:default' menu select=2
-# setopt menu_complete
-
-# ファイル補完の高速化
-__git_files() { _files }
-
-# ssh host
-function print_known_hosts (){
-    if [ -f $HOME/.ssh/known_hosts ]; then
-        cat $HOME/.ssh/known_hosts | tr ',' ' ' | cut -d' ' -f1
-    fi
-}
-_cache_hosts=($( print_known_hosts ))
 
 # cd ls
 # タブによるファイルの順番切り替えをしない
@@ -163,16 +171,8 @@ setopt pushd_ignore_dups
 
 # cdrコマンドで履歴にないディレクトリにも移動可能に
 zstyle ":chpwd:*" recent-dirs-default true
-# 中間ファイルを補完しない
-zstyle ':completion:*:*files' ignored-patterns '*?.o' '*?~' '*\#'
 #あらかじめcdpathを適当に設定しておく
 cdpath=(~)
-# カレントディレクトリに候補がない場合のみ cdpath 上のディレクトリを候補に出す
-zstyle ':completion:*:cd:*' tag-order local-directories path-directories
-# 親ディレクトリからカレントディレクトを表示させないようにする (例: cd ../<TAB>):
-zstyle ':completion:*:cd:*' ignore-parents parent pwd
-#LS_COLORSを設定しておく
-export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
 
 # history
 # 他のターミナルとヒストリーを共有
@@ -195,8 +195,6 @@ setopt no_beep
 setopt no_nomatch
 # コマンド実行後は右プロンプトを消す
 setopt transient_rprompt
-# sudoの際にコマンドを探す
-zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin
 # -------------------------------------
 # パス
 # -------------------------------------
