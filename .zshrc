@@ -674,12 +674,20 @@ zle -N fzf-src
 bindkey '^]' fzf-src
 
 function fzf-src-remote () {
-  local selected=$(ghq list | fzf -e --prompt "REPO >" --query "$LBUFFER" | rev | cut -d "/" -f -2 | rev)
-  if [ -n "${selected}" ]; then
-    echo ${selected}
-    BUFFER="hub browse ${selected}"
+  local selected=$(ghq list | fzf -e --prompt "REPO >" --query "$LBUFFER")
+  if [ "${selected}" == "" ]; then
+    return 0
+  fi
+
+  if [[ "${selected}" =~ ^github.com.*  ]]; then
+    local repo=$(echo ${selected} | rev | cut -d "/" -f -2 | rev)
+    BUFFER="hub browse ${repo}"
     zle accept-line
   fi
+  # for others
+  BUFFER="open https://${selected}"
+  zle accept-line
+
   zle clear-screen
 }
 zle -N fzf-src-remote
