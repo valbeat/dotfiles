@@ -7,10 +7,20 @@ fi
 #--------------------------------------
 # プラグイン
 #--------------------------------------
-source ~/.zplug/init.zsh
 
+## zplug init
+case ${OSTYPE} in
+    darwin*)
+        #ここにMac向けの設定
+        export ZPLUG_HOME=/usr/local/opt/zplug
+        ;;
+    linux*)
+        #ここにLinux向けの設定
+        export ZPLUG_HOME=/home/linuxbrew/.linuxbrew/opt/zplug
+        ;;
+esac
+source $ZPLUG_HOME/init.zsh
 
-## zplug
 ## 拡張
 zplug "zsh-users/zsh-syntax-highlighting", defer:2, lazy:true
 ## 補完
