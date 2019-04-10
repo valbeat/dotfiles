@@ -656,6 +656,8 @@ PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 # fzf
 #-------------------------------------
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 # exp: ls | p cd
 p() { fzf | while read LINE; do $@ $LINE; done }
 
@@ -671,7 +673,18 @@ function fzf-src () {
 zle -N fzf-src
 bindkey '^]' fzf-src
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+function fzf-src-remote () {
+  local selected=$(ghq list | fzf -e --prompt "REPO >" --query "$LBUFFER" | rev | cut -d "/" -f -2 | rev)
+  if [ -n "${selected}" ]; then
+    echo ${selected}
+    BUFFER="hub browse ${selected}"
+    zle accept-line
+  fi
+  zle clear-screen
+}
+zle -N fzf-src-remote
+bindkey '^[' fzf-src-remote
+
 #-------------------------------------
 # google cloud sdk
 #-------------------------------------
