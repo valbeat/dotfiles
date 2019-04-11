@@ -350,7 +350,6 @@ alias diffr='diff --old-line-format="" --unchanged-line-format="" --new-line-for
 # 両方に存在する行にみを出力
 alias diffc='diff --old-line-format="" --unchanged-line-format="%L" --new-line-format=""'
 
-
 # 拡張子列挙
 alias ext-list="find . -type f -not -iwholename '*/.git/*' | sed -e 's/^.*\///' | grep '\.' | sed -e 's/^.*\.//' | sort | uniq -c | sort -nr"
 
@@ -378,7 +377,7 @@ alias dstop=_docker_stop_all
 
 # Stop select container
 _docker_fzf_stop() {
-  local line=`docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"| awk 'NR != 1 {print}' | fzf`
+  local line=`docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"| awk 'NR != 1 {print}' | fzf --query "$LBUFFER"`
   if [ "$line" != "" ]; then
     id=`echo $line | awk '{print $1}'`
     docker stop ${id}
@@ -394,7 +393,7 @@ drmi() { docker rmi $(docker images -q); }
 
 # fzf docker run
 _fzf_docker_run() {
-  local image=`docker images | fzf --header-lines=1 | awk '{print $1}'`
+  local image=`docker images | fzf --header-lines=1 --query "$LBUFFER" | awk '{print $1}'`
   if [ "$image" != "" ]; then
     docker run ${image}
   fi
@@ -403,7 +402,7 @@ alias fdrun=_fzf_docker_run
 
 # fzf docker exec -it
 _fzf_docker_exec_it() { 
-  local line=`docker ps --format "table {{.Names}}" | awk 'NR != 1 {print}' | fzf`
+  local line=`docker ps --format "table {{.Names}}" | fzf --header-lines=1  --query "$LBUFFER"`
   if [ "$line" != "" ]; then
     print -z "docker exec -it ${line}"
   fi
@@ -450,7 +449,7 @@ function _fzf_kubectl_describe_pod() {
 alias fkdp=_fzf_kubectl_describe_pod
 
 function _fzf_kubectl_describe() {
-  local selection=$(kubectl get all | grep -v '^NAME' | fzf | awk '{print $1}')
+  local selection=$(kubectl get all | grep -v '^NAME' | fzf --query "$LBUFFER" | awk '{print $1}')
   if [[ -n $pod ]]; then
     print -z "kubectl describe pod ${selection} "
   fi
@@ -705,7 +704,7 @@ p() { fzf | while read LINE; do $@ $LINE; done }
 
 # Ctrl + ] => ghq
 function fzf-src () {
-  local project=$(ghq list | fzf -e --prompt "REPO >")
+  local project=$(ghq list | fzf -e --prompt "REPO >" --query "$LBUFFER")
   if [ "$project" == "" ]; then
     return 0
   fi
