@@ -324,6 +324,8 @@ alias aw=anyframe-widget-select-widget
 
 alias viRename=massren
 
+alias ezrc='vim ~/.zshrc'
+
 # git
 alias g='git'
 alias tg='tig'
