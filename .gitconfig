@@ -1,4 +1,5 @@
 [include]
+  path = ~/.gitconfig.os
   path = ~/.gitconfig.local
   path = ~/.gitconfig.alias
 [includeIf "gitdir:~/src/github.com/"]
@@ -12,8 +13,6 @@
 	excludesfile = ~/.gitignore_global
   editor = vim
   pager = less
-[credential]
-	helper = osxkeychain
 [commit]
   # 常にやるのは重いのでエイリアスで明示的にcommit -vする
   #verbose = true
@@ -32,9 +31,6 @@
   generic = G move-last-line
 [ghq]
   root = ~/src
-[http]
-	postBuffer = 524288000
-	cookiefile = ${HOME}/.gitcookies
 [credential "https://source.developers.google.com"]
 	helper = gcloud.sh
 [url "git@gitlab.com:"]
