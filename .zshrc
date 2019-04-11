@@ -271,6 +271,38 @@ chpwd() {
 # エイリアス
 # -------------------------------------
 
+# expand global aliases by space
+# http://blog.patshead.com/2012/11/automatically-expaning-zsh-global-aliases---simplified.html
+globalias() {
+  if [[ $LBUFFER =~ ' [A-Z0-9]+$' ]]; then
+    zle _expand_alias
+    # zle expand-word
+  fi
+  zle self-insert
+}
+
+zle -N globalias
+
+bindkey " " globalias
+
+
+alias -g A='| awk'
+# count
+alias -g C='| wc -l'
+alias -g G='| grep --color=auto'
+alias -g H='| head'
+alias -g T='| tail'
+alias -g L='| less -R'
+alias -g X='| xargs'
+
+alias c='pbcopy'
+alias d='docker'
+alias h='tldr' 
+alias y='yarn'
+
+# Copy current directory path
+alias pwdc='pwd | tr -d "\n" | pbcopy'
+
 # -n 行数表示, -I バイナリファイル無視, svn関係のファイルを無視
 alias grep="grep --color -I --exclude='*.svn-*' --exclude='entries' --exclude='*/cache/*'"
 
