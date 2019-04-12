@@ -126,9 +126,9 @@ export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46
 # 入力された文字そのままで補完
 # マッチするものがなければ，小文字を大文字に変えつつ補完
 # マッチするものがなければ，大文字を小文字に変えるルールを追加（`+'）して補完
-#⁠a-zをそれぞれ対応するA-Zに置き換えて，A-Zもそれぞれ対応するa-zに置き換えて補完してみるのと同時に，右側にハイフンかアンダースコアかピリオドが来る場所には * を補ったかのように補完してみる
+#⁠a-zをそれぞれ対応するA-Zに置き換えて，A-Zもそれぞれ対応するa-zに置き換えて補完してみるのと同時に，右側にハイフンかアンダースコアかピリオドが来る場所には * を補ったかのように補完
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z} r:|[-_.]=**' 'm:{a-z}={A-Z}' '+m:{A-Z}={a-z}' 
-#zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
+zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
 # 中間ファイルを補完しない
 zstyle ':completion:*:*files' ignored-patterns '*?.o' '*?~' '*\#'
 # カレントディレクトリに候補がない場合のみ cdpath 上のディレクトリを候補に出す
