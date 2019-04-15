@@ -321,7 +321,7 @@ alias back='pushd'
 alias tree="tree -NC" # N: 文字化け対策, C:色をつける
 alias aw=anyframe-widget-select-widget
 
-alias viRename=massren
+alias vrename=massren
 
 alias ezrc='vim ~/.zshrc'
 
