@@ -381,9 +381,17 @@ alias drm=_docker_rm_all
 _docker_rm_all_images() { docker rmi $(docker images -q); }
 alias drmi=_docker_rm_all_images
 
+_fzf_docker_tag() {
+  local selected_id=`docker images | fzf --header-lines=1 | awk '{print $3}'`
+  if [ "$selected_id" != "" ]; then
+    print -z "docker tag ${selected_id} "
+  fi
+}
+alias fdtag=_fzf_docker_tag
+
 # Stop select container
 _fzf_docker_stop() {
-  local line=`docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"| awk 'NR != 1 {print}' | fzf --query "$LBUFFER"`
+  local line=`docker ps --format "table {{.id}}\t{{.names}}\t{{.status}}"| awk 'nr != 1 {print}' | fzf --query "$LBUFFER"`
   if [ "$line" != "" ]; then
     id=`echo $line | awk '{print $1}'`
     docker stop ${id}
