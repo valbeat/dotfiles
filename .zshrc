@@ -385,10 +385,11 @@ _docker_fzf_stop() {
 alias dfstop=_docker_fzf_stop
 
 # Remove all containers (only stopped)
-drm() { docker rm $(docker ps -a -q); }
+_docker_rm_all() { docker rm $(docker ps -a -q); }
+alias drm=_docker_rm_all
 # Remove all images
-drmi() { docker rmi $(docker images -q); }
-
+_docker_rm_images() { docker rmi $(docker images -q); }
+alias drmi=_docker_rm_images
 
 # fzf docker run
 _fzf_docker_run() {
