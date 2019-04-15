@@ -374,23 +374,22 @@ alias dipa=_docker_show_ip_all
 # Stop all containers
 _docker_stop_all() { docker stop $(docker ps -a -q); }
 alias dstop=_docker_stop_all
+# Remove all containers (only stopped)
+_docker_rm_all() { docker rm $(docker ps -a -q); }
+alias drm=_docker_rm_all
+# Remove all images
+_docker_rm_all_images() { docker rmi $(docker images -q); }
+alias drmi=_docker_rm_all_images
 
 # Stop select container
-_docker_fzf_stop() {
+_fzf_docker_stop() {
   local line=`docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"| awk 'NR != 1 {print}' | fzf --query "$LBUFFER"`
   if [ "$line" != "" ]; then
     id=`echo $line | awk '{print $1}'`
     docker stop ${id}
   fi
 }
-alias dfstop=_docker_fzf_stop
-
-# Remove all containers (only stopped)
-_docker_rm_all() { docker rm $(docker ps -a -q); }
-alias drm=_docker_rm_all
-# Remove all images
-_docker_rm_images() { docker rmi $(docker images -q); }
-alias drmi=_docker_rm_images
+alias fdstop=_fzf_docker_stop
 
 # fzf docker run
 _fzf_docker_run() {
