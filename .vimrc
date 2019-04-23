@@ -50,16 +50,20 @@ hi SignColumn ctermbg=none
 hi VertSplit ctermbg=none 
 hi NonText ctermbg=none
 
-" 行番号とカーソルラインの設定
-set number
-set cursorline
-hi LineNr ctermfg=14
-hi CursorLineNr ctermbg=14 ctermfg=0
-hi clear CursorLine
+if has("mac")
 
-" 不可視文字の可視化
-set list
-set listchars=tab:▸\ ,eol:↲,extends:❯,precedes:❮
+  " 行番号とカーソルラインの設定
+  set number
+  set cursorline
+  hi LineNr ctermfg=14
+  hi CursorLineNr ctermbg=14 ctermfg=0
+  hi clear CursorLine
+  
+  " 不可視文字の可視化
+  set list
+  set listchars=tab:▸\ ,eol:↲,extends:❯,precedes:❮
+
+endif
 
 " 補完メニューの高さ
 set pumheight=10
