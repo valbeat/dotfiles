@@ -18,6 +18,7 @@ RUN set -eux \
      python-setuptools \
      ruby \
      tmux \
+     vim \
    && rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
 # For jp_JP.UTF-8 and JST(Asia/Tokyo)
