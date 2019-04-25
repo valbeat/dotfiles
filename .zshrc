@@ -215,8 +215,11 @@ PATH=$GOENVTARGET:$PATH
 
 # dotnet
 PATH=$PATH:$HOME/dotnet
-# coreutilsのシンボリックリンク
-PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
+
+if [ type brew >/dev/null 2>&1 ]; then
+  # coreutilsのシンボリックリンク
+  PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
+fi
 
 PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 
