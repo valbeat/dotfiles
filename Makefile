@@ -19,9 +19,9 @@ deploy: ## Create symlink to home directory
 init: ## Setup environment settings
 	@brew bundle --file=~/.brewfile
 
-.PHONY: test
-test: ## Test dotfiles and init scripts
-	@echo "Start to test dotfiles in docker container."
+.PHONY: run
+test: ## Run dotfiles and init scripts
+	@echo "Start to run dotfiles in docker container."
 	@echo ""
 	@docker run -it -v $(DOTPATH):/home/dotfiles-sandbox/dotfiles valbeat/dotfiles-sandbox:latest /bin/bash
 
