@@ -20,10 +20,16 @@ init: ## Setup environment settings
 	@brew bundle --file=~/.brewfile
 
 .PHONY: run
-test: ## Run dotfiles and init scripts
+run: ## Run dotfiles and init scripts
 	@echo "Start to run dotfiles in docker container."
 	@echo ""
 	@docker run -it -v $(DOTPATH):/home/dotfiles-sandbox/dotfiles valbeat/dotfiles-sandbox:latest /bin/bash
+
+.PHONY: test
+test: ## Test dotfiles and init scripts
+	@echo "Start to test dotfiles."
+	@echo ""
+	@exec $$SHELL
 
 .PHONY: update
 update: ## Fetch changes for this repo
