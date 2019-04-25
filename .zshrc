@@ -25,7 +25,13 @@ source $ZPLUG_HOME/init.zsh
 zplug "zsh-users/zsh-syntax-highlighting"
 ## 補完
 zplug "zsh-users/zsh-completions"
-zplug "zsh-users/zsh-autosuggestions"  
+
+zplug "zsh-users/zsh-autosuggestions", \
+  hook-load:"{
+    bindkey '^ ' autosuggest-accept
+  }
+  "
+
 # テーマ
 ## pure
 zplug "mafredri/zsh-async"
