@@ -17,7 +17,7 @@ deploy: ## Create symlink to home directory
 
 .PHONY: init
 init: ## Setup environment settings
-	@brew bundle --file=~/.brewfile
+	@$(if $(shell which brew), @brew bundle --file=~/.brewfile, @echo "skip brew bundle")
 
 .PHONY: run
 run: ## Run dotfiles and init scripts
@@ -39,13 +39,12 @@ update: ## Fetch changes for this repo
 
 .PHONY: install
 install: backup update deploy init ## Run make update, deploy, init
-	@exec $$SHELL
 
 .PHONY: backup
 backup: ## Copy target dotfiles to repository
 	@echo "Start to backup dotfiles to repository."
 	@echo ""
-	@$(foreach dotfile, $(DOTFILES), cp -rn $(abspath $(HOME)/$(dotfile) $(DOTPATH)/$(dotfile));)
+	@$(foreach dotfile, $(DOTFILES), cp -rn $(abspath $(HOME)/$(dotfile) $(DOTPATH)/$(dotfile)) 2>&1;)
 
 .PHONY: clean
 clean: ## Copy target dotfiles to repository
