@@ -112,14 +112,15 @@ repo = 'lilydjwg/colorizer'
 # ----------------------------------
 # markdown
 # ----------------------------------
-[[plugins]] 
-repo = 'pocke/vim-textobj-markdown'
+# ちょっともっさりするので一旦無効化
+#[[plugins]] 
+#repo = 'pocke/vim-textobj-markdown'
 
-[[plugins]]
-repo = 'joker1007/vim-markdown-quote-syntax'
+#[[plugins]]
+#repo = 'joker1007/vim-markdown-quote-syntax'
 
-[[plugins]]
-repo = 'tpope/vim-markdown'
+#[[plugins]]
+#repo = 'tpope/vim-markdown'
 
 # ----------------------------------
 # Unite 
