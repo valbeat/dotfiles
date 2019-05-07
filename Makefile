@@ -23,7 +23,7 @@ init: ## Setup environment settings
 run: ## Run dotfiles and init scripts
 	@echo "Start to run dotfiles in docker container."
 	@echo ""
-	@docker run -it -v $(DOTPATH):/home/dotfiles-sandbox/dotfiles valbeat/dotfiles-sandbox:latest /bin/bash
+	@docker run -it -v $(DOTPATH):/home/dotfiles-sandbox/dotfiles valbeat/dotfiles-sandbox:latest /bin/zsh
 
 .PHONY: test
 test: ## Test dotfiles and init scripts
