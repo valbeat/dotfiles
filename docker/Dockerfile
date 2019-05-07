@@ -1,6 +1,9 @@
-FROM ubuntu:16.04
+# Install linuxbrew
+FROM linuxbrew-trusty
 
 ARG USERNAME=dotfiles-sandbox
+
+USER root
 
 # Install apt packages
 # Instead of `apt-get clean` to make it more effective
@@ -21,20 +24,8 @@ RUN set -eux \
      vim \
    && rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
-# For jp_JP.UTF-8 and JST(Asia/Tokyo)
-ENV TZ Asia/Tokyo
-ENV LANG ja_JP.UTF-8
-RUN apt-get update \
-  && apt-get install -y language-pack-ja tzdata \
-  && update-locale LANG=ja_JP.UTF-8 LANGUAGE="ja_JP:ja" \
-  && echo "${TZ}" > /etc/timezone \
-  && rm /etc/localtime \
-  && ln -s /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
-  && dpkg-reconfigure -f noninteractive tzdata \
-  && rm -rf /var/cache/apt/* /var/lib/apt/lists/*
-
 # Add user and grant sudo privileges
-RUN groupadd -g 1000 ${USERNAME} \
+RUN groupadd ${USERNAME} \
   && useradd -g ${USERNAME} -G sudo -m -s /bin/zsh ${USERNAME} \
   && echo "${USERNAME}:${USERNAME}" | chpasswd \
   && echo "Defaults visiblepw" >> /etc/sudoers \
@@ -42,5 +33,11 @@ RUN groupadd -g 1000 ${USERNAME} \
 
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}/
+ENV SHELL=/bin/zsh
 
-CMD ["/bin/bash"]
+RUN sudo chown -R $(whoami) /home/linuxbrew/.linuxbrew
+RUN sudo chsh -s $(which zsh) $(whoami)
+
+RUN touch ~/.zshrc
+
+CMD ["/bin/zsh"]
