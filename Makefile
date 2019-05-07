@@ -29,7 +29,7 @@ run: ## Run dotfiles and init scripts
 test: ## Test dotfiles and init scripts
 	@echo "Start to test dotfiles."
 	@echo ""
-	@source ~/.zshrc
+	@exec $$SHELL
 
 .PHONY: update
 update: ## Fetch changes for this repo
@@ -38,7 +38,7 @@ update: ## Fetch changes for this repo
 	@git submodule foreach git pull origin master
 
 .PHONY: install
-install: backup update deploy init ## Run make update, deploy, init
+install: backup clean update deploy init ## Run make update, deploy, init
 
 .PHONY: backup
 backup: ## Copy target dotfiles to repository
