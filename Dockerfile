@@ -35,11 +35,10 @@ RUN apt-get update \
 
 # Add user and grant sudo privileges
 RUN groupadd -g 1000 ${USERNAME} \
-   && useradd -g ${USERNAME} -G sudo -m -s /bin/zsh ${USERNAME} \
-   && echo "${USERNAME}:${USERNAME}" | chpasswd
-
-RUN echo "Defaults visiblepw" >> /etc/sudoers
-RUN echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+  && useradd -g ${USERNAME} -G sudo -m -s /bin/zsh ${USERNAME} \
+  && echo "${USERNAME}:${USERNAME}" | chpasswd \
+  && echo "Defaults visiblepw" >> /etc/sudoers \
+  && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}/
