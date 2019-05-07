@@ -29,7 +29,7 @@ run: ## Run dotfiles and init scripts
 test: ## Test dotfiles and init scripts
 	@echo "Start to test dotfiles."
 	@echo ""
-	@exec $$SHELL
+	@source ~/.zshrc
 
 .PHONY: update
 update: ## Fetch changes for this repo
