@@ -26,10 +26,7 @@ run: ## Run dotfiles and init scripts
 	@docker run -it -v $(DOTPATH):/home/dotfiles-sandbox/dotfiles valbeat/dotfiles-sandbox:latest /bin/zsh
 
 .PHONY: test
-test: ## Test dotfiles and init scripts
-	@echo "Start to test dotfiles."
-	@echo ""
-	@exec $$SHELL
+test: clean deploy init ## Test dotfiles and init scripts
 
 .PHONY: update
 update: ## Fetch changes for this repo

@@ -1,0 +1,8 @@
+.git
+.gitignore
+.gitmodules
+.atom
+.vscode
+.travis.yml
+.mackup.cfg
+.mackup
