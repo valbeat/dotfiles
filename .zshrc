@@ -96,7 +96,12 @@ if [ -x /usr/libexec/path_helper ]; then
   eval `/usr/libexec/path_helper -s`
 fi
 
-
+# linuxbrew
+case ${OSTYPE} in
+  linux*)
+    export PATH="/home/linuxbrew/.linuxbrew/bin/:$PATH"
+    ;;
+esac
 
 # -------------------------------------
 # prompt
