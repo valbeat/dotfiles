@@ -11,11 +11,9 @@ fi
 ## zplug init
 case ${OSTYPE} in
   darwin*)
-    #ここにMac向けの設定
     export ZPLUG_HOME=/usr/local/opt/zplug
     ;;
   linux*)
-    #ここにLinux向けの設定
     export ZPLUG_HOME=/home/linuxbrew/.linuxbrew/opt/zplug
     ;;
 esac
