@@ -232,6 +232,8 @@ set softtabstop=2
 set autoindent
 set smartindent
 
+autocmd FileType make set noexpandtab shiftwidth=2 softtabstop=0
+
 "----------------------------------------------
 " コマンドライン
 "----------------------------------------------
