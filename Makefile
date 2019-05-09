@@ -16,8 +16,13 @@ deploy: ## Create symlink to home directory
 	@$(foreach dotfile, $(DOTFILES), ln -sfnv $(abspath $(DOTPATH)/$(dotfile) $(HOME)/$(dotfile));)
 
 .PHONY: init
+ifeq ($(shell uname),Linux)
 init: ## Setup environment settings
-	@$(if $(shell which brew), @brew bundle --file=~/.brewfile, @echo "skip brew bundle")
+	@$(if $(shell which brew), brew bundle --file=~/.brewfile.linux, echo "skip brew bundle")
+else
+init:
+	@$(if $(shell which brew), brew bundle --file=~/.brewfile.osx, echo "skip brew bundle")
+endif
 
 .PHONY: run
 run: ## Run dotfiles and init scripts
