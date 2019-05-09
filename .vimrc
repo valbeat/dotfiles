@@ -13,8 +13,8 @@ if v:version >= 800
   " dein.vim がなければ github から落としてくる
   if &runtimepath !~# '/dein.vim'
     if !isdirectory(s:dein_repo_dir)
-        execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
-      endif
+      execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
+    endif
     execute 'set runtimepath^=' . fnamemodify(s:dein_repo_dir, ':p')
   endif
   
@@ -29,7 +29,7 @@ if v:version >= 800
   
   " 不足プラグインのインストール
   if has('vim_starting') && dein#check_install()
-      call dein#install()
+    call dein#install()
   endif
 endif
 
@@ -216,7 +216,7 @@ autocmd FocusLost * call s:AutoWriteIfPossible()
 " :e などでファイルを開く際にフォルダが存在しない場合は自動作成
 function! s:mkdir(dir, force)
 if !isdirectory(a:dir) && (a:force ||
-      \ input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
+  \ input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
   call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
 endif
 endfunction
