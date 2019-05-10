@@ -1,3 +1,8 @@
+language: bash
+os:
+  - linux
+  - osx
+
 services:
   - docker
 
@@ -10,4 +15,4 @@ before_install:
   - docker build -t dotfiles-test .
 
 script:
-  - docker run --rm dotfiles-test
+  - docker run --rm dotfiles-test make test
