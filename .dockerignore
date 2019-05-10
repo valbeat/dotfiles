@@ -6,3 +6,14 @@
 .travis.yml
 .mackup.cfg
 .mackup
+.config
+
+# OS generated files
+*.DS_Store
+.AppleDouble
+.LSOverride
+ehthumbs.db
+Thumbs.db
+
+# vim plugin
+.vim/dein
