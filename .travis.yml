@@ -1,16 +1,17 @@
-language: c
-git:
-  submodules: false
-
+language: bash
 os:
   - linux
+
+services:
+  - docker
+
+git:
+  submodules: false
 
 before_install:
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
-
-install:
-  - make install
+  - docker build -t dotfiles-test .
 
 script:
-  - make --silent test
+  - docker run --rm dotfiles-test make test
