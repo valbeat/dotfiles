@@ -5,4 +5,6 @@ COPY --chown=dotfiles-sandbox:dotfiles-sandbox . /home/dotfiles-sandbox/dotfiles
 RUN cd dotfiles \
   && make test
 
-CMD ["/bin/zsh"]
+WORKDIR /home/dotfiles-sandbox/dotfiles
+
+CMD ["make"]
