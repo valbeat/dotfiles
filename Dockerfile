@@ -1,4 +1,4 @@
-FROM linuxbrew-trusty
+FROM linuxbrew/linuxbrew
 
 ARG USERNAME=dotfiles-sandbox
 ENV SHELL=/bin/zsh
@@ -24,6 +24,14 @@ RUN set -eux \
      vim \
    && rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
+# Set Locale
+RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment \
+  && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+  && echo "LANG=en_US.UTF-8" > /etc/locale.conf \
+  && locale-gen en_US.UTF-8 \
+  && export LC_ALL=en_US.UTF \
+  && export LANG=en_US.UTF-8
+
 # Add user and grant sudo privileges
 RUN groupadd ${USERNAME} \
   && useradd -g ${USERNAME} -G sudo -m -s /bin/zsh ${USERNAME} \
@@ -33,11 +41,13 @@ RUN groupadd ${USERNAME} \
   && chown -R ${USERNAME} /home/linuxbrew/.linuxbrew \
   && chsh -s $(which zsh) ${USERNAME}
 
-
 USER ${USERNAME}
 
 # Copy dotfiles
 COPY --chown=dotfiles-sandbox:dotfiles-sandbox . /home/dotfiles-sandbox/dotfiles
-WORKDIR /home/dotfiles-sandbox/dotfiles
+WORKDIR /home/dotfiles-sandbox
 
-CMD ["make"]
+RUN cd dotfiles \
+  && make install
+
+CMD ["zsh"]
