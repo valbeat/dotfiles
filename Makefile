@@ -18,10 +18,10 @@ deploy: ## Create symlink to home directory
 .PHONY: init
 ifeq ($(shell uname),Linux)
 init: ## Setup environment settings
-	@$(if $(shell which brew), brew bundle --file=~/.brewfile.linux, echo "skip brew bundle")
+	@brew bundle --file=~/.brewfile.linux
 else
 init:
-	@$(if $(shell which brew), brew bundle --file=~/.brewfile.osx, echo "skip brew bundle")
+	@brew bundle --file=~/.brewfile.osx
 endif
 
 .PHONY: run
@@ -40,7 +40,7 @@ update: ## Fetch changes for this repo
 	@git submodule foreach git pull origin master
 
 .PHONY: install
-install: backup clean update deploy init ## Run make update, deploy, init
+install: clean deploy init ## Run make deploy, init
 
 .PHONY: backup
 backup: ## Copy target dotfiles to repository
