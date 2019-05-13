@@ -58,11 +58,7 @@ export LC_ALL=en_US.UTF-8
 
 
 # エディタ
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='mvim'
-fi
+export EDITOR='vim'
 # ページャ
 export PAGER=vimpager
 export MANPAGER=vimpager
