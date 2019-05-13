@@ -745,7 +745,7 @@ function fzf-src-remote () {
   zle clear-screen
 }
 zle -N fzf-src-remote
-bindkey '^[' fzf-src-remote
+bindkey '^p' fzf-src-remote
 
 #-------------------------------------
 # google cloud sdk
