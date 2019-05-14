@@ -196,6 +196,10 @@ setopt no_beep
 setopt no_nomatch
 # コマンド実行後は右プロンプトを消す
 setopt transient_rprompt
+
+# キー入力待ちを早く (default:40)
+KEYTIMEOUT=1
+
 # -------------------------------------
 # パス
 # -------------------------------------
