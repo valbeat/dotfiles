@@ -11,7 +11,7 @@ git:
 before_install:
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
-  - docker build -t ${DOCKER_IMAGE} .
+  - docker build -t ${DOCKER_IMAGE}:${TRAVIS_BUILD_NUMBER} .
 
 script:
   # FIXME: `__zplug::job::message::red:3: character not in range`
