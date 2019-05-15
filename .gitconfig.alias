@@ -1,5 +1,6 @@
 [alias]
   c = commit -v
+  cds = !"cd $(git submodule | fzf | awk '{print $2}')"
   cd = !"if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then cd `pwd`/`git rev-parse --show-cdup`; fi"
   co = !git branch | fzf | xargs git checkout
   co-remote = '! f() { git fetch --depth=1 origin $1 && git checkout -b $1 FETCH_HEAD; }; f '
