@@ -38,8 +38,8 @@ zplug "sindresorhus/pure", defer:2, \
 ## シンタックスハイライト(compinit後に読み込み)
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 
-# コマンド
-zplug "mollifier/cd-gitroot", as:command
+# 関数
+zplug "mollifier/cd-gitroot"
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
