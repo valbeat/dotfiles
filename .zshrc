@@ -19,8 +19,8 @@ case ${OSTYPE} in
 esac
 source $ZPLUG_HOME/init.zsh
 
-## 拡張
-zplug "zsh-users/zsh-syntax-highlighting"
+## compinit後に読み込み
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
 ## 補完
 zplug "zsh-users/zsh-completions"
 
