@@ -19,11 +19,8 @@ case ${OSTYPE} in
 esac
 source $ZPLUG_HOME/init.zsh
 
-## compinit後に読み込み
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
-## 補完
+# 補完
 zplug "zsh-users/zsh-completions"
-
 zplug "zsh-users/zsh-autosuggestions", \
   hook-load:"{
     bindkey '^ ' autosuggest-accept
@@ -38,6 +35,11 @@ zplug "sindresorhus/pure", defer:2, \
     PURE_GIT_DELAY_DIRTY_CHECK=1000
   }
   "
+## シンタックスハイライト(compinit後に読み込み)
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
+
+# コマンド
+zplug "mollifier/cd-gitroot", as:command
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
