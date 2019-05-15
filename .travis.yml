@@ -19,6 +19,5 @@ script:
 
 after_success:
  - docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
- - docker push ${DOCKER_IMAGE}:${TRAVIS_BUILD_NUMBER}
  - docker tag ${DOCKER_IMAGE}:${TRAVIS_BUILD_NUMBER} ${DOCKER_IMAGE}:latest
  - docker push ${DOCKER_IMAGE}:latest
