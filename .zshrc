@@ -337,6 +337,8 @@ alias vrename=massren
 
 alias ezrc='vim ~/.zshrc'
 
+alias rg='rg --hidden'
+
 # git
 alias g='git'
 alias tg='tig'
