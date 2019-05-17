@@ -19,11 +19,11 @@ deploy: ## Create symlink to home directory
 ifeq ($(shell uname),Linux)
 init: ## Setup environment settings
 	@brew bundle --file=~/.brewfile.linux
-	@yes | $(brew --prefix)/opt/fzf/install
+	@yes | `brew --prefix`/opt/fzf/install
 else
 init:
 	@brew bundle --file=~/.brewfile.osx
-	@yes | $(brew --prefix)/opt/fzf/install
+	@yes | `brew --prefix`/opt/fzf/install
 endif
 
 .PHONY: run
