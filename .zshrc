@@ -722,9 +722,6 @@ PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
 #-------------------------------------
 # fzf
 #-------------------------------------
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 # exp: ls | p cd
 p() { fzf | while read LINE; do $@ $LINE; done }
 
@@ -802,3 +799,5 @@ fi
 
 
 export PATH
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
