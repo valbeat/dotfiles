@@ -686,7 +686,12 @@ alias fssh=_fzf_ssh
 #-------------------------------------
 
 # shell integration
-source ~/.iterm2_shell_integration.`basename $SHELL`
+# https://www.iterm2.com/documentation-shell-integration.html
+if [[ ! -f ~/.iterm2_shell_integration.zsh ]]; then
+  curl -L https://iterm2.com/shell_integration/zsh \
+  -o ~/.iterm2_shell_integration.zsh
+fi
+source ~/.iterm2_shell_integration.zsh
 
 # title
 function chpwd() { ls; echo -ne "\033]0;$(pwd | rev | awk -F \/ '{print "/"$1"/"$2}'| rev)\007"}
