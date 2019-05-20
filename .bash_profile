@@ -19,5 +19,3 @@ alias l1="ls -1"
 # tree
 alias tree="tree -NC" # N: 文字化け対策, C:色をつける
 
-# vima
-export EDITOR=/Applications/MacVim.app/Contents/MacOS/Vim
