@@ -10,8 +10,6 @@ defaults write com.apple.finder _FXShowPosixPathInTitle -bool yes
 # QuickLook - 閲覧中ファイルの文字列を選択コピー可能に
 defaults write com.apple.finder QLEnableTextSelection -bool yes
 
-killall Finder
-
 # Dock - MissonControlのアニメーションスピードを速く
 defaults write com.apple.dock expose-animation-duration -float 0.15
 # Dock - スペース表示高速化
@@ -21,8 +19,6 @@ defaults write com.apple.dashboard mcx-disabled -bool yes
 ## アプリ隠しをDock上で半透明で表現
 defaults write com.apple.Dock showhidden -bool yes
 
-killall Dock
-
 # マウスの速度を変える
 defaults write .GlobalPreferences com.apple.trackpad.scaling 10
 
@@ -31,3 +27,11 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores true
 
 # 保存ダイアログを常に展開状態にする
 defaults write -g NSNavPanelExpandedStateForSaveMode -bool yes
+
+# クラッシュレポートの無効化
+defaults write com.apple.CrashReporter DialogType -string "none"
+
+
+# 対象アプリの再起動
+killall Finder
+killall Dock
