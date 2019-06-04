@@ -84,13 +84,6 @@ local WHITE=$'%{^[[1;37m%}'$
 # vimモード
 set -o vi 
 
-# for brew dotnet
-# ref: http://monry.hatenablog.com/entry/2018/01/20/235901
-# system-wide environment settings for zsh(1)
-if [ -x /usr/libexec/path_helper ]; then
-  eval `/usr/libexec/path_helper -s`
-fi
-
 # linuxbrew
 case ${OSTYPE} in
   linux*)
@@ -207,9 +200,7 @@ KEYTIMEOUT=1
 # -------------------------------------
 PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin"
 PATH="$PATH:/usr/local/git/bin"
-PATH="$PATH:/opt/ImageMagick/bin"
 PATH="/usr/local/opt/openssl/bin:$PATH"
-PATH="$HOME:/.composer/vendor/bin:$PATH"
 PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # go
@@ -228,8 +219,6 @@ if [ type brew >/dev/null 2>&1 ]; then
   # coreutilsのシンボリックリンク
   PATH=$(brew --prefix coreutils)/libexec/gnubin:$PATH
 fi
-
-PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 
 PATH="$HOME/.yarn/bin:$PATH"
 
@@ -620,9 +609,6 @@ function _gcloud_activate_configuration() {
 }
 alias gac=_gcloud_activate_configuration
 
-# vagrant
-alias vgkey="vagrant ssh-config | grep IdentityFile | sed -e 's/IdentityFile//' | sed -e 's/^[ ]*//'"
-
 # -------------------------------------
 # キーバインド
 # -------------------------------------
@@ -713,10 +699,6 @@ alias top='tab-color 134 200 0; top; tab-reset'
 
 # CaskのシンボリックリンクをApplicationsに
 export HOMEBREW_CASK_OPTS="--appdir=/Applications"
-PATH="$PATH:/Applications/android-sdk/sdk/platform-tools"
-PATH="$PATH:$HOME/Library/Android/sdk"
-PATH="$PATH:$HOME/Library/Android/sdk/platform-tools"
-
 
 #-------------------------------------
 # fzf
