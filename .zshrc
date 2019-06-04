@@ -672,6 +672,7 @@ alias fssh=_fzf_ssh
 
 # shell integration
 # https://www.iterm2.com/documentation-shell-integration.html
+# TODO: アップデートがあった際はインストールし直す
 if [[ ! -f ~/.iterm2_shell_integration.zsh ]]; then
   curl -L https://iterm2.com/shell_integration/zsh \
   -o ~/.iterm2_shell_integration.zsh
