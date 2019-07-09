@@ -418,6 +418,8 @@ _fzf_docker_exec_it() {
 }
 alias fdeit=_fzf_docker_exec_it
 
+alias lzd=lazydocker
+
 # kubectl
 alias k=kubectl
 alias kx=kubectx
