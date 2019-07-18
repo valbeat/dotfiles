@@ -208,6 +208,7 @@ export GOROOT=/usr/local/opt/go/libexec
 export GOPATH=$HOME
 export GOENVTARGET=$HOME/.goenvtarget
 export GO15VENDOREXPERIMENT=1
+export GO111MODULE=on
 
 PATH=$PATH:$GOPATH/bin
 PATH=$GOENVTARGET:$PATH
