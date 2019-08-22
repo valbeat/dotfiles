@@ -1,3 +1,5 @@
+cask_args appdir: "/Applications"
+
 tap "derailed/k9s"
 tap "ethereum/ethereum"
 tap "go-delve/delve"
