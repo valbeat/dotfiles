@@ -205,9 +205,11 @@ on_ft = 'python'
 [[plugins]] 
 repo = 'jmcantrell/vim-virtualenv' # virtualenvとの連携
 on_ft = 'python'
-[[plugins]] 
-repo = 'hachibeedi/python_hl_lvar.vim' # ローカル変数のハイライト
-on_ft = 'python'
+
+# FIXME: This plugin does not work without has('python')
+# [[plugins]] 
+# repo = 'hachibeedi/python_hl_lvar.vim' # ローカル変数のハイライト
+# on_ft = 'python'
 
 [[plugins]]
 repo = 'derekwyatt/vim-scala'
