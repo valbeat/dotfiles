@@ -1,7 +1,10 @@
 [alias]
   c = commit -v
+  s = switch
+  sc = switch -c
   st = status
   br = branch
+  rs = restore
 
   cds = !"cd $(git submodule | fzf | awk '{print $2}')"
 
