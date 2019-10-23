@@ -5,22 +5,23 @@
 [includeIf "gitdir:~/src/github.com/"]
   path = ~/src/github.com/.gitconfig
 [color]
-	ui = auto
+  ui = auto
 [filter "media"]
-	clean = !git-media-clean %f
-	smudge = !git-media-smudge %f
+  clean = !git-media-clean %f
+  smudge = !git-media-smudge %f
 [core]
-	excludesfile = ~/.gitignore_global
+  excludesfile = ~/.gitignore_global
   editor = vim
   pager = less
+  quotepath = false
 [commit]
   # 常にやるのは重いのでエイリアスで明示的にcommit -vする
   #verbose = true
 [rebase]
-	autosquash = true
+  autosquash = true
 [merge]
   # トピックブランチで行った変更を見やすくするため常にno-ff
-	ff = false
+  ff = false
 [pull]
   # マージコミットを作らないようにno-ffのマージを禁止
   ff = only
@@ -32,8 +33,9 @@
 [ghq]
   root = ~/src
 [credential "https://source.developers.google.com"]
-	helper = gcloud.sh
+  helper = gcloud.sh
 [url "git@gitlab.com:"]
-	insteadOf = https://gitlab.com/
+  insteadOf = https://gitlab.com/
 [status]
   submoduleSummary = true
+
