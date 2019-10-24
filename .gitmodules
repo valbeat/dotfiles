@@ -2,12 +2,3 @@
   path = .vim/bundle/neobundle.vim
   url = git://github.com/Shougo/neobundle.vim.git
   ignore = dirty
-[submodule ".atom"]
-  path = .atom
-  url = https://github.com/valbeat/atom-config
-[submodule ".vscode"]
-  path = .vscode
-  url = git@github.com:valbeat/vscode-config.git
-[submodule ".config/karabiner"]
-  path = .config/karabiner
-  url = git@github.com:valbeat/karabiner-config.git
