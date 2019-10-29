@@ -2,8 +2,6 @@
   path = ~/.gitconfig.os
   path = ~/.gitconfig.local
   path = ~/.gitconfig.alias
-[includeIf "gitdir:~/src/github.com/"]
-  path = ~/src/github.com/.gitconfig
 [color]
   ui = auto
 [filter "media"]
