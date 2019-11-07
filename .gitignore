@@ -30,5 +30,18 @@ Temporary Items
 # ignore app settings
 library
 
+### https://raw.github.com/github/gitignore/8767bd67830c90e45336e3244af3cf9d90a65c01/Global/Vim.gitignore
+
+# swap
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+# session
+Session.vim
+# temporary
+.netrwhist
+*~
+# auto-generated tag files
+tags
+
 # vim plugin
 .vim/dein
