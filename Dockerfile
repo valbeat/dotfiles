@@ -47,6 +47,9 @@ USER ${USERNAME}
 COPY --chown=dotfiles-sandbox:dotfiles-sandbox . /home/dotfiles-sandbox/dotfiles
 WORKDIR /home/dotfiles-sandbox
 
+RUN set -eux \
+  && brew update
+
 RUN cd dotfiles \
   && make install
 
