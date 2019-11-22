@@ -612,6 +612,19 @@ function _gcloud_activate_configuration() {
 }
 alias gac=_gcloud_activate_configuration
 
+# memo edit with grep
+function _memo_edit_grep { 
+  local selection=$(memo grep $1 | fzf);
+
+  if [[ -n $selection ]]; then
+    local file=$(echo ${selection} | awk -F":" '{print $1}')
+    local num=$(echo ${selection} | awk -F":" '{print $2}')
+    vim +${num} ${file}
+    return $?
+  fi
+}
+alias memoeg=_memo_edit_grep
+
 # -------------------------------------
 # キーバインド
 # -------------------------------------
