@@ -285,6 +285,9 @@ zle -N globalias
 
 bindkey " " globalias
 
+##############################
+# common
+##############################
 
 alias -g A='| awk'
 # count
@@ -327,16 +330,8 @@ alias vrename=massren
 
 alias ezrc='vim ~/.zshrc'
 
-
-# git
-alias g='git'
-alias tg='tig'
-alias tgc='git branch | fzf | xargs tig --stdin'
-
 alias tmux="TERM=screen-256color-bce tmux"
 
-# iterm
-alias ssh="ssh-iterm-profile-setting"
 
 alias today="date '+%Y%m%d'"
 
@@ -355,7 +350,9 @@ alias diffc='diff --old-line-format="" --unchanged-line-format="%L" --new-line-f
 # 拡張子列挙
 alias ext-list="find . -type f -not -iwholename '*/.git/*' | sed -e 's/^.*\///' | grep '\.' | sed -e 's/^.*\.//' | sort | uniq -c | sort -nr"
 
+##############################
 # docker
+##############################
 alias fig=docker-compose
 # Show all alias related docker
 dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
@@ -421,7 +418,9 @@ alias fdeit=_fzf_docker_exec_it
 
 alias lzd=lazydocker
 
+##############################
 # kubectl
+##############################
 alias k=kubectl
 alias kx=kubectx
 alias kn=kubens
@@ -549,7 +548,10 @@ function _fzf_kubectl_logs() {
 }
 alias fkl=_fzf_kubectl_logs
 
+
+##############################
 # gcloud
+##############################
 function _gcloud_set_credential() {
   local selection=`gcloud container clusters list | fzf --header-lines=1 --query="$*" --select-1 -e `
   local cluster=`echo $selection | awk '{print $1}'`
@@ -611,6 +613,24 @@ function _gcloud_activate_configuration() {
   fi
 }
 alias gac=_gcloud_activate_configuration
+
+
+##############################
+# alias for ruby
+##############################
+alias be=bundle exec
+
+##############################
+# alias for misc
+##############################
+
+# git
+alias g='git'
+alias tg='tig'
+alias tgc='git branch | fzf | xargs tig --stdin'
+
+# iterm
+alias ssh="ssh-iterm-profile-setting"
 
 # memo edit with grep
 function _memo_edit_grep { 
