@@ -816,6 +816,9 @@ if [ $commands[stern] ]; then
   source <(stern --completion=zsh)
 fi
 
+if [ $commands[aws] ]; then
+  PATH=$HOME/.anyenv/envs/pyenv/shims/aws_completer:$PATH
+fi
 
 export PATH
 
