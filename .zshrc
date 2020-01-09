@@ -635,7 +635,7 @@ alias ssh="ssh-iterm-profile-setting"
 # memo edit with grep
 function _memo_edit_grep { 
 
-  local selection=$(memo grep $1 | fzf --preview 'echo {} | awk -F":" "{print \$1}" | xargs mdcat')    
+  local selection=$(memo grep $1 | fzf --preview 'echo {} | awk -F":" "{print \$1}" | xargs -I% echo \"%\" | xargs mdcat')
 
   if [[ -n $selection ]]; then
     local file=$(echo ${selection} | awk -F":" '{print $1}')
