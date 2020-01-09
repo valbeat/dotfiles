@@ -646,6 +646,25 @@ function _memo_edit_grep {
 }
 alias memoeg=_memo_edit_grep
 
+function _memo_rename {
+
+  local selection=$(memo list --fullpath | fzf --preview 'echo {} | xargs mdcat')
+
+  if [[ -n $selection ]]; then
+    local dir=$(dirname $selection)
+    local current=$(basename $selection)
+
+    cd $dir 1>/dev/null
+
+    echo "Rename ${current} to ?"
+    read new
+    mv $current $new
+
+    return $?
+  fi
+}
+alias memor=_memo_rename
+
 # -------------------------------------
 # キーバインド
 # -------------------------------------
