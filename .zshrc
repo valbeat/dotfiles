@@ -633,9 +633,13 @@ alias tgc='git branch | fzf | xargs tig --stdin'
 alias ssh="ssh-iterm-profile-setting"
 
 # memo edit with grep
-function _memo_edit_grep { 
+function _memo_edit_grep {
 
-  local selection=$(memo grep $1 | fzf --preview 'echo {} | awk -F":" "{print \$1}" | xargs -I% echo \"%\" | xargs mdcat')
+  if [ $commands[mdcat] ]; then
+    local selection=$(memo grep $1 | fzf --preview 'echo {} | awk -F":" "{print \$1}" | xargs -I% echo \"%\" | xargs mdcat')
+  else
+    local selection=$(memo grep $1 | fzf --preview 'echo {} | awk -F":" "{print \$1}" | xargs -I% echo \"%\" | xargs cat')
+  fi
 
   if [[ -n $selection ]]; then
     local file=$(echo ${selection} | awk -F":" '{print $1}')
