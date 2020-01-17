@@ -651,18 +651,22 @@ function _memo_edit_grep {
 alias memoeg=_memo_edit_grep
 
 function _memo_rename {
-
   local selection=$(memo list --fullpath | fzf --preview 'echo {} | xargs mdcat')
-
   if [[ -n $selection ]]; then
     local dir=$(dirname $selection)
     local current=$(basename $selection)
+    local date=$(echo ${current} | sed -n -e 's/\(^[0-9]\{4\}-[0-9]\{1,2\}-[0-9]\{1,2\}\).*$/\1/p')
 
     cd $dir 1>/dev/null
 
     echo "Rename ${current} to ?"
-    read new
-    mv $current $new
+    read input
+    if [[ -n $date  ]]; then
+      new="${date}-${input}.md"
+    else
+      new="${input}.md"
+    fi
+    mv ${current} ${new}
 
     return $?
   fi
