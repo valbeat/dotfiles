@@ -74,7 +74,6 @@ brew "git-now"
 brew "git-secrets"
 brew "glide"
 brew "glslang"
-brew "gnu-sed", args: ["with-default-names"]
 brew "golang-migrate"
 brew "graphviz"
 brew "groff"
@@ -88,7 +87,6 @@ brew "imagemagick", link: false
 brew "imagemagick@6", link: true
 brew "ipfs"
 brew "iproute2mac"
-brew "jenkins", restart_service: true
 brew "jo"
 brew "oniguruma"
 brew "jq"
