@@ -1,7 +1,6 @@
 tap "appsody/appsody"
 tap "brona/iproute2mac"
 tap "c-bata/kube-prompt"
-tap "colopl/homebrew", "https://esmeralda.gitlab.colopl.jp/colopl/homebrew"
 tap "derailed/k9s"
 tap "derailed/popeye"
 tap "dtan4/tools"
