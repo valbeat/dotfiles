@@ -61,9 +61,6 @@ export LC_ALL=en_US.UTF-8
 
 # エディタ
 export EDITOR='vim'
-# ページャ
-export PAGER=vimpager
-export MANPAGER=vimpager
 
 # ncurses
 export PATH="/usr/local/opt/ncurses/bin:$PATH"
