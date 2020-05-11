@@ -61,7 +61,7 @@ if has("mac")
   
   " 不可視文字の可視化
   set list
-  set listchars=tab:▸\ ,eol:↲,extends:❯,precedes:❮
+  set listchars=tab:▸\ ,extends:❯,precedes:❮
 
 endif
 
