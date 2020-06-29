@@ -638,6 +638,7 @@ function _memo_edit_grep {
 }
 alias memoeg=_memo_edit_grep
 
+# memo rename
 function _memo_rename {
   local selection=$(memo list --fullpath | fzf --preview 'echo {} | xargs mdcat')
   if [[ -n $selection ]]; then
