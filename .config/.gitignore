@@ -1,7 +1,0 @@
-# ignore all
-*
-*/
-
-# allow any
-!.gitignore
-!karabiner
