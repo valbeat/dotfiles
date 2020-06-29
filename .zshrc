@@ -618,7 +618,7 @@ alias tg='tig'
 alias tgc='git branch | fzf | xargs tig --stdin'
 
 # iterm
-alias ssh="ssh-iterm-profile-setting"
+# alias ssh="ssh-iterm-profile-setting"
 
 # memo edit with grep
 function _memo_edit_grep {
