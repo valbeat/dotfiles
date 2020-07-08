@@ -622,6 +622,10 @@ alias tgc='git branch | fzf | xargs tig --stdin'
 
 # memo edit with grep
 function _memo_edit_grep {
+  local pattern=$1
+  if [ -z $pattern ]; then
+    return 0; 
+  fi
 
   if [ $commands[mdcat] ]; then
     local selection=$(memo grep $1 | fzf --preview 'echo {} | awk -F":" "{print \$1}" | xargs -I% echo \"%\" | xargs mdcat')
@@ -640,7 +644,12 @@ alias memoeg=_memo_edit_grep
 
 # memo rename
 function _memo_rename {
-  local selection=$(memo list --fullpath | fzf --preview 'echo {} | xargs mdcat')
+  if [ $commands[mdcat] ]; then
+    local selection=$(memo list --fullpath | fzf --preview 'echo {} | xargs mdcat')
+  else
+    local selection=$(memo list --fullpath | fzf --preview 'echo {} | xargs cat')
+  fi
+
   if [[ -n $selection ]]; then
     local dir=$(dirname $selection)
     local current=$(basename $selection)
