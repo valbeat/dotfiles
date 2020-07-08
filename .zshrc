@@ -644,7 +644,12 @@ alias memoeg=_memo_edit_grep
 
 # memo rename
 function _memo_rename {
-  local selection=$(memo list --fullpath | fzf --preview 'echo {} | xargs mdcat')
+  if [ $commands[mdcat] ]; then
+    local selection=$(memo list --fullpath | fzf --preview 'echo {} | xargs mdcat')
+  else
+    local selection=$(memo list --fullpath | fzf --preview 'echo {} | xargs cat')
+  fi
+
   if [[ -n $selection ]]; then
     local dir=$(dirname $selection)
     local current=$(basename $selection)
