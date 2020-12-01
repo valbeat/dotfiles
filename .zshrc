@@ -172,6 +172,8 @@ cdpath=(~)
 setopt share_history
 # ヒストリーに重複を表示しない
 setopt histignorealldups
+# ヒストリー呼び出し時に一旦編集可能
+setopt hist_verify
 
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
