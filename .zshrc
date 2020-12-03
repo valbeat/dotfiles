@@ -340,6 +340,18 @@ alias diffc='diff --old-line-format="" --unchanged-line-format="%L" --new-line-f
 # 拡張子列挙
 alias ext-list="find . -type f -not -iwholename '*/.git/*' | sed -e 's/^.*\///' | grep '\.' | sed -e 's/^.*\.//' | sort | uniq -c | sort -nr"
 
+
+##############################
+# alias for git
+##############################
+
+# hubコマンドがある場合は、gitの代わりに使う
+eval "$(hub alias -s)"
+
+alias g='git'
+alias tg='tig'
+alias tgc='git branch | fzf | xargs tig --stdin'
+
 ##############################
 # docker
 ##############################
@@ -613,11 +625,6 @@ alias be=bundle exec
 ##############################
 # alias for misc
 ##############################
-
-# git
-alias g='git'
-alias tg='tig'
-alias tgc='git branch | fzf | xargs tig --stdin'
 
 # iterm
 # alias ssh="ssh-iterm-profile-setting"
