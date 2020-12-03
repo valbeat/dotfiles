@@ -352,6 +352,9 @@ alias g='git'
 alias tg='tig'
 alias tgc='git branch | fzf | xargs tig --stdin'
 
+# ghコマンドの補完
+eval "$(gh completion -s zsh)"
+
 ##############################
 # docker
 ##############################
