@@ -18,13 +18,13 @@ deploy: ## Create symlink to home directory
 .PHONY: init
 ifeq ($(shell uname),Linux)
 init: ## Setup environment settings
-	@brew update
-	@brew bundle --file=~/.brewfile.linux
-	@yes | `brew --prefix`/opt/fzf/install
+	-@brew update
+	-@brew bundle --file=~/.brewfile.linux
+	-@yes | `brew --prefix`/opt/fzf/install
 else
 init:
-	@brew bundle --file=~/.brewfile.osx
-	@yes | `brew --prefix`/opt/fzf/install
+	-@brew bundle --file=~/.brewfile.osx
+	-@yes | `brew --prefix`/opt/fzf/install
 endif
 
 .PHONY: run
@@ -49,13 +49,13 @@ install: clean deploy init ## Run make deploy, init
 backup: ## Copy target dotfiles to repository
 	@echo "Start to backup dotfiles to repository."
 	@echo ""
-	@$(foreach dotfile, $(DOTFILES), cp -rn $(abspath $(HOME)/$(dotfile) $(DOTPATH)/$(dotfile)) 2>&1;)
+	-@$(foreach dotfile, $(DOTFILES), cp -rn $(abspath $(HOME)/$(dotfile) $(DOTPATH)/$(dotfile));)
 
 .PHONY: clean
 clean: ## Copy target dotfiles to repository
 	@echo "Start to clean dotfiles."
 	@echo ""
-	@$(foreach dotfile, $(DOTFILES), mv $(abspath $(HOME)/$(dotfile) /tmp/$(dotfile));)
+	-@$(foreach dotfile, $(DOTFILES), mv $(abspath $(HOME)/$(dotfile) /tmp/$(dotfile));)
 
 .PHONY: help
 help: ## Self-documented Makefile
