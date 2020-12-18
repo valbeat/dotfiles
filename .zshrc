@@ -236,6 +236,9 @@ path=(
 export PATH="$HOME/.anyenv/bin:$PATH"
 eval "$(anyenv init -)"
 
+# npm
+export PATH="$HOME/.anyenv/envs/nodenv/bin:$PATH"
+
 # -------------------------------------
 # プロンプト
 # -------------------------------------
