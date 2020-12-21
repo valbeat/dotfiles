@@ -791,7 +791,7 @@ p() { fzf | while read LINE; do $@ $LINE; done }
 
 # Ctrl + ] => ghq
 function fzf-src () {
-  local project=$(ghq list | fzf -e --prompt "REPO >" --query "$LBUFFER")
+  local project=$(ghq list | sort | fzf -e --prompt "REPO >" --query "$LBUFFER")
   if [ "$project" == "" ]; then
     return 0
   fi
