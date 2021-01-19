@@ -7,6 +7,6 @@
 ```shell
 $ git clone git@github.com:valbeat/dotfiles.git $HOME/dotfiles
 $ cd $HOME/dotfiles
-$ make init
+$ make install
 $ zsh
 ```
