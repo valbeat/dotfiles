@@ -124,3 +124,6 @@ fabric.properties
 # Ignore configs
 .config
 .vscode
+
+# Ignore local config
+.gitconfig.local
