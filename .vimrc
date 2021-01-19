@@ -134,6 +134,28 @@ noremap <Space>k <c-b><cr><cr>
 " <Enter> always means inserting line.
 map <S-Enter> O<ESC>
 map <Enter> o<ESC>
+
+"----------------------------------------------
+" レジスタ
+"----------------------------------------------
+
+" 自動でpasteモード
+if &term =~ "xterm"
+    let &t_ti .= "\e[?2004h"
+    let &t_te .= "\e[?2004l"
+    let &pastetoggle = "\e[201~"
+
+    function XTermPasteBegin(ret)
+        set paste
+        return a:ret
+    endfunction
+
+    noremap <special> <expr> <Esc>[200~ XTermPasteBegin("0i")
+    inoremap <special> <expr> <Esc>[200~ XTermPasteBegin("")
+    cnoremap <special> <Esc>[200~ <nop>
+    cnoremap <special> <Esc>[201~ <nop>
+endif
+
 "----------------------------------------------
 " 検索／置換
 "----------------------------------------------
@@ -542,25 +564,6 @@ function! s:hl_cword()
     silent! let b:highlight_cursor_word_id = matchadd("CursorWord", pattern)
     let b:highlight_cursor_word = word
 endfunction
-
-"----------------------------------------------
-" 自動でpaste mode
-"----------------------------------------------
-if &term =~ "xterm"
-    let &t_ti .= "\e[?2004h"
-    let &t_te .= "\e[?2004l"
-    let &pastetoggle = "\e[201~"
-
-    function XTermPasteBegin(ret)
-        set paste
-        return a:ret
-    endfunction
-
-    noremap <special> <expr> <Esc>[200~ XTermPasteBegin("0i")
-    inoremap <special> <expr> <Esc>[200~ XTermPasteBegin("")
-    cnoremap <special> <Esc>[200~ <nop>
-    cnoremap <special> <Esc>[201~ <nop>
-endif
 
 "----------------------------------------------
 " 最後に読み込む設定
