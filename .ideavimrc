@@ -69,3 +69,9 @@ nnoremap <S-Down>  <C-w>+<CR>
 noremap <Space>j <c-f><cr><cr>
 noremap <Space>k <c-b><cr><cr>
 
+"----------------------------------------------
+" レジスタ
+"----------------------------------------------
+
+" 複製するために、yankの最新のレジスタをpastする
+xnoremap <leader>p "_0p
