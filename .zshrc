@@ -11,7 +11,7 @@ fi
 ## zplug init
 case ${OSTYPE} in
   darwin*)
-    export ZPLUG_HOME=/usr/local/opt/zplug
+    export ZPLUG_HOME=/opt/homebrew/opt/zplug
     ;;
   linux*)
     export ZPLUG_HOME=/home/linuxbrew/.linuxbrew/opt/zplug
