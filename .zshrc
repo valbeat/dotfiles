@@ -203,7 +203,6 @@ PATH="/usr/local/opt/openssl/bin:$PATH"
 PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # go
-export GOROOT=/usr/local/opt/go/libexec
 export GOPATH=$HOME
 export GOENVTARGET=$HOME/.goenvtarget
 export GO15VENDOREXPERIMENT=1
