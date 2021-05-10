@@ -348,7 +348,10 @@ alias ext-list="find . -type f -not -iwholename '*/.git/*' | sed -e 's/^.*\///' 
 ##############################
 
 # hubコマンドがある場合は、gitの代わりに使う
-eval "$(hub alias -s)"
+if which hub >/dev/null 2>&1; then
+    alias git='hub'
+    compdef hub=git
+fi
 
 alias g='git'
 alias tg='tig'
