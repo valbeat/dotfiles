@@ -867,6 +867,9 @@ if [ $commands[aws] ]; then
   PATH=$HOME/.anyenv/envs/pyenv/shims/aws_completer:$PATH
 fi
 
+
+export PKG_CONFIG_PATH="/opt/homebrew/opt/jpeg-turbo/lib/pkgconfig"
+
 export PATH
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
