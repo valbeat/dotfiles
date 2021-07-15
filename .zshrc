@@ -11,7 +11,11 @@ fi
 ## zplug init
 case ${OSTYPE} in
   darwin*)
-    export ZPLUG_HOME=/opt/homebrew/opt/zplug
+    if uname -m | grep --quiet "arm64" 2>&1 > /dev/null ; then
+      export ZPLUG_HOME=/opt/homebrew/opt/zplug
+    else
+      export ZPLUG_HOME=/usr/local/opt/zplug
+    fi
     ;;
   linux*)
     export ZPLUG_HOME=/home/linuxbrew/.linuxbrew/opt/zplug
