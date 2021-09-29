@@ -34,7 +34,8 @@
   # スタッシュを選択してdropする
   std = !git stl | xargs git stash drop
   
-  p = !git push --force-with-lease origin `git rev-parse --abbrev-ref HEAD`
+  p = !git push origin `git rev-parse --abbrev-ref HEAD`
+  pf = !git push --force-with-lease origin `git rev-parse --abbrev-ref HEAD`
 
   lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 
