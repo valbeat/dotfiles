@@ -13,8 +13,7 @@
   pager = less
   quotepath = false
 [commit]
-  # 常にやるのは重いのでエイリアスで明示的にcommit -vする
-  #verbose = true
+	verbose = true
 [rebase]
   autosquash = true
 [merge]
