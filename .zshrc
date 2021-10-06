@@ -45,6 +45,11 @@ zplug "zsh-users/zsh-syntax-highlighting", defer:2
 # 関数
 zplug "mollifier/cd-gitroot"
 
+# 絵文字対応
+zplug "mrowa44/emojify", as:command
+
+zplug "changyuheng/zsh-interactive-cd"
+
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
   zplug install
