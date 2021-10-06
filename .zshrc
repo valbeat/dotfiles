@@ -792,9 +792,29 @@ export HOMEBREW_CASK_OPTS="--appdir=/Applications"
 #-------------------------------------
 # fzf
 #-------------------------------------
+export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 # exp: ls | p cd
 p() { fzf | while read LINE; do $@ $LINE; done }
 
+fe() {
+  local files
+  IFS=$'\n' files=($(fzf-tmux --query="$1" --multi --select-1 --exit-0))
+  [[ -n "$files" ]] && ${EDITOR:-vim} "${files[@]}"
+}
+
+fkill() {
+  local pid
+  pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
+
+  if [ "x$pid" != "x" ]
+  then
+    echo $pid | xargs kill -${1:-9}
+  fi
+}
+
+#-------------------------------------
+# ghq
+#-------------------------------------#
 # Ctrl + ] => ghq
 function fzf-src () {
   local project=$(ghq list | sort | fzf -e --prompt "REPO >" --query "$LBUFFER")
