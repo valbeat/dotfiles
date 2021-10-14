@@ -8,8 +8,8 @@
 $ git clone git@github.com:valbeat/dotfiles.git $HOME/dotfiles
 $ cd $HOME/dotfiles
 $ make install
-$ zsh
 ```
+This will create symlinks from this repo to your home folder.
 
 ## Contribution
 
