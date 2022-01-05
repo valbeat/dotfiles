@@ -543,13 +543,12 @@ function _fzf_kubectl_exec_it_sh() {
 alias fkeitsh=_fzf_kubectl_exec_it_sh
 
 function _fzf_kubectl_logs() {
-  local selection=`kubectl get pods --all-namespaces -o wide | fzf --header-lines=1 --query="$*" --select-1 -e `
+  local selection=`kubectl get pods -o wide | fzf --header-lines=1 --query="$*" --select-1 -e `
   if [ $selection == "" ]; then
     return 0
   fi
-  local namespace=`echo $selection | awk '{ print $1 }'`
-  local pod=`echo $selection | awk '{ print $2 }'`
-  local containers=`kubectl -n $namespace get pods $pod -o jsonpath='{range .spec.containers[*]}{@.name}{"\n"}{end}'`
+  local pod=`echo $selection | awk '{ print $1 }'`
+  local containers=`kubectl get pods $pod -o jsonpath='{range .spec.containers[*]}{@.name}{"\n"}{end}'`
   local container_count=$((`echo "$containers" | wc -l`))
 
   local container
@@ -562,8 +561,7 @@ function _fzf_kubectl_logs() {
   if [ $container == "" ]; then
     return 0
   fi
-
-  print -z "kubectl logs -n ${namespace} ${pod} -c ${container}"
+  print -z "kubectl logs ${pod} -c ${container}"
 }
 alias fkl=_fzf_kubectl_logs
 
@@ -653,8 +651,8 @@ function _memo_edit_grep {
     return 0; 
   fi
 
-  if [ $commands[mdcat] ]; then
-    local selection=$(memo grep $1 | fzf --preview 'echo {} | awk -F":" "{print \$1}" | xargs -I% echo \"%\" | xargs mdcat')
+  if [ $commands[bat] ]; then
+    local selection=$(memo grep $1 | fzf --preview 'echo {} | awk -F":" "{print \$1}" | xargs -I% echo \"%\" | xargs bat --color=always --style=numbers --line-range=:500')
   else
     local selection=$(memo grep $1 | fzf --preview 'echo {} | awk -F":" "{print \$1}" | xargs -I% echo \"%\" | xargs cat')
   fi
@@ -670,8 +668,8 @@ alias memoeg=_memo_edit_grep
 
 # memo rename
 function _memo_rename {
-  if [ $commands[mdcat] ]; then
-    local selection=$(memo list --fullpath | fzf --preview 'echo {} | xargs mdcat')
+  if [ $commands[bat] ]; then
+    local selection=$(memo list --fullpath | fzf --preview 'echo {} | xargs bat --color=always --style=numbers --line-range=:500')
   else
     local selection=$(memo list --fullpath | fzf --preview 'echo {} | xargs cat')
   fi
