@@ -221,6 +221,12 @@ set noexpandtab
 set autowrite
 set updatetime=500
 
+augroup autowrite_text_changed
+  au!
+  autocmd InsertLeave,TextChanged * silent! write
+  autocmd FocusGained,BufEnter * :silent! !
+augroup END
+
 " 自動保存は特定の場合にのみ適応
 function s:AutoWriteIfPossible()
 if &filetype == 'gitcommit'
