@@ -218,8 +218,8 @@ set fileencodings=utf-8,euc-jp,sjis
 set noexpandtab
 
 " 自動保存
-set autowrite
-set updatetime=500
+" set autowrite
+" set updatetime=500
 
 augroup autowrite_text_changed
   au!
