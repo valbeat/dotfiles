@@ -377,7 +377,7 @@ eval "$(gh completion -s zsh)"
 ##############################
 # docker
 ##############################
-alias fig=docker-compose
+alias dc=docker-compose
 # Show all alias related docker
 dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
 # Get container process
@@ -905,7 +905,6 @@ export PKG_CONFIG_PATH="/opt/homebrew/opt/jpeg-turbo/lib/pkgconfig"
 export PATH
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 #### FIG ENV VARIABLES ####
 # Please make sure this block is at the end of this file.
 [ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
