@@ -432,7 +432,7 @@ noremap <C-X><C-T> :VimFiler -split -simple -winwidth=35 -no-quit<ENTER>
 nnoremap <silent> <Leader>fe :<C-u>VimFilerBufferDir -quit<CR>
 
 "デフォルトのキーマッピングを変更
-augroup vimrc
+augroup change_default_keymapping
 autocmd FileType vimfiler call s:vimfiler_my_settings()
 augroup END
 function! s:vimfiler_my_settings()
