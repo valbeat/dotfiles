@@ -378,6 +378,8 @@ eval "$(gh completion -s zsh)"
 # docker
 ##############################
 alias dc=docker-compose
+alias dcu="docker-compose up -d"
+alias dcb="docker-compose build"
 # Show all alias related docker
 dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
 # Get container process
