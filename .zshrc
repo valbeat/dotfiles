@@ -378,6 +378,8 @@ eval "$(gh completion -s zsh)"
 # docker
 ##############################
 alias dc=docker-compose
+alias dcu="docker-compose up -d"
+alias dcb="docker-compose build"
 # Show all alias related docker
 dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
 # Get container process
@@ -909,3 +911,4 @@ export PATH
 # Please make sure this block is at the end of this file.
 [ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
 #### END FIG ENV VARIABLES ####
+export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
