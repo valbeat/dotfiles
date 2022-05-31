@@ -27,12 +27,6 @@ init:
 	-@yes | `brew --prefix`/opt/fzf/install
 endif
 
-.PHONY: run
-run: ## Run dotfiles and init scripts
-	@echo "Start to run dotfiles in docker container."
-	@echo ""
-	@docker run -it -v $(DOTPATH):/home/dotfiles-sandbox/dotfiles valbeat/dotfiles-sandbox:latest /bin/zsh
-
 .PHONY: test
 test: deploy init ## Test for successful initialization
 
