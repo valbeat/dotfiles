@@ -911,3 +911,4 @@ export PATH
 # Please make sure this block is at the end of this file.
 [ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
 #### END FIG ENV VARIABLES ####
+export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
