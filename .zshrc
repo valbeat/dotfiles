@@ -14,18 +14,9 @@ fi
 #--------------------------------------
 
 ## zplug init
-case ${OSTYPE} in
-  darwin*)
-    if uname -m | grep --quiet "arm64" 2>&1 > /dev/null ; then
-      export ZPLUG_HOME=/opt/homebrew/opt/zplug
-    else
-      export ZPLUG_HOME=/usr/local/opt/zplug
-    fi
-    ;;
-  linux*)
-    export ZPLUG_HOME=/home/linuxbrew/.linuxbrew/opt/zplug
-    ;;
-esac
+if [[ -z $ZPLUG_HOME ]]; then
+  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+fi
 source $ZPLUG_HOME/init.zsh
 
 # 補完
