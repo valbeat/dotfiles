@@ -1,5 +1,7 @@
 # dotfiles
 
+[![Build Status](https://app.travis-ci.com/valbeat/dotfiles-testing.svg?branch=main)](https://app.travis-ci.com/valbeat/dotfiles-testing)
+
 ## Installing
 
 ```shell
