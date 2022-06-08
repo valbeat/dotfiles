@@ -14,43 +14,47 @@ fi
 #--------------------------------------
 
 ## zplug init
-export ZPLUG_HOME=~/.zplug
-source $ZPLUG_HOME/init.zsh
+if [ $commands[zplug] ]; then
+  export ZPLUG_HOME=~/.zplug
 
-# 補完
-zplug "zsh-users/zsh-completions"
-zplug "zsh-users/zsh-autosuggestions", \
-  hook-load:"{
+  source $ZPLUG_HOME/init.zsh
+
+  # 補完
+  zplug "zsh-users/zsh-completions"
+  zplug "zsh-users/zsh-autosuggestions", \
+    hook-load:"{
     bindkey '^ ' autosuggest-accept
   }
   "
-
-# テーマ
-## pure
-zplug "mafredri/zsh-async"
-zplug "sindresorhus/pure", defer:2, \
-  hook-load:"{
+  
+  # テーマ
+  ## pure
+  zplug "mafredri/zsh-async"
+  zplug "sindresorhus/pure", defer:2, \
+    hook-load:"{
     PURE_GIT_DELAY_DIRTY_CHECK=1000
   }
   "
-## シンタックスハイライト(compinit後に読み込み)
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
+  ## シンタックスハイライト(compinit後に読み込み)
+  zplug "zsh-users/zsh-syntax-highlighting", defer:2
+  
+  # 関数
+  zplug "mollifier/cd-gitroot"
+  
+  # 絵文字対応
+  zplug "mrowa44/emojify", as:command
+  
+  zplug "changyuheng/zsh-interactive-cd"
+  
+  # Install plugins if there are plugins that have not been installed
+  if ! zplug check --verbose; then
+    zplug install
+  fi
+  
+  # Then, source plugins and add commands to $PATH
+  zplug load --verbose
 
-# 関数
-zplug "mollifier/cd-gitroot"
-
-# 絵文字対応
-zplug "mrowa44/emojify", as:command
-
-zplug "changyuheng/zsh-interactive-cd"
-
-# Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-  zplug install
 fi
-
-# Then, source plugins and add commands to $PATH
-zplug load --verbose
 
 # -------------------------------------
 # 環境変数
