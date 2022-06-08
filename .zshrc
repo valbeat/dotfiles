@@ -14,9 +14,7 @@ fi
 #--------------------------------------
 
 ## zplug init
-if [[ -z $ZPLUG_HOME ]]; then
-  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
-fi
+export ZPLUG_HOME=~/.zplug
 source $ZPLUG_HOME/init.zsh
 
 # 補完
