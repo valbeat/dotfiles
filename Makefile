@@ -1,6 +1,8 @@
+.PHONY: test
+test: deploy ## Test for successful initialization
 DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 CANDIDATES := $(wildcard .??*)
-EXCLUSIONS := .DS_Store .git .gitmodules .travis.yml
+EXCLUSIONS := .DS_Store .git .gitmodules
 DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 
 .DEFAULT_GOAL := help
@@ -15,21 +17,6 @@ deploy: ## Create symlink to home directory
 	@echo ""
 	@$(foreach dotfile, $(DOTFILES), ln -sfnv $(abspath $(DOTPATH)/$(dotfile) $(HOME)/$(dotfile));)
 
-.PHONY: init
-ifeq ($(shell uname),Linux)
-init: ## Setup environment settings
-	-@brew update
-	-@brew bundle --file=.brewfile.linux
-	-@yes | `brew --prefix`/opt/fzf/install
-else
-init:
-	-@brew bundle --file=.brewfile.osx
-	-@yes | `brew --prefix`/opt/fzf/install
-endif
-
-.PHONY: test
-test: deploy init ## Test for successful initialization
-
 .PHONY: update
 update: ## Fetch changes for this repo
 	@git pull origin master
@@ -37,7 +24,7 @@ update: ## Fetch changes for this repo
 	@git submodule foreach git pull origin master
 
 .PHONY: install
-install: clean deploy init ## Run make deploy, init
+install: clean deploy ## Run make deploy, init
 
 .PHONY: backup
 backup: ## Copy target dotfiles to repository
