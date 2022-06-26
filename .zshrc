@@ -11,7 +11,7 @@ fi
 #--------------------------------------
 
 ## zplug init
-if [ $commands[zplug] ]; then
+if [ -d ~/.zplug ]; then
   export ZPLUG_HOME=~/.zplug
 
   source $ZPLUG_HOME/init.zsh
