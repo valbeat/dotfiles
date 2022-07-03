@@ -858,12 +858,6 @@ PATH="$PATH:$GCLOUD_SDK/bin"
 export APPENGINE_SDK="$GCLOUD_SDK/platform/google_appengine"
 PATH="$PATH:$APPENGINE_SDK"
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f "$GCLOUD_SDK/path.zsh.inc" ]; then source "$GCLOUD_SDK/path.zsh.inc"; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f "$GCLOUD_SDK/completion.zsh.inc" ]; then source "$GCLOUD_SDK/completion.zsh.inc"; fi
-
 #-------------------------------------
 # load local settings
 #-------------------------------------
@@ -902,3 +896,10 @@ export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
 
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && . "$HOME/.fig/shell/zshrc.post.zsh"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/takuma/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/takuma/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/takuma/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/takuma/google-cloud-sdk/completion.zsh.inc'; fi
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
