@@ -7,7 +7,7 @@ jobs:
     - name: Publish GitHub dispatch event
       run: |
         curl --request POST 'https://api.github.com/repos/valbeat/dotfiles-testing/dispatches' \
-        --header 'Authorization: Bearer ${{secrets.GITHUB_ACCESS_TOKEN}}' \
+        --header 'Authorization: Bearer ${{secrets.PERSONAL_ACCESS_TOKEN}}' \
         --header 'Content-Type: application/json' \
         --data-raw '{
           "event_type": "dotfiles-updated"
