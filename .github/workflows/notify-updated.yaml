@@ -10,5 +10,5 @@ jobs:
         --header 'Authorization: Bearer ${{secrets.PERSONAL_ACCESS_TOKEN}}' \
         --header 'Content-Type: application/json' \
         --data-raw '{
-          "event_type": "dotfiles-updated"
+          "event_type": "dotfiles updated"
         }'
