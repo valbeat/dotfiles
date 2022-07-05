@@ -1,4 +1,4 @@
-name: Publish dispactch event
+name: Notify updated
 on: [push]
 jobs:
   build:
