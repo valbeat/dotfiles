@@ -237,7 +237,9 @@ path=(
 
 # anyenv
 export PATH="$HOME/.anyenv/bin:$PATH"
-eval "$(anyenv init -)"
+if [ $commands[anyenv] ]; then
+  eval "$(anyenv init -)"
+fi
 
 # npm
 export PATH="$HOME/.anyenv/envs/nodenv/bin:$PATH"
@@ -362,7 +364,9 @@ alias tg='tig'
 alias tgc='git branch | fzf | xargs tig --stdin'
 
 # ghコマンドの補完
-eval "$(gh completion -s zsh)"
+if [ $commands[gh] ]; then
+  eval "$(gh completion -s zsh)"
+fi
 
 ##############################
 # docker
