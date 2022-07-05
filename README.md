@@ -1,6 +1,6 @@
 # dotfiles
 
-[![Build Status](https://app.travis-ci.com/valbeat/dotfiles-testing.svg?branch=main)](https://app.travis-ci.com/valbeat/dotfiles-testing)
+[![Test](https://github.com/valbeat/dotfiles-testing/actions/workflows/test.yml/badge.svg)](https://github.com/valbeat/dotfiles-testing/actions/workflows/test.yml)
 
 ## Installing
 
