@@ -1,6 +1,0 @@
-brew "tig"
-brew "rename"
-brew "ripgrep"
-brew "direnv"
-brew "fzf"
-
