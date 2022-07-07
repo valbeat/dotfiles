@@ -2,7 +2,7 @@
 test: deploy ## Test for successful initialization
 DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 CANDIDATES := $(wildcard .??*)
-EXCLUSIONS := .DS_Store .git .gitmodules
+EXCLUSIONS := .DS_Store .git .gitmodules .github
 DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 
 .DEFAULT_GOAL := help
