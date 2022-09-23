@@ -348,6 +348,10 @@ alias diffc='diff --old-line-format="" --unchanged-line-format="%L" --new-line-f
 # 拡張子列挙
 alias ext-list="find . -type f -not -iwholename '*/.git/*' | sed -e 's/^.*\///' | grep '\.' | sed -e 's/^.*\.//' | sort | uniq -c | sort -nr"
 
+# goimport
+if which gosimports >/dev/null 2>&1; then
+  alias goimports="gosimports"
+fi
 
 ##############################
 # alias for git
