@@ -899,11 +899,9 @@ export PATH
 
 export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
+source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
+source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
 
-# The next line enables shell command completion for gcloud.
-if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 # Fig post block. Keep at the bottom of this file.
