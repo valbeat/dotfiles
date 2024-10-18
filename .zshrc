@@ -356,13 +356,7 @@ fi
 ##############################
 # alias for git
 ##############################
-
-# hubコマンドがある場合は、gitの代わりに使う
-if which hub >/dev/null 2>&1; then
-    alias git='hub'
-    compdef hub=git
-fi
-
+#
 alias g='git'
 alias tg='tig'
 alias tgc='git branch | fzf | xargs tig --stdin'
