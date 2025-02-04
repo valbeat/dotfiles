@@ -47,7 +47,7 @@
 
   c = commit -v
   # commit messageの自動生成つきcommit
-  ca=!git diff --cached | aichat -r commit-message | git commit -F -
+  ca=!TMP_MSG=/tmp/git_commit_msg; git diff --cached | aichat -r commit-message > $TMP_MSG && git commit -v -e -F $TMP_MSG
 
   s = switch
   sc = switch -c
