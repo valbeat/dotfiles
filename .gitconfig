@@ -46,7 +46,14 @@
 [alias]
 
   # commit messageの自動生成つきcommit
-  c=!TMP_MSG=$(mktemp) && git diff --cached | aichat -r commit-message > "$TMP_MSG" && git commit -v -e -F "$TMP_MSG" && rm -f "$TMP_MSG"
+  c = "!f() { \
+    TMP_MSG=$(mktemp); \
+    if ! git diff --cached | aichat -r commit-message > \"$TMP_MSG\"; then \
+      echo \"# ❌ aichat failed. Please write your commit message manually.\" > \"$TMP_MSG\"; \
+    fi; \
+    git commit -v -e -F \"$TMP_MSG\"; \
+    rm -f \"$TMP_MSG\"; \
+  }; f"
   # manual commit
   cm = commit -v
 
