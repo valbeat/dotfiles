@@ -44,7 +44,6 @@
 	textconv = sops -d
 
 [alias]
-
   # commit messageの自動生成つきcommit
   c = "!f() { \
     TMP_MSG=$(mktemp); \
