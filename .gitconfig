@@ -102,7 +102,7 @@
 
   # ブランチを選択して削除する
   bd = "!f() { \
-  branch=$(git branch --format='%(refname:short)' | grep -vE '^(\\*|develop|master|main)$' | fzf --preview 'git log --color=always {}'); \
+  branch=$(git branch --format='%(refname:short)' | grep -vE '^(\\*|develop|master)$' | fzf --preview 'git log --color=always {}'); \
   [ -n \"$branch\" ] && git branch -d \"$branch\"; \
 }; f"
   
