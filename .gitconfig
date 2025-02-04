@@ -45,9 +45,10 @@
 
 [alias]
 
-  c = commit -v
   # commit messageの自動生成つきcommit
-  ca=!TMP_MSG=$(mktemp) && git diff --cached | aichat -r commit-message > "$TMP_MSG" && git commit -v -e -F "$TMP_MSG" && rm -f "$TMP_MSG"
+  c=!TMP_MSG=$(mktemp) && git diff --cached | aichat -r commit-message > "$TMP_MSG" && git commit -v -e -F "$TMP_MSG" && rm -f "$TMP_MSG"
+  # manual commit
+  cm = commit -v
 
   s = switch
   sc = switch -c
