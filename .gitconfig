@@ -44,7 +44,11 @@
 	textconv = sops -d
 
 [alias]
+
   c = commit -v
+  # commit messageの自動生成つきcommit
+  ca=!git diff --cached | aichat -r commit-message | git commit -F -
+
   s = switch
   sc = switch -c
   st = status
