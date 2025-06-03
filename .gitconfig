@@ -47,7 +47,8 @@
   # commit messageの自動生成つきcommit
   c = "!f() { \
     TMP_MSG=$(mktemp); \
-    if ! git diff --cached | claude -p 'Based on this git diff, write a concise commit message following conventional commit format' > \"$TMP_MSG\"; then \
+    PROMPT='Based on this git diff, write a concise commit message following conventional commit format\n\n## Commit Message Format\n- **First line:** {Type of change}: A concise summary (≤ 50 characters)\n- **Second line:** (Leave blank)\n- **Third line and beyond:** A detailed explanation (what changed and why)'; \
+    if ! git diff --cached | claude -p \"$PROMPT\" > \"$TMP_MSG\"; then \
       echo \"# ❌ claude failed. Please write your commit message manually.\" > \"$TMP_MSG\"; \
     fi; \
     git commit -v -e -F \"$TMP_MSG\"; \
