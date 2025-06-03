@@ -58,3 +58,4 @@ credentials
 .aws
 # Ignore local config
 .gitconfig.local
+.claude/settings.local.json
