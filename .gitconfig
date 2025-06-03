@@ -47,8 +47,8 @@
   # commit messageの自動生成つきcommit
   c = "!f() { \
     TMP_MSG=$(mktemp); \
-    if ! git diff --cached | aichat -r commit-message > \"$TMP_MSG\"; then \
-      echo \"# ❌ aichat failed. Please write your commit message manually.\" > \"$TMP_MSG\"; \
+    if ! git diff --cached | claude -p 'Based on this git diff, write a concise commit message following conventional commit format (feat/fix/chore/etc). Focus on what changed and why, not how. Keep it under 72 characters.' > \"$TMP_MSG\"; then \
+      echo \"# ❌ claude failed. Please write your commit message manually.\" > \"$TMP_MSG\"; \
     fi; \
     git commit -v -e -F \"$TMP_MSG\"; \
     rm -f \"$TMP_MSG\"; \
