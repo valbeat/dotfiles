@@ -45,9 +45,7 @@
 
 [alias]
   # commit messageの自動生成つきcommit
-  c = "!f() { \
-    claude commit; \
-  }; f"
+  c = !claude commit -p
   # manual commit
   cm = commit -v
 
