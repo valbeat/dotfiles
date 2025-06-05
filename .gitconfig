@@ -45,7 +45,7 @@
 
 [alias]
   # commit messageの自動生成つきcommit
-  c = "!f() { if git diff --cached --quiet; then echo 'No staged changes to commit'; else claude commit -p --allowedTools \"Bash(git commit)\"; fi }; f"
+  c = "!f() { if git diff --cached --quiet; then echo 'No staged changes to commit'; else claude commit; fi }; f"
   # manual commit
   cm = commit -v
 

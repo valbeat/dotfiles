@@ -1,6 +1,4 @@
 {
-  "model": "opus",
-  "theme": "dark",
   "cleanupPeriodDays": 30,
   "includeCoAuthoredBy": false,
   "permissions": {
@@ -149,7 +147,10 @@
       "Glob(**)",
       "LS(**)",
       "WebFetch(domain:*)",
-      "WebSearch(*)"
+      "WebSearch(*)",
+      "Bash(npx:*)"
     ]
-  }
+  },
+  "model": "opus",
+  "theme": "dark"
 }
