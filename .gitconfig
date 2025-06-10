@@ -45,7 +45,7 @@
 
 [alias]
   # commit messageの自動生成つきcommit
-  c = "!f() { if git diff --cached --quiet; then echo 'No staged changes to commit'; else msg=$(git diff --cached | claude -p 'Analyze this git diff and generate a concise commit message. Output only the commit message, no explanations.'); git commit -e -m \"$msg\"; fi }; f"
+  c = "!f() { if git diff --cached --quiet; then echo 'No staged changes to commit'; else msg=$(git diff --cached | claude -p 'Analyze this git diff and generate a concise commit message. Output only the commit message, no explanations.'); git commit -v -e -m \"$msg\"; fi }; f"
   # manual commit
   cm = commit -v
   # commit with message and editor
