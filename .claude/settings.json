@@ -141,6 +141,7 @@
       "Bash(velero:*)",
       "Bash(kopia:*)",
       "Bash(borg:*)",
+      "Bash(find:*)",
       "Read(**)",
       "Edit(**)",
       "Grep(**)",
