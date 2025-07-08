@@ -35,7 +35,7 @@
 - **コミットメッセージ**: Conventional Commit形式を使用（例: `feat:`, `fix:`, `chore:`）
 - **PR作成コマンド**: 必ず以下のコマンドを使用
   ```bash
-  gh pr create --assign @me --draft --title "[package-name] 変更内容" --body "変更の詳細"
+  gh pr create --assignee @me --draft 
   ```
 - ドキュメントの言語はプロジェクトに合わせる
 - 異なるタスクを始めるときはベースブランチに戻る
