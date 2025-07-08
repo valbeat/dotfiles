@@ -45,18 +45,14 @@ NEVER create files unless they're absolutely necessary for achieving your goal.
 ALWAYS prefer editing an existing file to creating a new one.
 NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
 
-## Claude Code 連携ガイド
+## Claude Code Integration
 
-### 目的
-Claude から **Gemini CLI** が呼び出された際に、
-Gemini は Claude との対話コンテキストを保ちながら、複数ターンに渡り協働する。
-
----
-
-### Claude Code の使い方
-- ターミナルで以下を実行すると Claude と対話できる。
-```bash
-Claude <<EOF
-<質問・依頼内容>
-EOF
-```
+- ClaudeからGemini CLIが呼び出された際は、対話コンテキストを保ちながら協働する
+- Claude Codeの基本的な使用方法:
+  ```bash
+  Claude <<EOF
+  <質問・依頼内容>
+  EOF
+  ```
+- 複数ターンにわたる協業時は、Claudeとの連携を意識して応答する
+- Claudeから渡されるコンテキストを活用し、一貫性のある提案を行う
