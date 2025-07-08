@@ -1,58 +1,65 @@
 # GEMINI.md
 
-## Development Philosophy
+## 開発哲学
 
-### Test-Driven Development (TDD)
+### テスト駆動開発 (TDD)
 
-- Follow t-wada's recommended approach
-- Always proceed with Test-Driven Development (TDD)
-- Create tests based on expected input/output first
-- Write tests only, no implementation code initially
-- Run tests and confirm they fail
-- Commit once tests are verified to be correct
-- Then proceed with implementation to pass the tests
-- Do not modify tests during implementation
-- Continue fixing code until all tests pass
+- **t-wadaの推奨する進め方に従ってください**
 
-## Documentation Maintenance
+- 原則としてテスト駆動開発（TDD）で進める
+- 期待される入出力に基づき、まずテストを作成する
+- 実装コードは書かず、テストのみを用意する
+- テストを実行し、失敗を確認する
+- テストが正しいことを確認できた段階でコミットする
+- その後、テストをパスさせる実装を進める
+- 実装中はテストを変更せず、コードを修正し続ける
+- すべてのテストが通過するまで繰り返す
 
-- Continuously update GEMINI.md
-- Add new rules and procedures as they become clear
-- Accumulate project-specific knowledge and best practices
-- Record frequently used commands and shortcuts
-- Update when code conventions change or new tools are introduced
+## ドキュメントの保守
 
-## Important Notes
+- GEMINI.md は継続的に更新する
+- 新しいルールや手順が明確になった際に追記
+- プロジェクト固有の知識やベストプラクティスを蓄積
+- よく使うコマンドやショートカットも記録
+- コード規約の変更や新しいツール導入時にも更新
 
-- Never create files unless absolutely necessary
-- Always prioritize editing existing files over creating new ones
-- Follow TDD principles when requested
+## 重要事項
 
-## Git Workflow
+- 絶対に必要でない限りファイルを作成しない
+- 常に新規ファイル作成より既存ファイルの編集を優先
+- 要求された場合はテスト駆動開発（TDD）の原則に従う
 
-- **Feature Branch Creation**: Never commit directly to base branch
-- **Commit Messages**: Use Conventional Commit format (e.g., `feat:`, `fix:`, `chore:`)
-- **PR Creation Command**: Always use:
+## Gitワークフロー
+
+- **フィーチャーブランチの作成**: ベースブランチに直接コミットしない
+- **コミットメッセージ**: Conventional Commit形式を使用（例: `feat:`, `fix:`, `chore:`）
+- **PR作成コマンド**: 必ず以下のコマンドを使用
   ```bash
   gh pr create --assignee @me --draft 
   ```
-- Match documentation language to project
-- Return to base branch when starting different tasks
+- ドキュメントの言語はプロジェクトに合わせる
+- 異なるタスクを始めるときはベースブランチに戻る
 
-# important-instruction-reminders
-Do what has been asked; nothing more, nothing less.
-NEVER create files unless they're absolutely necessary for achieving your goal.
-ALWAYS prefer editing an existing file to creating a new one.
-NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
-
-## Claude Code Integration
+## Claudeとの連携
 
 - ClaudeからGemini CLIが呼び出された際は、対話コンテキストを保ちながら協働する
-- Claude Codeの基本的な使用方法:
-  ```bash
-  Claude <<EOF
-  <質問・依頼内容>
-  EOF
-  ```
+- Claudeはオーケストレーター、Geminiはエキスパートとして振る舞う
+- Claudeから渡されるコンテキスト（ユーザー要件、議論の要約、コードスニペット等）を基に専門的な分析や提案を行う
 - 複数ターンにわたる協業時は、Claudeとの連携を意識して応答する
-- Claudeから渡されるコンテキストを活用し、一貫性のある提案を行う
+
+### 具体的な連携シナリオ
+
+1. **Claudeからの呼び出し**:
+   ```bash
+   gemini <<EOF
+   ユーザーはReactコンポーネントのパフォーマンス改善を希望しています。
+   以下が対象のコードです。最適な改善案を提案してください。
+   [コードスニペット]
+   EOF
+   ```
+
+2. **Geminiによる提案**:
+   具体的なリファクタリング案やコードの修正案を提示
+
+3. **Claudeによる統合**:
+   Geminiの専門的な提案を統合し、ユーザーに分かりやすく提示
