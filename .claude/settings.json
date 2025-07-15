@@ -152,6 +152,5 @@
       "Bash(npx:*)"
     ]
   },
-  "model": "opus",
-  "theme": "dark"
+  "model": "opus"
 }
