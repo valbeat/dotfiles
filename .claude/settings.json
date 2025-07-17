@@ -142,6 +142,7 @@
       "Bash(kopia:*)",
       "Bash(borg:*)",
       "Bash(find:*)",
+      "Bash(gemini:*)",
       "Read(**)",
       "Edit(**)",
       "Grep(**)",
