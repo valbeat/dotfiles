@@ -1,1 +1,1 @@
-対話をもとに CLAUDE.md を更新してください。
+Please update CLAUDE.md based on the conversation.
