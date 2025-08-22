@@ -58,22 +58,18 @@ Update PR #<pr-number>
    ## Summary
    [変更の概要を1-3文で記載]
    
-   ## Changes
-   - [主要な変更点をリスト形式で]
-   - [機能ごとにグループ化]
+   ## What Changed
+   [主要な変更点のみをシンプルに記載]
    
-   ## Technical Details
-   - [実装の詳細や技術的な判断]
-   - [パフォーマンスへの影響]
-   - [破壊的変更がある場合はその説明]
+   ## Why
+   [変更の理由や背景（必要に応じて）]
    
    ## Testing
-   - [追加/変更されたテスト]
-   - [テスト結果]
+   - [ ] テスト済み
+   - [ ] 関連テストを追加/更新
    
    ## Related Issues
-   - Fixes #<issue-number> (該当する場合)
-   - Related to #<issue-number>
+   Closes #<issue-number> (該当する場合)
    ```
 
 7. **PRの更新**
@@ -130,10 +126,10 @@ EOF
 
 ### 説明文
 - **Summary**: 何を・なぜ変更したかを簡潔に
-- **Changes**: 具体的な変更内容をリスト化
-- **Technical Details**: 実装の詳細（必要に応じて）
+- **What Changed**: 主要な変更点のみ記載
+- **Why**: 変更の理由（必要に応じて）
 - **Breaking Changes**: 破壊的変更がある場合は明記
-- **Testing**: テスト内容や結果
+- **Testing**: テスト状況をチェックボックスで
 
 ## Notes
 

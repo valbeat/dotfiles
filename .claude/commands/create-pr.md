@@ -84,28 +84,18 @@ Create PR
    ## Summary
    [変更の概要を自動生成]
    
-   ## Changes
-   [コミットメッセージから主要な変更を抽出]
-   - feat: 新機能の追加
-   - fix: バグ修正
-   - refactor: リファクタリング
-   - docs: ドキュメント更新
-   
-   ## Commits
-   [すべてのコミットをリスト]
-   
-   ## Files Changed
-   - [変更されたファイルの要約]
-   - Added: X files
-   - Modified: Y files
-   - Deleted: Z files
+   ## What Changed
+   [コミットメッセージから主要な変更を抽出してシンプルに記載]
+   - 新機能の追加内容
+   - 修正した問題
+   - 改善点
    
    ## Testing
    - [ ] ローカルでテスト済み
-   - [ ] CI/CDパイプラインの確認
+   - [ ] 関連するテストを追加/更新
    
    ## Related Issues
-   [コミットメッセージから Issue 番号を抽出]
+   Closes #<issue-number> (該当する場合)
    ```
 
 7. **ブランチをプッシュ**
@@ -152,10 +142,9 @@ Create PR
 
 ### 説明文生成
 1. **Summary**: 変更の目的と影響を1-3文で要約
-2. **Changes**: コミットメッセージをタイプ別にグループ化
-3. **Technical Details**: 重要な実装詳細を抽出
-4. **Breaking Changes**: "BREAKING CHANGE" を含むコミットを強調
-5. **Issue References**: #番号 パターンを自動検出
+2. **What Changed**: 主要な変更点のみをシンプルに記載
+3. **Breaking Changes**: "BREAKING CHANGE" を含む場合のみ追加
+4. **Issue References**: #番号 パターンを自動検出
 
 ## Gemini連携オプション
 
