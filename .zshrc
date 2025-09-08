@@ -904,5 +904,4 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
 
-alias claude="/Users/takuma/.claude/local/claude"
 export PATH="$HOME/.claude/local:$PATH"
