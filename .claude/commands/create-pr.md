@@ -121,7 +121,23 @@ Create PR
    
    ## Related Issues
    [コミットメッセージから Issue 番号を抽出]
+
+   ## Architecture & Flow Diagram
+   ```mermaid
+   [変更内容に応じて以下のいずれかを自動生成]
+   - Architecture changes (if any)
+   - Data flow modifications
+   - Component relationships
+   - Process flows affected by the changes
    ```
+   ```
+
+6. **Mermaid図を自動生成**
+   変更内容を分析して適切なMermaid図を自動生成する：
+   - アーキテクチャ変更図
+   - データフロー変更図
+   - コンポーネント関係図
+   - 影響を受けるプロセスフロー図
 
 7. **ブランチをプッシュ**
    ```bash
