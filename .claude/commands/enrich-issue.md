@@ -1,6 +1,14 @@
 # Enrich Issue
 
-GitHub Issueの内容を分析し、プロジェクトのドキュメントやコーディング規約を参照して実装計画や仕様を詳細に補足する。
+## Context
+
+- Current repository: !`gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "Not a GitHub repository"`
+- Project documentation: @.claude/CLAUDE.md
+- Codebase structure: Available for analysis to provide implementation guidance
+
+## Your task
+
+GitHub Issueの内容を分析し、プロジェクトのドキュメントやコーディング規約を参照して実装計画や仕様を詳細に補足する。Issue を開発者にとってより実行可能な形に強化する。
 
 ## Usage
 ```

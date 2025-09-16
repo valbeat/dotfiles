@@ -1,6 +1,15 @@
 # Fix GitHub Issue
 
-Analyze and fix a GitHub issue by its issue number.
+## Context
+
+- Current repository: !`gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "Not a GitHub repository"`
+- Current branch: !`git branch --show-current`
+- Project standards: @.claude/CLAUDE.md
+- TDD approach: Follow t-wada's TDD methodology when applicable
+
+## Your task
+
+Analyze and fix a GitHub issue by its issue number. Understand the problem, implement a solution following project standards, and ensure proper testing.
 
 ## Usage
 ```
