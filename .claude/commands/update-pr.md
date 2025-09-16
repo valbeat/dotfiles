@@ -5,7 +5,16 @@ description: Update GitHub PR title and description based on changes
 
 # Update PR
 
-GitHub PRのタイトルと説明を、ベースブランチとの差分やコミットメッセージを基に自動更新する。
+## Context
+
+- Current repository: !`gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "Not a GitHub repository"`
+- Current branch: !`git branch --show-current`
+- Recent commits: !`git log --oneline -5`
+- Conventional commit format: Follow project standards
+
+## Your task
+
+GitHub PRのタイトルと説明を、ベースブランチとの差分やコミットメッセージを基に自動更新する。変更内容を分析して適切なPR説明を生成する。
 
 ## Usage
 ```

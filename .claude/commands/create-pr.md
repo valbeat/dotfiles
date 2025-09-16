@@ -5,7 +5,17 @@ description: Create PR from current branch with auto-generated content
 
 # Create PR
 
-現在のブランチから、差分とコミットメッセージを基にPRを自動作成する。
+## Context
+
+- Current repository: !`gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "Not a GitHub repository"`
+- Current branch: !`git branch --show-current`
+- Git status: !`git status --porcelain`
+- Recent commits: !`git log --oneline -5`
+- Git workflow: Follow CLAUDE.md conventions for PR creation
+
+## Your task
+
+現在のブランチから、差分とコミットメッセージを基にPRを自動作成する。変更内容を分析し、適切なタイトルと説明を生成してドラフトPRを作成する。
 
 ## Usage
 ```

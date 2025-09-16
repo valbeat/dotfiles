@@ -5,7 +5,16 @@ description: Comprehensively handle GitHub PR fixes (CI failures, conflicts, rev
 
 # Fix PR
 
-Comprehensively handle GitHub PR fixes (CI failures, conflicts, review comments, etc.).
+## Context
+
+- Current repository: !`gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "Not a GitHub repository"`
+- Current branch: !`git branch --show-current`
+- Git status: !`git status --porcelain`
+- Project standards: @.claude/CLAUDE.md
+
+## Your task
+
+Comprehensively handle GitHub PR fixes including CI failures, merge conflicts, review comments, and other PR-related issues. Analyze the PR state and implement appropriate fixes.
 
 ## Usage
 ```

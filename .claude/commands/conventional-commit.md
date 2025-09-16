@@ -5,7 +5,16 @@ description: Make a commit following Conventional Commits specification
 
 # Conventional Commit Command
 
-Make a commit following the Conventional Commits specification.
+## Context
+
+- Current changes: !`git status`
+- Staged changes: !`git diff --cached`
+- Recent commits: !`git log --oneline -5`
+- Project conventions: Follow Conventional Commits specification
+
+## Your task
+
+Make a commit following the Conventional Commits specification. Check current changes, stage appropriate files, and create a properly formatted commit message.
 
 ## Steps
 
