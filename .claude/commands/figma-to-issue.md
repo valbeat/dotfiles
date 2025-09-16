@@ -1,3 +1,8 @@
+---
+allowed-tools: Bash(gh:*)
+description: Generate GitHub issues from selected Figma components using Dev Mode MCP
+---
+
 # Figma Component to Issue
 
 Figma Dev Mode MCP を使用して、選択中のコンポーネントの実装用 GitHub Issue を自動生成する。

@@ -1,3 +1,8 @@
+---
+allowed-tools: Bash(git:*)
+description: Make a commit following Conventional Commits specification
+---
+
 # Conventional Commit Command
 
 Make a commit following the Conventional Commits specification.

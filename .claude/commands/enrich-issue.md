@@ -1,3 +1,8 @@
+---
+allowed-tools: Read, Bash(gh:*), Glob, Grep
+description: Analyze GitHub Issue and enrich with implementation details
+---
+
 # Enrich Issue
 
 GitHub Issueの内容を分析し、プロジェクトのドキュメントやコーディング規約を参照して実装計画や仕様を詳細に補足する。

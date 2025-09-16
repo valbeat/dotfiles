@@ -1,3 +1,8 @@
+---
+allowed-tools: Read, Write, Edit, Bash(gh:*), Bash(git:*), Glob, Grep
+description: Analyze and fix a GitHub issue by its issue number
+---
+
 # Fix GitHub Issue
 
 Analyze and fix a GitHub issue by its issue number.
