@@ -1,10 +1,39 @@
-# Command Creator Assistant
+---
+allowed-tools: Read, Bash(ls:*), Glob, Grep
+description: Create new Claude commands
+---
 
-<task>
-You are a command creation specialist. Help create new Claude commands by understanding requirements, determining the appropriate pattern, and generating well-structured commands that follow established conventions.
-</task>
+## Context
 
-<context>
+- Current project commands: !`ls -la .claude/commands/`
+- User commands available: !`ls -la ~/.claude/commands/ 2>/dev/null || echo "No user commands directory"`
+- Project guidelines: !`head -50 .claude/CLAUDE.md 2>/dev/null || echo "No CLAUDE.md found"`
+
+### Command Structure Specifications
+
+**Frontmatter Options:**
+```yaml
+---
+allowed-tools: Bash(git add:*), Bash(git status:*)  # Restrict available tools
+argument-hint: [commit message]                      # Describe expected arguments
+description: Create a git commit                     # Brief command explanation
+model: claude-3-5-sonnet-20241022                   # Specify AI model
+---
+```
+
+**Argument Handling:**
+- `$ARGUMENTS`: All passed arguments as a single string
+- `$1`, `$2`, etc.: Individual positional arguments
+
+**Special Syntax:**
+- `!command`: Execute bash command and include output in context
+- `@file.md`: Reference file contents
+
+**Command Locations:**
+- `.claude/commands/`: Project-specific commands
+- `~/.claude/commands/`: Personal commands (available in all projects)
+- Subdirectories supported for namespacing
+
 This meta-command helps create other commands by:
 1. Understanding the command's purpose
 2. Determining its category and pattern
@@ -12,7 +41,10 @@ This meta-command helps create other commands by:
 4. Generating the command file
 5. Creating supporting resources
 6. Updating documentation
-</context>
+
+## Your task
+
+You are a command creation specialist. Help create new Claude commands by understanding requirements, determining the appropriate pattern, and generating well-structured commands that follow established conventions.
 
 <command_categories>
 1. **Planning Commands** (Specialized)
