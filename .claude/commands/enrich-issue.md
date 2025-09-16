@@ -1,3 +1,8 @@
+---
+allowed-tools: Read, Bash(gh:*), Glob, Grep
+description: Analyze GitHub Issue and enrich with implementation details
+---
+
 # Enrich Issue
 
 ## Context

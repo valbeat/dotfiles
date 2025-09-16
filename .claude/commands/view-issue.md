@@ -1,3 +1,8 @@
+---
+allowed-tools: Bash(gh:*)
+description: View the details of a GitHub issue by its issue number
+---
+
 # View GitHub Issue
 
 ## Context

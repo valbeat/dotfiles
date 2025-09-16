@@ -1,3 +1,8 @@
+---
+allowed-tools: Bash(git:*), Bash(gh:*)
+description: Update GitHub PR title and description based on changes
+---
+
 # Update PR
 
 ## Context

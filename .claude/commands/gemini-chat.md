@@ -1,3 +1,8 @@
+---
+allowed-tools: Bash(gemini:*)
+description: Execute Gemini CLI for AI-powered conversations and code assistance
+---
+
 # Gemini Chat
 
 ## Context

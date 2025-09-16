@@ -1,3 +1,8 @@
+---
+allowed-tools: Bash(gh:*)
+description: Generate GitHub issues from selected Figma components using Dev Mode MCP
+---
+
 # Figma Component to Issue
 
 ## Context

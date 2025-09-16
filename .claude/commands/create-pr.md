@@ -1,3 +1,8 @@
+---
+allowed-tools: Bash(git:*), Bash(gh:*)
+description: Create PR from current branch with auto-generated content
+---
+
 # Create PR
 
 ## Context

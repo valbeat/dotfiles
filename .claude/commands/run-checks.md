@@ -1,3 +1,8 @@
+---
+allowed-tools: Read, Bash
+description: Execute all project quality checks including linter, formatter, tests
+---
+
 # Run Project Checks
 
 ## Context

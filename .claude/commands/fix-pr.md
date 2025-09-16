@@ -1,3 +1,8 @@
+---
+allowed-tools: Read, Write, Edit, Bash(git:*), Bash(gh:*), Glob, Grep
+description: Comprehensively handle GitHub PR fixes (CI failures, conflicts, reviews)
+---
+
 # Fix PR
 
 ## Context
