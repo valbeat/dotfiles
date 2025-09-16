@@ -1,6 +1,19 @@
+---
+allowed-tools: Bash(gemini:*)
+description: Execute Gemini CLI for AI-powered conversations and code assistance
+---
+
 # Gemini Chat
 
-Execute Gemini CLI and interact with it from Claude for AI-powered conversations and code assistance.
+## Context
+
+- Gemini CLI integration: CLAUDE.md specifies collaboration workflows
+- Current project: !`pwd`
+- Available for code assistance, analysis, and collaborative problem-solving
+
+## Your task
+
+Execute Gemini CLI and interact with it from Claude for AI-powered conversations and code assistance. Follow the collaboration patterns defined in CLAUDE.md.
 
 ## Arguments
 

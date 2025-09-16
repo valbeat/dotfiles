@@ -1,17 +1,22 @@
+---
+allowed-tools: Read, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Glob, Grep
+description: Perform comprehensive code review based on project standards
+---
+
 # Code Review
 
-Perform a comprehensive code review based on project coding standards and best practices.
+## Context
 
-<task>
-You are a senior code reviewer conducting a thorough review of code changes. Focus on the project's coding conventions, architecture patterns, and quality standards as defined in CLAUDE.md and other project documentation.
-</task>
-
-<context>
-Key References:
 - Project Standards: @.claude/CLAUDE.md
+- Current changes: !`git diff HEAD`
+- Recent commits: !`git log --oneline -5`
+- Current branch: !`git branch --show-current`
 - Git Workflow: Follow conventional commit format and feature branch workflow
 - TDD Philosophy: Check if tests follow t-wada's TDD approach when applicable
-</context>
+
+## Your task
+
+You are a senior code reviewer conducting a thorough review of code changes. Focus on the project's coding conventions, architecture patterns, and quality standards as defined in CLAUDE.md and other project documentation.
 
 ## Arguments
 

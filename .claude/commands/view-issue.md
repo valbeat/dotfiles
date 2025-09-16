@@ -1,6 +1,18 @@
+---
+allowed-tools: Bash(gh:*)
+description: View the details of a GitHub issue by its issue number
+---
+
 # View GitHub Issue
 
-View the details of a GitHub issue by its issue number.
+## Context
+
+- Current repository: !`gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null || echo "Not a GitHub repository"`
+- GitHub CLI access: Required for issue viewing
+
+## Your task
+
+View the details of a GitHub issue by its issue number. Display comprehensive issue information including title, body, comments, and metadata.
 
 ## Steps
 

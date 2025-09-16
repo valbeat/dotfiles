@@ -1,6 +1,19 @@
+---
+allowed-tools: Read, Bash
+description: Execute all project quality checks including linter, formatter, tests
+---
+
 # Run Project Checks
 
-Execute all project quality checks including linter, formatter, tests, type checking, and static analysis.
+## Context
+
+- Project type detection: !`ls package.json Makefile pyproject.toml setup.cfg 2>/dev/null || echo "No standard project files found"`
+- Current directory: !`pwd`
+- Available check commands vary by project type
+
+## Your task
+
+Execute all project quality checks including linter, formatter, tests, type checking, and static analysis. Identify the project type and run appropriate checks.
 
 ## Steps
 
