@@ -15,7 +15,7 @@ description: Create PR from current branch with auto-generated content
 
 ## Your task
 
-現在のブランチから、差分とコミットメッセージを基にPRを自動作成する。変更内容を分析し、適切なタイトルと説明を生成してドラフトPRを作成する。
+現在のブランチから、差分とコミットメッセージを基にPRを自動作成する。**まず、プロジェクトのPRテンプレートが存在するかを確認し、存在する場合はそのフォーマットに従うことを最優先とする。**テンプレートがない場合は、変更内容を分析し、適切なタイトルと説明を生成してドラフトPRを作成する。
 
 ## Usage
 ```
@@ -28,6 +28,37 @@ Create PR
 - `--no-draft`: ドラフトではなく通常のPRとして作成
 
 ## Steps
+
+0. **PRテンプレートの確認（最優先）**
+   ```bash
+   # GitHubのPRテンプレートの存在確認（優先順位順）
+   # 1. .github/PULL_REQUEST_TEMPLATE.md
+   # 2. .github/pull_request_template.md
+   # 3. .github/PULL_REQUEST_TEMPLATE/*.md
+   # 4. docs/PULL_REQUEST_TEMPLATE.md
+
+   # テンプレートファイルを検索
+   if [ -f .github/PULL_REQUEST_TEMPLATE.md ]; then
+     TEMPLATE_FILE=".github/PULL_REQUEST_TEMPLATE.md"
+   elif [ -f .github/pull_request_template.md ]; then
+     TEMPLATE_FILE=".github/pull_request_template.md"
+   elif [ -d .github/PULL_REQUEST_TEMPLATE ]; then
+     TEMPLATE_FILE=$(ls .github/PULL_REQUEST_TEMPLATE/*.md | head -1)
+   elif [ -f docs/PULL_REQUEST_TEMPLATE.md ]; then
+     TEMPLATE_FILE="docs/PULL_REQUEST_TEMPLATE.md"
+   else
+     TEMPLATE_FILE=""
+   fi
+
+   # テンプレートが見つかった場合は、その内容を読み込んで構造を理解する
+   if [ -n "$TEMPLATE_FILE" ]; then
+     echo "PRテンプレートが見つかりました: $TEMPLATE_FILE"
+     cat "$TEMPLATE_FILE"
+     # このテンプレートの構造に従ってPR説明文を生成する
+   fi
+   ```
+
+   **重要**: テンプレートが存在する場合は、以下のステップで生成する説明文をテンプレートの構造に合わせて調整すること。テンプレートのセクション構成、見出しスタイル、チェックリスト形式などを厳密に踏襲する。
 
 1. **現在のブランチと状態を確認**
    ```bash
@@ -95,30 +126,39 @@ Create PR
    ```
 
 6. **PR説明文を生成**
+
+   **PRテンプレートの優先**: Step 0 でPRテンプレートが見つかった場合は、そのテンプレートの構造を厳密に踏襲すること。テンプレートがない場合、または補足として、以下も参考にする：
+
+   ```bash
+   # 既存のマージ済みPRから学習（プロジェクトのPRスタイルを把握）
+   gh pr list --state merged --limit 3 --json number,title,body
+   ```
+
+   **デフォルトの構造**（テンプレートがない場合）:
    ```markdown
    ## Summary
    [変更の概要を自動生成]
-   
+
    ## Changes
    [コミットメッセージから主要な変更を抽出]
    - feat: 新機能の追加
    - fix: バグ修正
    - refactor: リファクタリング
    - docs: ドキュメント更新
-   
+
    ## Commits
    [すべてのコミットをリスト]
-   
+
    ## Files Changed
    - [変更されたファイルの要約]
    - Added: X files
    - Modified: Y files
    - Deleted: Z files
-   
+
    ## Testing
    - [ ] ローカルでテスト済み
    - [ ] CI/CDパイプラインの確認
-   
+
    ## Related Issues
    [コミットメッセージから Issue 番号を抽出]
 
@@ -219,6 +259,8 @@ EOF
 
 ## Notes
 
+- **最優先事項**: プロジェクトのPRテンプレートが存在する場合は、そのフォーマットを厳密に踏襲する
+- 既存のマージ済みPRから学習し、プロジェクト固有のPRスタイルを把握する
 - CLAUDE.md の Git Workflow セクションに従って `--assignee @me --draft` を使用
 - デフォルトでドラフトPRとして作成（CLAUDE.mdの指定通り）
 - PR作成後、必要に応じて手動でレビュー準備完了にする
