@@ -37,25 +37,19 @@ Create PR
    # 3. .github/PULL_REQUEST_TEMPLATE/*.md
    # 4. docs/PULL_REQUEST_TEMPLATE.md
 
-   # テンプレートファイルを検索
-   if [ -f .github/PULL_REQUEST_TEMPLATE.md ]; then
-     TEMPLATE_FILE=".github/PULL_REQUEST_TEMPLATE.md"
-   elif [ -f .github/pull_request_template.md ]; then
-     TEMPLATE_FILE=".github/pull_request_template.md"
-   elif [ -d .github/PULL_REQUEST_TEMPLATE ]; then
-     TEMPLATE_FILE=$(ls .github/PULL_REQUEST_TEMPLATE/*.md | head -1)
-   elif [ -f docs/PULL_REQUEST_TEMPLATE.md ]; then
-     TEMPLATE_FILE="docs/PULL_REQUEST_TEMPLATE.md"
-   else
-     TEMPLATE_FILE=""
-   fi
+   # テンプレートファイルを検索（シンプルで堅牢な方法）
+   TEMPLATE_FILE=""
+   for f in .github/PULL_REQUEST_TEMPLATE.md .github/pull_request_template.md .github/PULL_REQUEST_TEMPLATE/*.md docs/PULL_REQUEST_TEMPLATE.md; do
+     if [ -f "$f" ]; then
+       TEMPLATE_FILE="$f"
+       echo "PRテンプレートが見つかりました: $TEMPLATE_FILE"
+       cat "$TEMPLATE_FILE"
+       break
+     fi
+   done
 
-   # テンプレートが見つかった場合は、その内容を読み込んで構造を理解する
-   if [ -n "$TEMPLATE_FILE" ]; then
-     echo "PRテンプレートが見つかりました: $TEMPLATE_FILE"
-     cat "$TEMPLATE_FILE"
-     # このテンプレートの構造に従ってPR説明文を生成する
-   fi
+   # テンプレートが見つからなかった場合
+   [ -z "$TEMPLATE_FILE" ] && echo "PRテンプレートが見つかりませんでした。デフォルトフォーマットを使用します。"
    ```
 
    **重要**: テンプレートが存在する場合は、以下のステップで生成する説明文をテンプレートの構造に合わせて調整すること。テンプレートのセクション構成、見出しスタイル、チェックリスト形式などを厳密に踏襲する。
