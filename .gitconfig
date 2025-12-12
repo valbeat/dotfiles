@@ -109,7 +109,7 @@
 
   n  = now --all --stat
 
-  new = "!f() { b=\"$1\"; d=\"${b//\\//__}\"; k=\"$(git remote get-url origin | sed -E 's#(git@|https://)([^:/]+)[:/](.+)/(.+)\\.git#\\2/\\3/\\4#')\"; p=\"$HOME/worktree/$k/$d\"; mkdir -p \"$(dirname \"$p\")\" && git worktree add -b \"$b\" \"$p\" HEAD && [ -d \".claude\" ] && cp -a \".claude\" \"$p/\"; }; f"
+  new = "!f() { b=\"$1\"; d=\"${b//\\//__}\"; k=\"$(git remote get-url origin | sed -E 's#(git@|https://)([^:/]+)[:/](.+)/(.+)\\.git#\\2/\\3/\\4#')\"; p=\"$HOME/worktree/$k/$d\"; current=$(git branch --show-current); mkdir -p \"$(dirname \"$p\")\" && git worktree add -b \"$b\" \"$p\" \"$current\" && [ -d \".claude\" ] && cp -a \".claude\" \"$p/\"; }; f"
 
   p = !git push origin `git rev-parse --abbrev-ref HEAD`
 
