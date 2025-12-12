@@ -52,6 +52,9 @@
   [ -n \"$branch\" ] && git branch -d \"$branch\"; \
 }; f"
 
+  # ワークツリーを選択して移動する
+  cw = "!f() { path=$(git worktree list --porcelain | awk '$1==\"worktree\"{p=$2} $1==\"branch\"{print $2 \"\\t\" p}' | sed 's#refs/heads/##' | fzf --with-nth=1 --delimiter=$'\\t' | cut -f2); [ -n \"$path\" ] && cd \"$path\"; }; f"
+
   br = branch
 
   # commit messageの自動生成つきcommit
@@ -109,7 +112,8 @@
 
   n  = now --all --stat
 
-  new = "!f() { b=\"$1\"; d=\"${b//\\//__}\"; k=\"$(git remote get-url origin | sed -E 's#(git@|https://)([^:/]+)[:/](.+)/(.+)\\.git#\\2/\\3/\\4#')\"; p=\"$HOME/worktree/$k/$d\"; current=$(git branch --show-current); mkdir -p \"$(dirname \"$p\")\" && git worktree add -b \"$b\" \"$p\" \"$current\" && [ -d \".claude\" ] && cp -a \".claude\" \"$p/\"; }; f"
+  # ワークツリーを作成して移動する
+  wt = "!f() { b=\"$1\"; d=\"${b//\\//__}\"; k=\"$(git remote get-url origin | sed -E 's#(git@|https://)([^:/]+)[:/](.+)/(.+)\\.git#\\2/\\3/\\4#')\"; p=\"$HOME/worktree/$k/$d\"; current=$(git branch --show-current); mkdir -p \"$(dirname \"$p\")\" && git worktree add -b \"$b\" \"$p\" \"$current\" && [ -d \".claude\" ] && cp -a \".claude\" \"$p/\" && cd \"$p\"; }; f"
 
   p = !git push origin `git rev-parse --abbrev-ref HEAD`
 
