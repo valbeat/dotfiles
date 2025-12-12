@@ -740,6 +740,26 @@ function git-root() {
   fi
 }
 
+# ワークツリーを作成して移動する
+function git-worktree-new() {
+  local branch_name="$1"
+  local directory_name="${branch_name//\//__}"
+  local repository_key="$(git remote get-url origin | sed -E 's#(git@|https://)([^:/]+)[:/](.+)/(.+)\.git#\2/\3/\4#')"
+  local worktree_path="$HOME/worktree/$repository_key/$directory_name"
+  local current_branch="$(git branch --show-current)"
+  
+  mkdir -p "$(dirname "$worktree_path")" && \
+  git worktree add -b "$branch_name" "$worktree_path" "$current_branch" && \
+  [ -d ".claude" ] && cp -a ".claude" "$worktree_path/" && \
+  cd "$worktree_path"
+}
+
+# ワークツリーを選択して移動する
+function git-worktree-change() {
+  local selected_path=$(git worktree list --porcelain | awk '$1=="worktree"{path=$2} $1=="branch"{print $2 "\t" path}' | sed 's#refs/heads/##' | fzf --with-nth=1 --delimiter=$'\t' | cut -f2)
+  [ -n "$selected_path" ] && cd "$selected_path"
+}
+
 # Finderのアクティブウィンドウのパスにターミナルで移動
 function cdf () {
   target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
