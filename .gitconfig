@@ -44,7 +44,7 @@
 	textconv = sops -d
 
 [alias]
-  alias = !git config --list | grep ^alias\\.
+  alias = !git config --list | grep ^alias\\. | sed 's/^alias\\.//g'
 
   # ブランチを選択して削除する
   bd = "!f() { \
