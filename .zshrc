@@ -740,7 +740,7 @@ function git-root() {
   fi
 }
 
-# ワークツリーを作成して移動する
+# ワークツリーを作成して移動する (git wt)
 function git-worktree-new() {
   local branch_name="$1"
   local directory_name="${branch_name//\//__}"
@@ -754,10 +754,31 @@ function git-worktree-new() {
   cd "$worktree_path"
 }
 
-# ワークツリーを選択して移動する
+# ワークツリーを選択して移動する (git wc)
 function git-worktree-change() {
   local selected_path=$(git worktree list --porcelain | awk '$1=="worktree"{path=$2} $1=="branch"{print $2 "\t" path}' | sed 's#refs/heads/##' | fzf --with-nth=1 --delimiter=$'\t' | cut -f2)
   [ -n "$selected_path" ] && cd "$selected_path"
+}
+
+# Git カスタムサブコマンドのラッパー
+# Git のサブコマンドは PATH の実行可能ファイルとして認識されるため、
+# .zshrc の関数は直接呼び出せない。また、cd を親シェルで実行するために
+# git コマンド自体をラップして、カスタムサブコマンドをインターセプトする。
+# 新しいカスタムサブコマンドを追加する場合は case 文に追加
+git() {
+  case "$1" in
+    wt)
+      shift
+      git-worktree-new "$@"
+      ;;
+    wc)
+      shift
+      git-worktree-change "$@"
+      ;;
+    *)
+      command git "$@"
+      ;;
+  esac
 }
 
 # Finderのアクティブウィンドウのパスにターミナルで移動

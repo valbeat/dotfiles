@@ -52,9 +52,6 @@
   [ -n \"$branch\" ] && git branch -d \"$branch\"; \
 }; f"
 
-  # ワークツリーを選択して移動する
-  cw = "!git-worktree-change"
-
   br = branch
 
   # commit messageの自動生成つきcommit
@@ -113,7 +110,6 @@
   n  = now --all --stat
 
   # ワークツリーを作成して移動する
-  wt = "!git-worktree-new"
 
   p = !git push origin `git rev-parse --abbrev-ref HEAD`
 
