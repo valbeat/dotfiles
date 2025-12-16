@@ -743,11 +743,23 @@ function git-root() {
 # ワークツリーを作成して移動する (git wt)
 function git-worktree-new() {
   local branch_name="$1"
+
+  # ブランチ名が指定されていない場合は入力を求める
+  if [ -z "$branch_name" ]; then
+    echo -n "ブランチ名を入力してください: "
+    read branch_name
+    # 入力が空の場合は終了
+    if [ -z "$branch_name" ]; then
+      echo "ブランチ名が入力されませんでした。"
+      return 1
+    fi
+  fi
+
   local directory_name="${branch_name//\//__}"
   local repository_key="$(git remote get-url origin | sed -E 's#^(git@|https://|ssh://)([^:/]+)(:[0-9]+)?[:/](.+)\.git$#\2/\4#' | tr ':' '-')"
   local worktree_path="$HOME/worktree/$repository_key/$directory_name"
   local current_branch="$(git branch --show-current)"
-  
+
   mkdir -p "$(dirname "$worktree_path")" && \
   git worktree add -b "$branch_name" "$worktree_path" "$current_branch" && \
   [ -d ".claude" ] && cp -a ".claude" "$worktree_path/" && \
