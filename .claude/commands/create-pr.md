@@ -37,21 +37,6 @@ Create PR
    # 3. .github/PULL_REQUEST_TEMPLATE/*.md
    # 4. docs/PULL_REQUEST_TEMPLATE.md
 
-   # テンプレートファイルを検索（シンプルで堅牢な方法）
-   TEMPLATE_FILE=""
-   for f in .github/PULL_REQUEST_TEMPLATE.md .github/pull_request_template.md .github/PULL_REQUEST_TEMPLATE/*.md docs/PULL_REQUEST_TEMPLATE.md; do
-     if [ -f "$f" ]; then
-       TEMPLATE_FILE="$f"
-       echo "PRテンプレートが見つかりました: $TEMPLATE_FILE"
-       cat "$TEMPLATE_FILE"
-       break
-     fi
-   done
-
-   # テンプレートが見つからなかった場合
-   [ -z "$TEMPLATE_FILE" ] && echo "PRテンプレートが見つかりませんでした。デフォルトフォーマットを使用します。"
-   ```
-
    **重要**: テンプレートが存在する場合は、以下のステップで生成する説明文をテンプレートの構造に合わせて調整すること。テンプレートのセクション構成、見出しスタイル、チェックリスト形式などを厳密に踏襲する。
 
 1. **現在のブランチと状態を確認**
