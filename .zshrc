@@ -744,7 +744,7 @@ function git-root() {
 function git-worktree-new() {
   local branch_name="$1"
   local directory_name="${branch_name//\//__}"
-  local repository_key="$(git remote get-url origin | sed -E 's#(git@|https://)([^:/]+)[:/](.+)/(.+)\.git#\2/\3/\4#')"
+  local repository_key="$(git remote get-url origin | sed -E 's#^(git@|https://|ssh://)([^:/]+)(:[0-9]+)?[:/](.+)\.git$#\2/\4#' | tr ':' '-')"
   local worktree_path="$HOME/worktree/$repository_key/$directory_name"
   local current_branch="$(git branch --show-current)"
   
