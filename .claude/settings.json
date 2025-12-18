@@ -150,7 +150,6 @@
       "Glob(**)",
       "LS(**)",
       "WebFetch(domain:*)",
-      "WebSearch(*)",
       "Bash(npx:*)"
     ]
   },
