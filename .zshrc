@@ -758,10 +758,16 @@ function git-worktree-new() {
   local directory_name="${branch_name//\//__}"
   local repository_key="$(git remote get-url origin | sed -E 's#^(git@|https://|ssh://)([^:/]+)(:[0-9]+)?[:/](.+)\.git$#\2/\4#' | tr ':' '-')"
   local worktree_path="$HOME/worktree/$repository_key/$directory_name"
-  local current_branch="$(git branch --show-current)"
+
+  # リポジトリのデフォルトブランチを取得
+  local base_branch="$(gh repo view --json defaultBranchRef -q '.defaultBranchRef.name' 2>/dev/null)"
+  if [ -z "$base_branch" ]; then
+    echo "デフォルトブランチを取得できませんでした。"
+    return 1
+  fi
 
   mkdir -p "$(dirname "$worktree_path")" && \
-  git worktree add -b "$branch_name" "$worktree_path" "$current_branch" && \
+  git worktree add -b "$branch_name" "$worktree_path" "$base_branch" && \
   [ -d ".claude" ] && cp -a ".claude" "$worktree_path/" && \
   cd "$worktree_path"
 }
