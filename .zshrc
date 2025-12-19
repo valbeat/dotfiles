@@ -767,8 +767,8 @@ function git-worktree-new() {
   fi
 
   mkdir -p "$(dirname "$worktree_path")" && \
-  git worktree add -b "$branch_name" "$worktree_path" "$base_branch" && \
-  [ -d ".claude" ] && cp -a ".claude" "$worktree_path/" && \
+  git worktree add -b "$branch_name" "$worktree_path" "$base_branch"
+  cp .env* "$worktree_path/" 2>/dev/null
   cd "$worktree_path"
 }
 
