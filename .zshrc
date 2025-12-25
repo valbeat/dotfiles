@@ -768,7 +768,7 @@ function git-worktree-new() {
 
   mkdir -p "$(dirname "$worktree_path")" && \
   git worktree add -b "$branch_name" "$worktree_path" "$base_branch"
-  cp .env* "$worktree_path/" 2>/dev/null
+  rsync -a --include='*/' --include='.env*' --exclude='*' --prune-empty-dirs . "$worktree_path/" 2>/dev/null
   cd "$worktree_path"
 }
 
