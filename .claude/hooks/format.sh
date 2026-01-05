@@ -14,7 +14,11 @@ EXT="${FILE_PATH##*.}"
 
 case "$EXT" in
   go)
-    gofmt -w "$FILE_PATH" 2>/dev/null && echo "Formatted: $FILE_PATH"
+    if command -v goimports &>/dev/null; then
+      goimports -w "$FILE_PATH" 2>/dev/null && echo "Formatted with goimports: $FILE_PATH"
+    else
+      gofmt -w "$FILE_PATH" 2>/dev/null && echo "Formatted with gofmt: $FILE_PATH"
+    fi
     ;;
   rs)
     rustfmt "$FILE_PATH" 2>/dev/null && echo "Formatted: $FILE_PATH"
