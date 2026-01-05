@@ -155,22 +155,22 @@ When called with `--uncommitted --brief`:
 
 ```bash
 # Review branch changes (default)
-/code-review
+/review
 
 # Review uncommitted changes
-/code-review --uncommitted
+/review --uncommitted
 
 # Brief output for /impl
-/code-review --uncommitted --brief
+/review --uncommitted --brief
 
 # Review staged changes
-/code-review --staged
+/review --staged
 
 # Review specific files
-/code-review src/app.ts src/utils.ts
+/review src/app.ts src/utils.ts
 
 # Review GitHub PR
-/code-review --pr 42
+/review --pr 42
 ```
 
 ## Notes
