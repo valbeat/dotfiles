@@ -29,7 +29,7 @@ case "$EXT" in
     fi
     ;;
   json)
-    jq . "$FILE_PATH" > "$FILE_PATH.tmp" && mv "$FILE_PATH.tmp" "$FILE_PATH" && echo "Formatted: $FILE_PATH"
+    jq . "$FILE_PATH" > "$FILE_PATH.tmp.$$" && mv "$FILE_PATH.tmp.$$" "$FILE_PATH" && echo "Formatted: $FILE_PATH"
     ;;
 esac
 
