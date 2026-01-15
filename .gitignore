@@ -66,6 +66,7 @@ credentials
 !.claude/hooks/
 
 .gemini/*
+!.gemini/settings.json
 
 # Codex local artifacts
 .codex/*
