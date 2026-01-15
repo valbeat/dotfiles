@@ -66,3 +66,9 @@ credentials
 !.claude/hooks/
 
 .gemini/*
+
+# Codex local artifacts
+.codex/*
+!.codex/config.toml
+!.codex/commands/
+!.codex/commands/**
