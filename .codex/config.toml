@@ -1,6 +1,7 @@
 reasoning_level = "high"
 hide_agent_reasoning = true
 network_access = true
+web_search_request = true
+approval_policy = "on-failure"
+sandbox_mode = "workspace-write"
 
-[tools]
-web_search = true
