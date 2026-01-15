@@ -71,5 +71,4 @@ credentials
 # Codex local artifacts
 .codex/*
 !.codex/config.toml
-!.codex/commands/
-!.codex/commands/**
+!.codex/prompts/
