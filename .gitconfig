@@ -58,22 +58,7 @@
   c = "!f() { if git diff --cached --quiet; then echo 'No staged changes to commit'; else msg=$(git diff --cached | gemini -p 'Analyze this git diff and generate a concise commit message. Output only the commit message, no explanations.'); git commit -v -e -m \"$msg\"; fi }; f"
 
   # prの自動生成
-  pr = "!f() { \
-    title=$(git log -1 --pretty=%s); \
-    base_branch_ref=$(git symbolic-ref refs/remotes/origin/HEAD); \
-    if [ -z \"$base_branch_ref\" ]; then \
-      echo 'Could not determine the default remote branch.'; \
-      return 1; \
-    fi; \
-    base_branch=$(echo $base_branch_ref | sed 's@^refs/remotes/origin/@@'); \
-    diff_content=$(git diff origin/$base_branch...HEAD); \
-    if [ -z \"$diff_content\" ]; then \
-      echo 'No diff found to create a pull request.'; \
-      return 1; \
-    fi; \
-    body=$(echo \"$diff_content\" | gemini -p 'Analyze this git diff and generate a concise pull request body as a bulleted list. Output only the body, no title or explanations.'); \
-    gh pr create --title \"$title\" --body \"$body\" --draft; \
-  }; f"
+  pr = "!f() { DRAFT_MODE=\"--draft\"; echo 'Pushing current branch to origin...'; git push -u origin HEAD; if [ $? -ne 0 ]; then echo 'Failed to push branch to origin. Aborting.'; return 1; fi; BASE_BRANCH=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null); if [ -z \"$BASE_BRANCH\" ]; then BASE_BRANCH=\"main\"; fi; echo \"Using base branch: $BASE_BRANCH\"; git fetch origin; COMMIT_COUNT=$(git rev-list --count origin/$BASE_BRANCH..HEAD); if [ \"$COMMIT_COUNT\" -eq 0 ]; then echo \"No new commits on this branch compared to '$BASE_BRANCH'. Aborting.\"; return 1; fi; PR_TITLE=$(git log -1 --format=\"%s\"); PR_BODY_CONTENT=\"\"; TEMPLATE_PATH=\".github/PULL_REQUEST_TEMPLATE.md\"; if [ -f \"$TEMPLATE_PATH\" ]; then echo \"Using PR template from $TEMPLATE_PATH\"; PR_BODY_CONTENT=$(cat \"$TEMPLATE_PATH\"); else COMMITS=$(git log \"origin/$BASE_BRANCH..HEAD\" --pretty=\"format:- %s\"); PR_BODY_CONTENT=$(printf '## Summary\n\n<!-- Please add a summary of the changes. -->\n\n## Commits\n\n%s' \"$COMMITS\"); fi; echo 'Creating Pull Request...'; gh pr create --title \"$PR_TITLE\" --body \"$PR_BODY_CONTENT\" --base \"$BASE_BRANCH\" --assignee @me $DRAFT_MODE; if [ $? -eq 0 ]; then echo 'Pull Request created successfully.'; gh pr view --web; else echo 'Failed to create Pull Request.'; fi; }; f"
 
   cd = "!if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then cd `pwd`/`git rev-parse --show-cdup`; fi"
 
