@@ -1,0 +1,6 @@
+reasoning_level = "high"
+hide_agent_reasoning = true
+network_access = true
+
+[tools]
+web_search = true
