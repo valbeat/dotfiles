@@ -57,7 +57,25 @@
   # commit messageの自動生成つきcommit
   c = "!f() { if git diff --cached --quiet; then echo 'No staged changes to commit'; else msg=$(git diff --cached | gemini -p 'Analyze this git diff and generate a concise commit message. Output only the commit message, no explanations.'); git commit -v -e -m \"$msg\"; fi }; f"
 
-  cd = !"if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then cd `pwd`/`git rev-parse --show-cdup`; fi"
+  # prの自動生成
+  pr = "!f() { \
+    title=$(git log -1 --pretty=%s); \
+    base_branch_ref=$(git symbolic-ref refs/remotes/origin/HEAD); \
+    if [ -z \"$base_branch_ref\" ]; then \
+      echo 'Could not determine the default remote branch.'; \
+      return 1; \
+    fi; \
+    base_branch=$(echo $base_branch_ref | sed 's@^refs/remotes/origin/@@'); \
+    diff_content=$(git diff origin/$base_branch...HEAD); \
+    if [ -z \"$diff_content\" ]; then \
+      echo 'No diff found to create a pull request.'; \
+      return 1; \
+    fi; \
+    body=$(echo \"$diff_content\" | gemini -p 'Analyze this git diff and generate a concise pull request body as a bulleted list. Output only the body, no title or explanations.'); \
+    gh pr create --title \"$title\" --body \"$body\" --draft; \
+  }; f"
+
+  cd = "!if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then cd `pwd`/`git rev-parse --show-cdup`; fi"
 
   cds = !"cd $(git submodule | fzf | awk '{print $2}')"
 
