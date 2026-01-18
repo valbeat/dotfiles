@@ -4,3 +4,6 @@ network_access = true
 web_search_request = true
 approval_policy = "on-failure"
 
+[mcp_servers.figma-dev-mode-mcp-server]
+command = "npx"
+args = ["-y", "mcp-remote", "http://127.0.0.1:3845/mcp"]
