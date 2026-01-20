@@ -67,6 +67,8 @@ credentials
 
 .gemini/*
 !.gemini/settings.json
+!.gemini/GEMINI.md
+!.gemini/commands/
 
 # Codex local artifacts
 .codex/*

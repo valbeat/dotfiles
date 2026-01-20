@@ -1,0 +1,36 @@
+description = "Create PR from current branch with auto-generated title and description"
+prompt = """
+現在のブランチからPRを自動作成してください。
+
+## Context
+- Current branch: !{git branch --show-current}
+- Default branch: !{gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null || echo "main"}
+- Commits: !{git log origin/$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null || echo "main")..HEAD --pretty="format:%s" 2>/dev/null || echo "No commits"}
+
+## Steps
+
+1. **ブランチをプッシュ**
+   ```bash
+   git push -u origin HEAD
+   ```
+
+2. **PRタイトルと説明を生成**
+   - コミットメッセージを分析し、Conventional Commit形式のタイトルを生成
+   - Summary（1-2文）と Changes（箇条書き）を含む説明文を生成
+
+3. **PRを作成**
+   ```bash
+   gh pr create --title "<generated_title>" --body "<generated_body>" --base <default_branch> --assignee @me --draft
+   ```
+
+4. **作成したPRを表示**
+   ```bash
+   gh pr view --web
+   ```
+
+## Rules
+- タイトルはConventional Commit形式（feat:, fix:, chore: など）
+- 説明文は ## Summary と ## Changes セクションを含む
+- --draft フラグを必ず使用
+- --assignee @me を必ず使用
+"""
