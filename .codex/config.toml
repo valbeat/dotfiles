@@ -4,7 +4,7 @@ network_access = true
 web_search_request = true
 approval_policy = "never"
 model = "gpt-5.2-codex"
-mmodel_reasoning_effort = "high"
+mmodel_reasoning_effort = "medium"
 
 [mcp_servers.figma-dev-mode-mcp-server]
 command = "npx"
