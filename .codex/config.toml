@@ -2,7 +2,7 @@ reasoning_level = "high"
 hide_agent_reasoning = true
 network_access = true
 web_search_request = true
-approval_policy = "on-failure"
+approval_policy = "never"
 model = "gpt-5.2-codex"
 mmodel_reasoning_effort = "high"
 
