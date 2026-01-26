@@ -5,6 +5,7 @@ web_search_request = true
 approval_policy = "never"
 model = "gpt-5.2-codex"
 mmodel_reasoning_effort = "medium"
+sandbox_mode = "workspace-write"
 
 [mcp_servers.figma-dev-mode-mcp-server]
 command = "npx"
