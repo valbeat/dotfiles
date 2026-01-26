@@ -3,7 +3,15 @@ hide_agent_reasoning = true
 network_access = true
 web_search_request = true
 approval_policy = "on-failure"
+model = "gpt-5.2-codex"
+model_reasoning_effort = "medium"
 
 [mcp_servers.figma-dev-mode-mcp-server]
 command = "npx"
 args = ["-y", "mcp-remote", "http://127.0.0.1:3845/mcp"]
+
+[notice]
+"hide_gpt-5.1-codex-max_migration_prompt" = true
+
+[notice.model_migrations]
+"gpt-5.1-codex-mini" = "gpt-5.2-codex"
