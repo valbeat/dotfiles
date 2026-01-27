@@ -7,10 +7,6 @@ model = "gpt-5.2-codex"
 mmodel_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
 
-[mcp_servers.figma-dev-mode-mcp-server]
-command = "npx"
-args = ["-y", "mcp-remote", "http://127.0.0.1:3845/mcp"]
-
 [notice]
 "hide_gpt-5.1-codex-max_migration_prompt" = true
 
