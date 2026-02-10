@@ -6,6 +6,7 @@ approval_policy = "never"
 model = "gpt-5.2-codex"
 mmodel_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
+personality = "pragmatic"
 
 [notice]
 "hide_gpt-5.1-codex-max_migration_prompt" = true
