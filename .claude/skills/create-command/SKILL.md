@@ -1,23 +1,35 @@
 ---
 allowed-tools: Read, Bash(ls:*), Glob, Grep
-description: Create new Claude commands
+description: Create new Claude skills
 ---
 
 ## Context
 
-- Current project commands: !`ls -la .claude/commands/`
-- User commands available: !`ls -la ~/.claude/commands/ 2>/dev/null || echo "No user commands directory"`
+- Current project skills: !`ls -la .claude/skills/`
+- User skills available: !`ls -la ~/.claude/skills/ 2>/dev/null || echo "No user skills directory"`
 - Project guidelines: !`head -50 .claude/CLAUDE.md 2>/dev/null || echo "No CLAUDE.md found"`
 
-### Command Structure Specifications
+### Skill Structure Specifications
+
+**Directory Structure:**
+```
+.claude/skills/<skill-name>/
+├── SKILL.md           # Main instructions (required)
+├── reference.md       # Additional documentation (optional)
+├── examples.md        # Usage examples (optional)
+└── scripts/           # Supporting scripts (optional)
+```
 
 **Frontmatter Options:**
 ```yaml
 ---
 allowed-tools: Bash(git add:*), Bash(git status:*)  # Restrict available tools
 argument-hint: [commit message]                      # Describe expected arguments
-description: Create a git commit                     # Brief command explanation
-model: claude-3-5-sonnet-20241022                   # Specify AI model
+description: Create a git commit                     # Brief skill explanation
+model: sonnet                                        # Specify AI model (sonnet, opus, haiku)
+disable-model-invocation: true                       # Only user can invoke (optional)
+user-invocable: false                                # Only Claude can invoke (optional)
+context: fork                                        # Run in isolated subagent (optional)
 ---
 ```
 
@@ -29,22 +41,22 @@ model: claude-3-5-sonnet-20241022                   # Specify AI model
 - `!command`: Execute bash command and include output in context
 - `@file.md`: Reference file contents
 
-**Command Locations:**
-- `.claude/commands/`: Project-specific commands
-- `~/.claude/commands/`: Personal commands (available in all projects)
-- Subdirectories supported for namespacing
+**Skill Locations:**
+- `.claude/skills/<name>/SKILL.md`: Project-specific skills
+- `~/.claude/skills/<name>/SKILL.md`: Personal skills (available in all projects)
+- Nested directories supported for namespacing
 
-This meta-command helps create other commands by:
-1. Understanding the command's purpose
+This meta-skill helps create other skills by:
+1. Understanding the skill's purpose
 2. Determining its category and pattern
-3. Choosing command location (project vs user)
-4. Generating the command file
+3. Choosing skill location (project vs user)
+4. Generating the skill directory and SKILL.md
 5. Creating supporting resources
 6. Updating documentation
 
 ## Your task
 
-You are a command creation specialist. Help create new Claude commands by understanding requirements, determining the appropriate pattern, and generating well-structured commands that follow established conventions.
+You are a skill creation specialist. Help create new Claude skills by understanding requirements, determining the appropriate pattern, and generating well-structured skills that follow established conventions.
 
 <command_categories>
 1. **Planning Commands** (Specialized)
@@ -78,18 +90,18 @@ You are a command creation specialist. Help create new Claude commands by unders
 </command_categories>
 
 <pattern_research>
-## Before Creating: Study Similar Commands
+## Before Creating: Study Similar Skills
 
-1. **List existing commands in target directory**:
+1. **List existing skills in target directory**:
    ```bash
-   # For project commands
-   ls -la .claude/commands/
-   
-   # For user commands
-   ls -la ~/.claude/commands/
+   # For project skills
+   ls -la .claude/skills/
+
+   # For user skills
+   ls -la ~/.claude/skills/
    ```
 
-2. **Read similar commands for patterns**:
+2. **Read similar skills for patterns**:
    - How do they structure <task> sections?
    - What tools do they use?
    - How do they handle arguments?
@@ -143,25 +155,25 @@ Based on responses and existing examples:
 - Review sections
 ```
 
-## Phase 4: Command Location
+## Phase 4: Skill Location
 
-🎯 **Critical Decision: Where should this command live?**
+🎯 **Critical Decision: Where should this skill live?**
 
-**Project Command** (`.claude/commands/`)
+**Project Skill** (`.claude/skills/<name>/SKILL.md`)
 - Specific to this project's workflow
 - Uses project conventions
 - References project documentation
 - Integrates with project tools
 
-**User Command** (`~/.claude/commands/`)
+**User Skill** (`~/.claude/skills/<name>/SKILL.md`)
 - General-purpose utility
 - Reusable across projects
 - Personal productivity tool
 - Not project-specific
 
 Ask: "Should this be:
-1. A project command (specific to this codebase)
-2. A user command (available in all projects)?"
+1. A project skill (specific to this codebase)
+2. A user skill (available in all projects)?"
 
 ## Phase 5: Resource Planning
 
@@ -212,22 +224,23 @@ Before generating, read similar commands and note:
 </generation_patterns>
 
 <implementation_steps>
-1. **Create Command File**
-   - Determine location based on project/user choice
+1. **Create Skill Directory and SKILL.md**
+   - Create `.claude/skills/<skill-name>/` directory
+   - Create `SKILL.md` with proper frontmatter
    - Generate content following established patterns
    - Include all required sections
 
 2. **Create Supporting Files** (if needed)
-   - Templates in appropriate directories
-   - Mode guides if generic command
-   - Example documentation
+   - Additional .md files for reference documentation
+   - Scripts or templates in the skill directory
+   - Example files for complex skills
 
-3. **Update Documentation** (if project command)
-   - Add to command list/guide
+3. **Update Documentation** (if project skill)
+   - Add to skill list/guide
    - Update workflow documentation if applicable
    - Add to README if user-facing
 
-4. **Test the Command**
+4. **Test the Skill**
    - Create example usage scenarios
    - Verify argument handling
    - Check tool integration
@@ -235,26 +248,26 @@ Before generating, read similar commands and note:
 
 <creation_checklist>
 Before finalizing:
-- [ ] Studied similar commands in the category
-- [ ] Command follows naming conventions (kebab-case)
-- [ ] Includes proper task/context structure
+- [ ] Studied similar skills in the category
+- [ ] Skill follows naming conventions (kebab-case directory name)
+- [ ] Includes proper frontmatter and context structure
 - [ ] References relevant documentation
 - [ ] Uses appropriate tools and patterns
 - [ ] Includes review sections where needed
-- [ ] Has clear examples like other commands
+- [ ] Has clear examples like other skills
 - [ ] Updates documentation appropriately
-- [ ] Follows established patterns from similar commands
-- [ ] Correct command location (project vs user)
+- [ ] Follows established patterns from similar skills
+- [ ] Correct skill location (project vs user)
 </creation_checklist>
 
 <example_session>
-User: "I need a command to help run database migrations"
+User: "I need a skill to help run database migrations"
 
-🔍 **Research**: Let me check existing utility commands...
+🔍 **Research**: Let me check existing utility skills...
 
-*List existing commands: ls -la .claude/commands/*
+*List existing skills: ls -la .claude/skills/*
 
-I notice we have deployment and setup commands that might be similar.
+I notice we have deployment and setup skills that might be similar.
 
 🤔 **Question**: Can you tell me more about these database migrations?
 - What database system are you using?
@@ -264,17 +277,17 @@ I notice we have deployment and setup commands that might be similar.
 
 User: "Using PostgreSQL with migrate tool, need to handle staging and production"
 
-💡 **Category**: This is a Utility command with environment modes.
+💡 **Category**: This is a Utility skill with environment modes.
 
 🎯 **Location Question**: Should this be:
-1. A project command (specific to this project's database)
-2. A user command (useful for all your projects)
+1. A project skill (specific to this project's database)
+2. A user skill (useful for all your projects)
 
-User: "Project command - it uses our specific migration setup"
+User: "Project skill - it uses our specific migration setup"
 
-✅ Creating project command: `.claude/commands/run-migrations.md`
+✅ Creating project skill: `.claude/skills/run-migrations/SKILL.md`
 
-Generated command:
+Generated skill:
 ```markdown
 # Run Database Migrations
 
@@ -321,22 +334,22 @@ migrate -env=staging --rollback
 <final_output>
 After gathering all information:
 
-1. **Command Created**:
+1. **Skill Created**:
    - Location: {chosen location}
-   - Name: {command-name}
+   - Name: {skill-name}
    - Category: {category}
    - Pattern: {specialized/generic}
 
 2. **Resources Created**:
-   - Supporting templates: {list}
+   - Supporting files: {list}
    - Documentation updates: {list}
 
 3. **Usage Instructions**:
-   - Command: `@{prefix}{name}`
+   - Command: `/{skill-name}`
    - Example: {example usage}
 
 4. **Next Steps**:
-   - Test the command
+   - Test the skill
    - Refine based on usage
-   - Add to command documentation
+   - Add to skill documentation
 </final_output>

@@ -62,7 +62,7 @@ credentials
 .claude/*
 !.claude/settings.json
 !.claude/CLAUDE.md
-!.claude/commands/
+!.claude/skills/
 !.claude/hooks/
 
 .gemini/*
