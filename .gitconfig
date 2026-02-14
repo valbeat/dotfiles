@@ -55,7 +55,6 @@
   br = branch
 
   # commit messageの自動生成つきcommit
-  c = "!f() { if git diff --cached --quiet; then echo 'No staged changes to commit'; else msg=$(git diff --cached | gemini -p 'Analyze this git diff and generate a concise commit message. Output only the commit message, no explanations.'); git commit -v -e -m \"$msg\"; fi }; f"
 
   # prの自動生成（タイトル・本文はGeminiで生成）
   pr = "!f() { git push -u origin HEAD || { echo 'Failed to push'; return 1; }; BASE=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null || echo main); git fetch origin; [ $(git rev-list --count origin/$BASE..HEAD) -eq 0 ] && { echo 'No commits'; return 1; }; RESULT=$(git log origin/$BASE..HEAD --pretty='format:%s%n%b' | gemini -p 'Analyze these commit messages and generate a PR title and body. Rules: 1) Title must be conventional commit format (feat:/fix:/chore: etc) summarizing all changes. 2) Body must have ## Summary (1-2 sentences) and ## Changes (bullet list of commits). Example output: feat: add user authentication\\n\\n## Summary\\nAdded login feature.\\n\\n## Changes\\n- feat: add login page\\n- fix: validation error. Output only the title and body, nothing else.'); TITLE=$(echo \"$RESULT\" | head -1); BODY=$(echo \"$RESULT\" | tail -n +3); gh pr create --title \"$TITLE\" --body \"$BODY\" --base \"$BASE\" --assignee @me --draft && gh pr view --web; }; f"
@@ -155,7 +154,10 @@
   todo = !"git diff origin/$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')...HEAD | grep -E 'TODO' -C5"
 
   tr = log --graph --pretty='format:%C(yellow)%h%Creset %s %Cgreen(%an)%Creset %Cred%d%Creset'
- 
+
+  # commit messageの自動生成つきcommit (gemini-2.0-flash使用)
+  c = "!f() { if git diff --cached --quiet; then echo 'No staged changes to commit'; else msg=$(git diff --cached | gemini -m gemini-2.0-flash -p 'Analyze this git diff and generate a concise commit message. Output only the commit message, no explanations.'); git commit -v -e -m \"$msg\"; fi; }; f"
+
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
