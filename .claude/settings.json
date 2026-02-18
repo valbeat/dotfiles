@@ -154,10 +154,6 @@
     ]
   },
   "model": "opus",
-  "feedbackSurveyState": {
-    "lastShownTime": 1754087207880
-  },
-  "alwaysThinkingEnabled": true,
   "hooks": {
     "PostToolUse": [
       {
@@ -175,5 +171,9 @@
     "type": "command",
     "command": "npx -y ccstatusline@latest",
     "padding": 0
+  },
+  "alwaysThinkingEnabled": true,
+  "feedbackSurveyState": {
+    "lastShownTime": 1754087207880
   }
 }
