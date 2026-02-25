@@ -27,14 +27,12 @@
       "Bash(chmod 777 *)",
       "Read(.env)",
       "Read(.env.*)",
-      "Edit(.env)",
-      "Edit(.env.*)",
       "Read(~/.ssh/**)",
       "Read(~/.aws/**)",
       "Read(~/.kube/config)",
       "Read(~/.docker/config.json)",
-      "Edit(~/.ssh/**)",
-      "Edit(~/.aws/**)"
+      "Read(~/.config/gcloud/**)",
+      "Read(~/.azure/**)"
     ],
     "ask": [],
     "defaultMode": "bypassPermissions"
