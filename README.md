@@ -1,7 +1,5 @@
 # dotfiles
 
-[![Test](https://github.com/valbeat/dotfiles-testing/actions/workflows/test.yml/badge.svg)](https://github.com/valbeat/dotfiles-testing/actions/workflows/test.yml)
-
 ## Installing
 
 ```shell
