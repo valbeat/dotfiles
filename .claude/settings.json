@@ -176,8 +176,8 @@
     "padding": 0
   },
   "alwaysThinkingEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754087207880
-  },
-  "skipDangerousModePermissionPrompt": true
+  }
 }
