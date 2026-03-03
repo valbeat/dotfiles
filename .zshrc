@@ -329,17 +329,7 @@ alias back='pushd'
 alias tree="tree -NC" # N: 文字化け対策, C:色をつける
 alias aw=anyframe-widget-select-widget
 
-# interactive rename files
-alias vrename=massren
-
-alias ezrc='vim ~/.zshrc'
-
-alias tmux="TERM=screen-256color-bce tmux"
-
-
 alias today="date '+%Y%m%d'"
-
-alias updatedb='sudo /usr/libexec/locate.updatedb'
 
 # windowsのNASのパスをmacのsmb://に変換
 alias to-smb="tr '\' '/' | xargs -I {} echo 'smb:'{}"
