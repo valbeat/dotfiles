@@ -734,15 +734,9 @@ function git-root() {
 function git-worktree-new() {
   local branch_name="$1"
 
-  # ブランチ名が指定されていない場合は入力を求める
+  # ブランチ名が指定されていない場合はランダムな文字列を生成
   if [ -z "$branch_name" ]; then
-    echo -n "ブランチ名を入力してください: "
-    read branch_name
-    # 入力が空の場合は終了
-    if [ -z "$branch_name" ]; then
-      echo "ブランチ名が入力されませんでした。"
-      return 1
-    fi
+    branch_name="$(head -c 6 /dev/urandom | base64 | tr -dc 'a-z0-9' | head -c 8)"
   fi
 
   local directory_name="${branch_name//\//__}"
