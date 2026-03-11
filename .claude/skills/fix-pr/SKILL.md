@@ -1,5 +1,5 @@
 ---
-allowed-tools: Read, Write, Edit, Bash(git:*), Bash(gh:*), Glob, Grep
+allowed-tools: Read, Write, Edit, Bash(git:*), Bash(gh:*), Glob, Grep, AskUserQuestion
 description: Comprehensively handle GitHub PR fixes (CI failures, conflicts, reviews)
 ---
 
@@ -64,14 +64,42 @@ Fix PR #<pr-number>
     git commit  # if merging
     ```
 
-4.  **Check review comments**
+4.  **Check and handle review comments**
     ```bash
     # View review comments
     gh pr view <pr-number> --comments
-    
-    # Check for unresolved reviews
-    gh pr view <pr-number> --json reviews
+
+    # Get detailed review comments (inline comments on code)
+    gh api repos/{owner}/{repo}/pulls/<pr-number>/comments
+
+    # Get review threads to check resolved/unresolved status
+    gh pr view <pr-number> --json reviews,reviewDecision
     ```
+
+    For each unresolved review comment, classify and handle it:
+
+    **a) Change request or suggestion (コード修正の指摘):**
+    - Implement the requested change
+    - After fixing, reply to the comment explaining what was done:
+      ```bash
+      gh api repos/{owner}/{repo}/pulls/<pr-number>/comments/<comment-id>/replies \
+        -f body="Fixed: <brief description of what was changed>"
+      ```
+
+    **b) Question from reviewer (レビュアーからの質問):**
+    - Do NOT answer on behalf of the PR author
+    - Ask the user for the answer using AskUserQuestion
+    - Once the user provides an answer, reply to the comment:
+      ```bash
+      gh api repos/{owner}/{repo}/pulls/<pr-number>/comments/<comment-id>/replies \
+        -f body="<user's answer>"
+      ```
+
+    **c) Nitpick or optional suggestion:**
+    - Implement if straightforward, or ask the user if unsure
+    - Reply acknowledging the feedback
+
+    > **Important:** Process ALL review comments before proceeding. Track each comment and ensure every one has been addressed and replied to.
 
 5.  **Analyze CI failure cause**
     ```bash
@@ -127,9 +155,23 @@ Fix PR #<pr-number>
     ```bash
     # Check if all checks have passed
     gh pr checks <pr-number>
-    
+
     # Check the PR status
     gh pr view <pr-number>
+    ```
+
+11. **Request re-review (if review comments were addressed)**
+    If review comments were handled in step 4, request a re-review from the reviewers:
+    ```bash
+    # Get reviewers who left comments
+    gh pr view <pr-number> --json reviews --jq '[.reviews[].author.login] | unique | .[]'
+
+    # Request re-review
+    gh pr edit <pr-number> --add-reviewer <reviewer1>,<reviewer2>
+    ```
+    Also leave a summary comment on the PR:
+    ```bash
+    gh pr comment <pr-number> --body "All review comments have been addressed. Requesting re-review."
     ```
 
 ## Common CI Failure Patterns
