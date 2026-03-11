@@ -1,355 +1,121 @@
 ---
+name: create-skill
+description: >-
+  Interactive guide for creating new Claude skills. Walks the user through
+  use case definition, frontmatter generation, instruction writing, and
+  validation. Use when user says "create a skill", "build a new skill",
+  "help me make a skill", "new skill", or "add a skill".
 allowed-tools: Read, Bash(ls:*), Glob, Grep
-description: Create new Claude skills
 ---
 
 ## Context
 
-- Current project skills: !`ls -la .claude/skills/`
-- User skills available: !`ls -la ~/.claude/skills/ 2>/dev/null || echo "No user skills directory"`
+- Current project skills: !`ls -la .claude/skills/ 2>/dev/null || echo "No project skills"`
+- User skills available: !`ls -la ~/.claude/skills/ 2>/dev/null || echo "No user skills"`
 - Project guidelines: !`head -50 .claude/CLAUDE.md 2>/dev/null || echo "No CLAUDE.md found"`
 
-### Skill Structure Specifications
+## Your Task
 
-**Directory Structure:**
-```
-.claude/skills/<skill-name>/
-├── SKILL.md           # Main instructions (required)
-├── reference.md       # Additional documentation (optional)
-├── examples.md        # Usage examples (optional)
-└── scripts/           # Supporting scripts (optional)
-```
+You are a skill creation specialist. Guide the user through creating a well-structured Claude skill step by step. Always complete each step before moving to the next.
 
-**Frontmatter Options:**
-```yaml
----
-allowed-tools: Bash(git add:*), Bash(git status:*)  # Restrict available tools
-argument-hint: [commit message]                      # Describe expected arguments
-description: Create a git commit                     # Brief skill explanation
-model: sonnet                                        # Specify AI model (sonnet, opus, haiku)
-disable-model-invocation: true                       # Only user can invoke (optional)
-user-invocable: false                                # Only Claude can invoke (optional)
-context: fork                                        # Run in isolated subagent (optional)
----
-```
+## Step 1: Research Existing Skills
 
-**Argument Handling:**
-- `$ARGUMENTS`: All passed arguments as a single string
-- `$1`, `$2`, etc.: Individual positional arguments
+Before creating anything, survey what already exists:
 
-**Special Syntax:**
-- `!command`: Execute bash command and include output in context
-- `@file.md`: Reference file contents
+1. List skills in `.claude/skills/` and `~/.claude/skills/`
+2. Read any similar skills to understand established patterns
+3. Note conventions: tool usage, argument handling, structure
 
-**Skill Locations:**
-- `.claude/skills/<name>/SKILL.md`: Project-specific skills
-- `~/.claude/skills/<name>/SKILL.md`: Personal skills (available in all projects)
-- Nested directories supported for namespacing
+## Step 2: Understand Purpose
 
-This meta-skill helps create other skills by:
-1. Understanding the skill's purpose
-2. Determining its category and pattern
-3. Choosing skill location (project vs user)
-4. Generating the skill directory and SKILL.md
-5. Creating supporting resources
-6. Updating documentation
-
-## Your task
-
-You are a skill creation specialist. Help create new Claude skills by understanding requirements, determining the appropriate pattern, and generating well-structured skills that follow established conventions.
-
-<command_categories>
-1. **Planning Commands** (Specialized)
-   - Feature ideation, proposals, PRDs
-   - Complex workflows with distinct stages
-   - Interactive, conversational style
-   - Create documentation artifacts
-
-2. **Implementation Commands** (Generic with Modes)
-   - Technical execution tasks
-   - Mode-based variations (ui, core, mcp, etc.)
-   - Follow established patterns
-   - Update task states
-
-3. **Analysis Commands** (Specialized)
-   - Review, audit, analyze
-   - Generate reports or insights
-   - Read-heavy operations
-   - Provide recommendations
-
-4. **Workflow Commands** (Specialized)
-   - Orchestrate multiple steps
-   - Coordinate between areas
-   - Manage dependencies
-   - Track progress
-
-5. **Utility Commands** (Generic or Specialized)
-   - Tools, helpers, maintenance
-   - Simple operations
-   - May or may not need modes
-</command_categories>
-
-<pattern_research>
-## Before Creating: Study Similar Skills
-
-1. **List existing skills in target directory**:
-   ```bash
-   # For project skills
-   ls -la .claude/skills/
-
-   # For user skills
-   ls -la ~/.claude/skills/
-   ```
-
-2. **Read similar skills for patterns**:
-   - How do they structure <task> sections?
-   - What tools do they use?
-   - How do they handle arguments?
-   - What documentation do they reference?
-
-3. **Common patterns to look for**:
-   - Standard task descriptions
-   - Argument handling approaches
-   - Output formatting conventions
-   - Error handling patterns
-
-4. **Standard references to include**:
-   - Related documentation files
-   - Template structures
-   - Workflow guides
-</pattern_research>
-
-<interview_process>
-## Phase 1: Understanding Purpose
-
-"Let's create a new command. First, let me check what similar commands exist..."
-
-*Use ls to find existing commands in the target category*
-
-"Based on existing patterns, please describe:"
-1. What problem does this command solve?
+Ask the user:
+1. What problem does this skill solve?
 2. Who will use it and when?
-3. What's the expected output?
-4. Is it interactive or batch?
+3. What is the expected output?
 
-## Phase 2: Category Classification
+Then determine:
+- **Approach**: Problem-first (start from user need) or Tool-first (start from available tool/MCP)
+- **Category**: Document & Asset Creation / Workflow Automation / MCP Enhancement
+- **Pattern**: Sequential workflow / Multi-MCP coordination / Iterative refinement / Context-aware tool selection / Domain-specific intelligence
+- **Location**: Project skill (`.claude/skills/`) or User skill (`~/.claude/skills/`)
 
-Based on responses and existing examples:
-- Is this like existing planning commands?
-- Is this like implementation commands?
-- Does it need mode variations?
-- Should it follow analysis patterns?
+See @references/skill-categories-and-patterns.md for detailed guidance.
 
-## Phase 3: Pattern Selection
+## Step 3: Write Description
 
-**Study similar commands first**:
-```markdown
-# Read a similar command
-@{similar-command-path}
+Write the description using the WHAT + WHEN + triggers formula:
 
-# Note patterns:
-- Task description style
-- Argument handling
-- Tool usage
-- Documentation references
-- Review sections
+```
+[What it does] + [When to use it] + [Trigger phrases]
 ```
 
-## Phase 4: Skill Location
+Requirements:
+- Under 1024 characters
+- No XML angle brackets
+- Include 3-5 natural trigger phrases
 
-🎯 **Critical Decision: Where should this skill live?**
+See @references/description-writing-guide.md for examples and best practices.
 
-**Project Skill** (`.claude/skills/<name>/SKILL.md`)
-- Specific to this project's workflow
-- Uses project conventions
-- References project documentation
-- Integrates with project tools
+## Step 4: Generate the Skill
 
-**User Skill** (`~/.claude/skills/<name>/SKILL.md`)
-- General-purpose utility
-- Reusable across projects
-- Personal productivity tool
-- Not project-specific
+Create the skill directory and SKILL.md using the appropriate template.
 
-Ask: "Should this be:
-1. A project skill (specific to this codebase)
-2. A user skill (available in all projects)?"
+Required frontmatter fields:
+- `name`: matches folder name (kebab-case)
+- `description`: from Step 3
 
-## Phase 5: Resource Planning
+Optional fields: `allowed-tools`, `argument-hint`, `model`, `user-invocable`, `disable-model-invocation`, `context`
 
-Check existing resources:
-```bash
-# Check templates
-ls -la docs/command-resources/planning-templates/
-ls -la docs/command-resources/implement-modes/
+See @references/skill-template.md for templates and field reference.
 
-# Check which guides exist
-ls -la docs/
-```
-</interview_process>
+## Step 5: Define Success Criteria
 
-<generation_patterns>
-## Critical: Copy Patterns from Similar Commands
+Define measurable success criteria:
+- Trigger accuracy: does the skill activate on the right phrases?
+- Workflow completion: does it produce the expected output?
+- Error handling: does it recover gracefully from common failures?
 
-Before generating, read similar commands and note:
+## Step 6: Validate
 
-1. **Tool Usage**:
-   - What CLI tools are commonly used
-   - Standard tool patterns
-   - Error handling approaches
+Run through the validation checklist before considering the skill complete.
 
-2. **Standard References**:
-   ```markdown
-   <context>
-   Key Reference: @/path/to/relevant/guide.md
-   Template: @/path/to/template.md
-   Guide: @/path/to/workflow-guide.md
-   </context>
-   ```
+See @references/validation-checklist.md for the full checklist.
 
-3. **Task Update Patterns**:
-   - Status tracking approaches
-   - Progress documentation
-   - Completion criteria
+If issues arise, consult @references/troubleshooting.md.
 
-4. **Review Sections**:
-   ```markdown
-   <review_needed>
-   Flag decisions needing verification:
-   - [ ] Assumptions about workflows
-   - [ ] Technical approach choices
-   - [ ] Pattern-based suggestions
-   </review_needed>
-   ```
-</generation_patterns>
+For security considerations, see @references/security-restrictions.md.
 
-<implementation_steps>
-1. **Create Skill Directory and SKILL.md**
-   - Create `.claude/skills/<skill-name>/` directory
-   - Create `SKILL.md` with proper frontmatter
-   - Generate content following established patterns
-   - Include all required sections
+## Example Session
 
-2. **Create Supporting Files** (if needed)
-   - Additional .md files for reference documentation
-   - Scripts or templates in the skill directory
-   - Example files for complex skills
+User: "I need a skill to run database migrations"
 
-3. **Update Documentation** (if project skill)
-   - Add to skill list/guide
-   - Update workflow documentation if applicable
-   - Add to README if user-facing
+**Step 1** — Check existing skills for similar patterns.
 
-4. **Test the Skill**
-   - Create example usage scenarios
-   - Verify argument handling
-   - Check tool integration
-</implementation_steps>
+**Step 2** — Questions:
+- What database system? What migration tool?
+- Should it handle rollbacks? Multiple environments?
 
-<creation_checklist>
-Before finalizing:
-- [ ] Studied similar skills in the category
-- [ ] Skill follows naming conventions (kebab-case directory name)
-- [ ] Includes proper frontmatter and context structure
-- [ ] References relevant documentation
-- [ ] Uses appropriate tools and patterns
-- [ ] Includes review sections where needed
-- [ ] Has clear examples like other skills
-- [ ] Updates documentation appropriately
-- [ ] Follows established patterns from similar skills
-- [ ] Correct skill location (project vs user)
-</creation_checklist>
+Classification: Workflow Automation, Sequential workflow pattern, Project skill.
 
-<example_session>
-User: "I need a skill to help run database migrations"
-
-🔍 **Research**: Let me check existing utility skills...
-
-*List existing skills: ls -la .claude/skills/*
-
-I notice we have deployment and setup skills that might be similar.
-
-🤔 **Question**: Can you tell me more about these database migrations?
-- What database system are you using?
-- Do you have existing migration tools/scripts?
-- Should it handle rollbacks?
-- Any pre/post migration checks needed?
-
-User: "Using PostgreSQL with migrate tool, need to handle staging and production"
-
-💡 **Category**: This is a Utility skill with environment modes.
-
-🎯 **Location Question**: Should this be:
-1. A project skill (specific to this project's database)
-2. A user skill (useful for all your projects)
-
-User: "Project skill - it uses our specific migration setup"
-
-✅ Creating project skill: `.claude/skills/run-migrations/SKILL.md`
-
-Generated skill:
-```markdown
-# Run Database Migrations
-
-Execute database migrations for different environments with proper checks and rollback capability.
-
-## Arguments
-
-- `environment`: Target environment (staging|production)
-- `--dry-run`: Show what would be migrated without executing
-- `--rollback`: Rollback last migration
-
-## Steps
-
-1. Verify environment configuration
-2. Check database connectivity
-3. List pending migrations
-4. Create backup (production only)
-5. Execute migrations
-6. Verify migration success
-7. Update migration log
-
-## Example
-
-```bash
-# Dry run for staging
-migrate -env=staging --dry-run
-
-# Execute on production
-migrate -env=production
-
-# Rollback last migration
-migrate -env=staging --rollback
+**Step 3** — Description:
+```yaml
+description: >-
+  Execute database migrations with environment selection, dry-run support,
+  and rollback capability. Use when user says "run migrations",
+  "migrate database", "rollback migration", or "check pending migrations".
 ```
 
-## Safety Checks
+**Step 4** — Generate `.claude/skills/run-migrations/SKILL.md` with proper frontmatter and steps.
 
-- Always backup before production migrations
-- Verify rollback procedure tested in staging
-- Check for blocking queries before migration
-- Monitor application errors post-migration
-```
-</example_session>
+**Step 5** — Success criteria: migrations run correctly, rollback works, dry-run shows changes without executing.
 
-<final_output>
-After gathering all information:
+**Step 6** — Walk through validation checklist.
 
-1. **Skill Created**:
-   - Location: {chosen location}
-   - Name: {skill-name}
-   - Category: {category}
-   - Pattern: {specialized/generic}
+## Output Summary
 
-2. **Resources Created**:
-   - Supporting files: {list}
-   - Documentation updates: {list}
+After completing all steps, summarize:
 
-3. **Usage Instructions**:
-   - Command: `/{skill-name}`
-   - Example: {example usage}
-
-4. **Next Steps**:
-   - Test the skill
-   - Refine based on usage
-   - Add to skill documentation
-</final_output>
+1. **Skill Created**: location, name, category, pattern
+2. **Resources Created**: supporting files, references
+3. **Usage**: `/skill-name` with example invocation
+4. **Next Steps**: test the skill in a real conversation, iterate based on feedback
