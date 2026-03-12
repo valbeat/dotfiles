@@ -56,6 +56,12 @@
     "command": "npx -y ccstatusline@latest",
     "padding": 0
   },
+  "enabledPlugins": {
+    "code-review@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "slack@claude-plugins-official": true
+  },
   "alwaysThinkingEnabled": true,
   "skipDangerousModePermissionPrompt": true,
   "feedbackSurveyState": {
