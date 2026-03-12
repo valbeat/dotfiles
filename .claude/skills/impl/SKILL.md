@@ -1,5 +1,9 @@
 ---
-description: "Implement features or fix bugs following TDD methodology. Strictly follow RED→GREEN→REFACTOR cycle"
+name: impl
+description: >-
+  Implements features or fixes bugs following TDD methodology with strict
+  RED→GREEN→REFACTOR cycle. Use when implementing features, fixing bugs
+  with TDD, or when the user says "implement", "build feature", or "TDD".
 argument-hint: "[task description]"
 ---
 
@@ -164,7 +168,7 @@ Quality checks:
 ### Next Action
 
 Ask with AskUserQuestion:
-- **Commit**: Run `/conventional-commit`
+- **Commit**: Run `/commit`
 - **Done**: End development
 
 ---

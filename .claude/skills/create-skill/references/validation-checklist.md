@@ -29,6 +29,11 @@
 - [ ] Has error handling guidance for common failure modes
 - [ ] References are linked with `@references/filename.md` syntax
 - [ ] No orphaned closing tags or broken markup
+- [ ] SKILL.md body is under 500 lines (use progressive disclosure for larger content)
+- [ ] File references are one level deep from SKILL.md (no nested reference chains)
+- [ ] No time-sensitive information (or in "old patterns" section)
+- [ ] Consistent terminology throughout (e.g., always "API endpoint", not mix of "URL"/"route")
+- [ ] Only includes context Claude doesn't already know (concise is key)
 
 ### Naming
 

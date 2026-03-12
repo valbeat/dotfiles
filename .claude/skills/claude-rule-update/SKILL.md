@@ -1,6 +1,10 @@
 ---
+name: claude-rule-update
 allowed-tools: Read, Edit
-description: Update CLAUDE.md based on conversation learnings
+description: >-
+  Updates CLAUDE.md based on conversation learnings and new patterns.
+  Use when updating project rules, adding conventions, or when the user
+  says "update rules", "update CLAUDE.md", or "add convention".
 ---
 
 # Update CLAUDE.md

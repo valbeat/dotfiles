@@ -16,7 +16,8 @@ A good description has three parts:
 
 - Maximum 1024 characters
 - No XML tags (`<`, `>`) in frontmatter
-- Keep it scannable — Claude reads this to decide whether to invoke the skill
+- **Always write in third person** (e.g., "Processes files" not "I can help you" or "You can use this to")
+- Keep it scannable — Claude reads this to decide whether to invoke the skill from potentially 100+ available skills
 
 ## Good Examples
 

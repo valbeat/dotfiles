@@ -1,6 +1,10 @@
 ---
+name: check
 allowed-tools: Read, Bash
-description: Execute all project quality checks including linter, formatter, tests
+description: >-
+  Executes project quality checks including linter, formatter, build, and tests.
+  Use when running checks, validating code quality, or when the user says
+  "check", "run tests", "lint", or "format".
 argument-hint: "[--test|--lint|--format|--build|--all]"
 ---
 

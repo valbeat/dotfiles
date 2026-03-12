@@ -1,6 +1,10 @@
 ---
+name: update-pr
 allowed-tools: Bash(git:*), Bash(gh:*)
-description: Update GitHub PR title and description based on changes
+description: >-
+  Updates GitHub PR title and description based on current branch changes.
+  Use when updating PRs, refreshing PR descriptions, or when the user says
+  "update PR", "refresh PR", or "update PR description".
 ---
 
 # Update PR

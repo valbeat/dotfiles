@@ -1,6 +1,10 @@
 ---
+name: fix-issue
 allowed-tools: Read, Write, Edit, Bash(gh:*), Bash(git:*), Glob, Grep
-description: Analyze and fix a GitHub issue by its issue number
+description: >-
+  Analyzes and fixes a GitHub issue by its issue number with proper testing.
+  Use when fixing issues, resolving bugs, or when the user says "fix issue",
+  "resolve issue", or "fix bug #N".
 ---
 
 # Fix GitHub Issue

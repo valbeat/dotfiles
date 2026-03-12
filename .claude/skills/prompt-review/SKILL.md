@@ -1,9 +1,8 @@
 ---
 name: prompt-review
-description: >
+description: >-
   Claude Code の対話履歴を収集・分析し、プロンプトの傾向・技術理解度・AI活用パターンを
-  診断するレポートを生成する。/prompt-review で呼び出す。
-disable-model-invocation: false
+  診断するレポートを生成する。「プロンプトレビュー」「対話分析」「prompt review」で起動。
 allowed-tools: Read, Glob, Grep, Bash
 context: fork
 ---

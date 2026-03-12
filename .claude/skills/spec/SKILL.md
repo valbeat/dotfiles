@@ -1,5 +1,9 @@
 ---
-description: "Interactive planning command. Generate DESIGN.md and TODO.md for task planning"
+name: spec
+description: >-
+  Generates DESIGN.md and TODO.md through interactive planning sessions.
+  Use when planning features, designing architecture, or when the user
+  says "plan", "spec", "design", or "create a spec".
 argument-hint: "[task description]"
 ---
 

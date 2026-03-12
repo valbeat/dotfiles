@@ -1,6 +1,10 @@
 ---
+name: review
 allowed-tools: Read, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Glob, Grep
-description: Perform comprehensive code review based on project standards
+description: >-
+  Performs comprehensive code review based on project standards and best practices.
+  Use when reviewing code, checking changes, or when the user says "review",
+  "code review", or "check my code".
 argument-hint: "[--uncommitted|--staged|--brief|<file>]"
 ---
 
