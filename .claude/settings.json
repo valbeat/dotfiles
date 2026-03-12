@@ -62,7 +62,9 @@
     "claude-md-management@claude-plugins-official": true,
     "slack@claude-plugins-official": true
   },
+  "language": "Japanese",
   "alwaysThinkingEnabled": true,
+  "voiceEnabled": true,
   "skipDangerousModePermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754087207880
