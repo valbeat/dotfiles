@@ -59,7 +59,7 @@ Agent 結果を統合し、修正対象ファイル一覧を確定する。
 
 ```bash
 # ベースブランチを最新化してブランチ作成
-git switch <base-branch> && git pull && git switch -c {type}/issue-{番号}-{description}
+git fetch origin && git switch -c {type}/issue-{番号}-{description} origin/<base-branch>
 ```
 
 - bug fix → `fix/issue-{番号}-{概要}`
