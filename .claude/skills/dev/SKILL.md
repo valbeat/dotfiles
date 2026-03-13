@@ -2,10 +2,10 @@
 name: dev
 description: >-
   Issue番号を指定して、仕様把握→テスト計画→TDD実装→品質チェック→PR作成まで自律実行する。
-  テスト計画のみユーザー承認を求める。「dev #N」「開発 #N」「issue対応」
+  完全自律で実行する。「dev #N」「開発 #N」「issue対応」
   「fix issue」「resolve issue」で起動。
 disable-model-invocation: true
-allowed-tools: Bash, Read, Glob, Grep, Write, Edit, Task, AskUserQuestion, Agent
+allowed-tools: Bash, Read, Glob, Grep, Write, Edit, Task, Agent
 argument-hint: "<issue-number>"
 ---
 
@@ -84,7 +84,7 @@ git fetch origin && git switch -c {type}/issue-{番号}-{description} origin/<ba
 | 1 | {条件}_{振る舞い} | {何を検証するか} |
 ```
 
-**AskUserQuestion で承認を得る。承認まで Step 4 に進まない。**
+**承認不要。そのまま Step 4 に進む。**
 
 ---
 
@@ -141,7 +141,7 @@ EOF
 
 ## 注意事項
 
-- テスト計画承認後は完全自律で実装を進める
+- 全ステップを完全自律で実行する（承認不要）
 - 品質チェック最大3回ループ、通らなければユーザーに報告
 - ベースブランチへの直接コミット禁止
 - CLAUDE.md のルールに従う
