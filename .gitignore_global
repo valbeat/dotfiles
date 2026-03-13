@@ -25,6 +25,7 @@ Session.vim
 # === Claude Code ===
 # 基本すべて除外し、プロジェクト側の .gitignore で共有すべきものを ! で許可する
 .claude/*
+.claude/.*
 !.claude/settings.json
 !.claude/CLAUDE.md
 !.claude/skills/
