@@ -50,9 +50,11 @@ Write the description using the WHAT + WHEN + triggers formula:
 ```
 
 Requirements:
+- **Always third person** ("Processes files" not "I can help you")
 - Under 1024 characters
 - No XML angle brackets
 - Include 3-5 natural trigger phrases
+- Be specific enough for Claude to select from 100+ skills
 
 See @references/description-writing-guide.md for examples and best practices.
 
@@ -61,10 +63,18 @@ See @references/description-writing-guide.md for examples and best practices.
 Create the skill directory and SKILL.md using the appropriate template.
 
 Required frontmatter fields:
-- `name`: matches folder name (kebab-case)
+- `name`: matches folder name (kebab-case, max 64 chars, no reserved words)
 - `description`: from Step 3
 
 Optional fields: `allowed-tools`, `argument-hint`, `model`, `user-invocable`, `disable-model-invocation`, `context`
+
+### Authoring Principles
+
+- **Concise is key**: Only include context Claude doesn't already know. Challenge each paragraph: "Does Claude need this?"
+- **SKILL.md under 500 lines**: Use progressive disclosure — split into reference files loaded on demand
+- **One level deep**: All reference files link directly from SKILL.md (no nested chains)
+- **Appropriate freedom**: Match specificity to fragility (exact scripts for fragile ops, general guidance for flexible tasks)
+- **Consistent terminology**: Choose one term and use it throughout
 
 See @references/skill-template.md for templates and field reference.
 

@@ -1,6 +1,10 @@
 ---
+name: fix-pr
 allowed-tools: Read, Write, Edit, Bash(git:*), Bash(gh:*), Glob, Grep, AskUserQuestion
-description: Comprehensively handle GitHub PR fixes (CI failures, conflicts, reviews)
+description: >-
+  Comprehensively handles GitHub PR fixes including CI failures, merge conflicts,
+  and review comments. Use when fixing PRs, resolving CI failures, or when the
+  user says "fix PR", "fix CI", or "resolve PR issues".
 ---
 
 # Fix PR

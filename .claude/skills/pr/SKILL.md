@@ -1,6 +1,10 @@
 ---
+name: pr
 allowed-tools: Bash(git:*), Bash(gh:*)
-description: Create PR from current branch with auto-generated content
+description: >-
+  Creates a GitHub pull request from the current branch with auto-generated
+  title and description. Use when creating PRs, or when the user says
+  "create PR", "open PR", or "make a pull request".
 ---
 
 # Create PR
@@ -150,13 +154,6 @@ Create PR
    - Process flows affected by the changes
    ```
    ```
-
-6. **Mermaid図を自動生成**
-   変更内容を分析して適切なMermaid図を自動生成する：
-   - アーキテクチャ変更図
-   - データフロー変更図
-   - コンポーネント関係図
-   - 影響を受けるプロセスフロー図
 
 7. **ブランチをプッシュ**
    ```bash

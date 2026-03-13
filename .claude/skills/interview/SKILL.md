@@ -1,5 +1,9 @@
 ---
-description: "Read DESIGN.md and conduct deep-dive interview on technical implementation, UI/UX, concerns, and trade-offs"
+name: interview
+description: >-
+  Reads DESIGN.md and conducts deep-dive interviews on technical implementation,
+  concerns, and trade-offs. Use when exploring requirements, or when the user
+  says "interview", "deep-dive", or "discuss design".
 argument-hint: "[DESIGN.md path]"
 ---
 

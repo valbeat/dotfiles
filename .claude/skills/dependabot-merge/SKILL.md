@@ -1,6 +1,10 @@
 ---
+name: dependabot-merge
 allowed-tools: Bash(gh:*)
-description: "Auto-merge all open Dependabot PRs with AI review"
+description: >-
+  Auto-reviews and enables auto-merge for all open Dependabot PRs.
+  Use when merging dependency updates, or when the user says "merge dependabot",
+  "auto-merge deps", or "handle dependabot PRs".
 argument-hint: "[--dry-run] [--include-major]"
 ---
 

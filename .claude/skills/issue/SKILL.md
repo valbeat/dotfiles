@@ -1,6 +1,10 @@
 ---
+name: issue
 allowed-tools: Read, Bash(gh:*), Glob, Grep
-description: Analyze GitHub Issue and enrich with implementation details
+description: >-
+  Analyzes a GitHub issue and enriches it with implementation details, specs,
+  and plans. Use when enriching issues, adding specs, or when the user says
+  "enrich issue", "detail issue", or "spec issue #N".
 ---
 
 # Enrich Issue
