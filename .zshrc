@@ -1,7 +1,3 @@
-
-# Kiro CLI pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
-
 #--------------------------------------
 # Auto compile
 #--------------------------------------
@@ -951,8 +947,4 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 [[ -f "$HOME/fig-export/dotfiles/dotfile.zsh" ]] && builtin source "$HOME/fig-export/dotfiles/dotfile.zsh"
 
 export PATH="$HOME/.claude/local:$PATH"
-
-
-# Kiro CLI post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
 export PATH="$HOME/.local/bin:$PATH"
