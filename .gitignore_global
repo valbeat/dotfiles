@@ -1,3 +1,34 @@
+# === macOS ===
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# === Editor: Vim ===
+*.swp
+*.swo
+*~
+.netrwhist
+Session.vim
+
+# === Editor: JetBrains IDEs ===
 .idea/
+
+# === Editor: VSCode ===
+.vscode/
+
+# === direnv ===
 .envrc
-.claude/settings.local.json
+
+# === Claude Code ===
+# 基本すべて除外し、プロジェクト側の .gitignore で共有すべきものを ! で許可する
+.claude/*
+.claude/.*
+!.claude/settings.json
+!.claude/CLAUDE.md
+!.claude/skills/
+!.claude/hooks/
+!.claude/commands/
+!.claude/agents/
