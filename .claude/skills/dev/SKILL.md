@@ -58,8 +58,10 @@ Agent 結果を統合し、修正対象ファイル一覧を確定する。
 ベースブランチから feature ブランチを作成:
 
 ```bash
-# ベースブランチを最新化してブランチ作成
-git fetch origin && git switch -c {type}/issue-{番号}-{description} origin/<base-branch>
+# ベースブランチを自動検出して最新化
+git rev-parse --abbrev-ref origin/HEAD  # → "origin/main" or "origin/master"
+# 失敗時は origin/main → origin/master の順でフォールバック
+git fetch origin && git switch -c {type}/issue-{番号}-{description} origin/{detected-branch}
 ```
 
 - bug fix → `fix/issue-{番号}-{概要}`
@@ -123,19 +125,22 @@ t-wada の TDD サイクルに従って実装:
 
 ```bash
 git push -u origin HEAD
+ISSUE_NUM=$ARGUMENTS
 gh pr create --assignee @me --draft \
-  --title "{type}: {概要} (#$ARGUMENTS)" \
-  --body "$(cat <<'EOF'
+  --title "{type}: {概要} (#${ISSUE_NUM})" \
+  --body "$(cat <<EOF
 ## Summary
 {変更内容の要約}
 
 ## Test Plan
 {テスト計画の要約}
 
-Fixes #$ARGUMENTS
+Fixes #${ISSUE_NUM}
 EOF
 )"
 ```
+
+注意: heredoc は `<<EOF`（クォートなし）を使用して変数展開を有効にすること。
 
 ---
 
