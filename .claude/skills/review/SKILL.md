@@ -86,7 +86,7 @@ Launch all review agents in parallel. Internal agents and external AI tools run 
 model: sonnet
 ```
 
-Each agent receives the diff and CLAUDE.md paths from Step 2, and returns issues with reasons.
+Each agent receives the diff and CLAUDE.md paths from Step 2, and returns issues with reasons. 各 issue の reason には `(Claude Sonnet)` を付記する。
 
 **Agent #1 — CLAUDE.md Compliance**
 Audit the changes against CLAUDE.md rules. Not all CLAUDE.md instructions apply to every change; focus on directly relevant ones.
@@ -186,7 +186,7 @@ Filter out issues scoring below 75.
 
 ### Issues
 
-1. **[description]** (confidence: N/100)
+1. **[description]** (confidence: N/100, model: Claude Sonnet|Gemini|Codex|Copilot)
    - File: path:line
    - Reason: [CLAUDE.md rule / bug / historical context / etc.]
    - Suggestion: [fix]
@@ -208,8 +208,8 @@ PASSED: No issues with confidence >= 75
 or
 
 ISSUES FOUND:
-- [score] path:line - description
-- [score] path:line - description
+- [score] [model] path:line - description
+- [score] [model] path:line - description
 ```
 
 ## Notes
