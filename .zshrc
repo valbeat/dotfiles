@@ -320,7 +320,12 @@ alias lly="ls -l --time-style=long-iso"
 
 alias cdg='cd-gitroot'
 alias cp='cp -i'
-alias rm='rm -i'
+rm() {
+  while [[ "$1" == -* ]]; do
+    shift
+  done
+  trash "$@"
+}
 alias back='pushd'
 alias tree="tree -NC" # N: 文字化け対策, C:色をつける
 alias aw=anyframe-widget-select-widget
