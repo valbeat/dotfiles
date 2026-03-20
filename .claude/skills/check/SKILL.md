@@ -3,8 +3,9 @@ name: check
 allowed-tools: Read, Bash
 description: >-
   Executes project quality checks including linter, formatter, build, and tests.
-  Use when running checks, validating code quality, or when the user says
-  "check", "run tests", "lint", or "format".
+  Auto-detects project type from config files (package.json, go.mod, Cargo.toml, pyproject.toml).
+  Trigger conditions: コード変更後の品質確認時、CI相当のローカルチェック実行時。
+  Use when user says "check", "run tests", "lint", "format", "チェック", "テスト実行", or "品質確認".
 argument-hint: "[--test|--lint|--format|--build|--all]"
 ---
 

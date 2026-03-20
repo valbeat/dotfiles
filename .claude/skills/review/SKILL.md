@@ -3,8 +3,9 @@ name: review
 allowed-tools: Read, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git blame:*), Bash(git rev-parse:*), Bash(git merge-base:*), Bash(git show:*), Bash(git symbolic-ref:*), Bash(which:*), Bash(cat /tmp/*), Bash(gemini:*), Bash(codex:*), Bash(copilot:*), Glob, Grep, Agent
 description: >-
   Multi-agent local code review with confidence scoring.
-  Use when reviewing code, checking changes, or when the user says "review",
-  "code review", or "check my code".
+  Trigger conditions: git diff に変更がある場合（staged/unstaged/committed）。
+  特に .ts, .tsx, .js, .jsx, .go, .rs, .py, .rb 等のソースコード変更時。
+  Use when user says "review", "code review", "check my code", "コードレビュー", or "変更を確認".
 argument-hint: "[--uncommitted|--staged|--brief|--commit <sha>|<file>]"
 ---
 
