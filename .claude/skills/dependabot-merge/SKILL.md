@@ -1,6 +1,7 @@
 ---
 name: dependabot-merge
 allowed-tools: Bash(gh:*)
+disable-model-invocation: true
 description: >-
   Auto-reviews and enables auto-merge for all open Dependabot PRs.
   Use when merging dependency updates, or when the user says "merge dependabot",

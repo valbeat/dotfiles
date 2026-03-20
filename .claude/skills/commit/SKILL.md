@@ -1,6 +1,8 @@
 ---
 name: commit
 allowed-tools: Bash(git:*)
+disable-model-invocation: true
+argument-hint: “[message]”
 description: >-
   Creates git commits following the Conventional Commits specification.
   Use when committing changes, writing commit messages, or when the user

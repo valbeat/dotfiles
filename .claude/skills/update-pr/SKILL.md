@@ -1,6 +1,8 @@
 ---
 name: update-pr
 allowed-tools: Bash(git:*), Bash(gh:*)
+disable-model-invocation: true
+argument-hint: "[<pr-number>]"
 description: >-
   Updates GitHub PR title and description based on current branch changes.
   Use when updating PRs, refreshing PR descriptions, or when the user says

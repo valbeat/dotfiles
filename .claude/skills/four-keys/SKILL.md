@@ -2,6 +2,8 @@
 allowed-tools: Bash(gh:*), Bash(git log:*), Bash(git tag:*), Bash(git diff:*), Bash(git rev-list:*), Bash(git show:*), Bash(date:*), Bash(bc:*), Bash(sort:*), Bash(wc:*), Bash(awk:*), Bash(head:*), Bash(tail:*), Bash(grep:*), Bash(uniq:*), Bash(jq:*), Read
 argument-hint: "[--period 30d|90d|180d|1y] [--repo owner/repo] [--deploy-tag-pattern 'v*'] [--deploy-workflow 'deploy']"
 name: four-keys
+disable-model-invocation: true
+context: fork
 description: >-
   Measures Four Keys (DORA metrics) including deployment frequency, lead time,
   change failure rate, and MTTR. Use when measuring DevOps performance, or when

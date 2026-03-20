@@ -1,6 +1,7 @@
 ---
 name: gemini
 allowed-tools: Bash(gemini:*)
+argument-hint: "<prompt>"
 description: >-
   Executes Gemini CLI for AI-powered conversations and code assistance.
   Use when consulting Gemini, starting collaboration, or when the user says

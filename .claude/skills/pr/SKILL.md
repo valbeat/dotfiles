@@ -1,6 +1,8 @@
 ---
 name: pr
 allowed-tools: Bash(git:*), Bash(gh:*)
+disable-model-invocation: true
+argument-hint: "[--base <branch>]"
 description: >-
   Creates a GitHub pull request from the current branch with auto-generated
   title and description. Use when creating PRs, or when the user says
