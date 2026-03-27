@@ -155,8 +155,8 @@
 
   tr = log --graph --pretty='format:%C(yellow)%h%Creset %s %Cgreen(%an)%Creset %Cred%d%Creset'
 
-  # commit messageの自動生成つきcommit (gemini CLI使用)
-	c = "!f() { if git diff --cached --quiet; then echo 'No staged changes to commit'; else tmpfile=$(mktemp); echo 'Generating commit message with Gemini...' >&2; git diff --cached | gemini -p 'Analyze this git diff and generate a concise commit message following Conventional Commits format. Output only the commit message, no explanations.' > \"$tmpfile\" 2>&1; msg=$(cat \"$tmpfile\"); rm -f \"$tmpfile\"; if [ -z \"$msg\" ]; then echo 'Failed to generate commit message' >&2; return 1; fi; git commit -v -e -m \"$msg\"; fi; }; f"
+  # commit messageの自動生成つきcommit (claude CLI使用)
+	c = "!f() { if git diff --cached --quiet; then echo 'No staged changes to commit'; else tmpfile=$(mktemp); echo 'Generating commit message with Claude...' >&2; git diff --cached | claude -p 'Analyze this git diff and generate a concise commit message following Conventional Commits format. Output only the commit message, no explanations.' > \"$tmpfile\" 2>&1; msg=$(cat \"$tmpfile\"); rm -f \"$tmpfile\"; if [ -z \"$msg\" ]; then echo 'Failed to generate commit message' >&2; return 1; fi; git commit -v -e -m \"$msg\"; fi; }; f"
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f
