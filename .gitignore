@@ -64,6 +64,7 @@ credentials
 !.claude/CLAUDE.md
 !.claude/skills/
 !.claude/hooks/
+!.claude/statusline.sh
 
 .gemini/*
 !.gemini/settings.json
