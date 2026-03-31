@@ -13,3 +13,6 @@ personality = "pragmatic"
 
 [notice.model_migrations]
 "gpt-5.1-codex-mini" = "gpt-5.2-codex"
+
+[plugins."google-drive@openai-curated"]
+enabled = true
