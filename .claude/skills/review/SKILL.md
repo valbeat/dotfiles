@@ -1,6 +1,6 @@
 ---
 name: review
-allowed-tools: Read, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git blame:*), Bash(git rev-parse:*), Bash(git merge-base:*), Bash(git show:*), Bash(git symbolic-ref:*), Bash(which:*), Bash(cat /tmp/*), Bash(gemini:*), Bash(codex:*), Bash(copilot:*), Glob, Grep, Agent
+allowed-tools: Read, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git blame:*), Bash(git rev-parse:*), Bash(git merge-base:*), Bash(git show:*), Bash(git symbolic-ref:*), Bash(which:*), Bash(cat /tmp/*), Bash(codex:*), Bash(copilot:*), Glob, Grep, Agent
 description: >-
   Multi-agent local code review with confidence scoring.
   Trigger conditions: git diff に変更がある場合（staged/unstaged/committed）。
@@ -106,12 +106,11 @@ Check that changes follow existing patterns in the codebase (naming, structure, 
 
 #### External AI Review (Optional, in parallel)
 
-Gemini CLI / Codex CLI / Copilot CLI がインストールされている場合、並列で外部AIレビューを実行する。
-未インストールのツールはスキップ。
+Codex CLI / Copilot CLI がインストールされている場合、並列で外部AIレビューを実行する。
+未インストールのツールはスキップ。Gemini は検索専用のため、レビューには使用しない。
 
 ```bash
 # インストール確認（個別に実行）
-which gemini
 which codex
 which copilot
 ```
@@ -123,11 +122,6 @@ You are a senior code reviewer. Review these changes for bugs, logic errors, and
 
 Step 1 で保存した `/tmp/review-diff.txt` を `cat` で読み取り、stdin 経由で各ツールに渡す:
 
-**Gemini Review** (if installed):
-```bash
-cat /tmp/review-diff.txt | gemini -p "$REVIEW_PROMPT"
-```
-
 **Codex Review** (if installed):
 ```bash
 codex exec --full-auto --sandbox read-only --cd /path/to/repo "$REVIEW_PROMPT" < /tmp/review-diff.txt
@@ -138,7 +132,7 @@ codex exec --full-auto --sandbox read-only --cd /path/to/repo "$REVIEW_PROMPT" <
 cat /tmp/review-diff.txt | copilot -p "$REVIEW_PROMPT"
 ```
 
-外部AIの指摘は Step 4 の信頼度スコアリング対象に統合する。issue の reason には `(Gemini)` / `(Codex)` / `(Copilot)` を付記。
+外部AIの指摘は Step 4 の信頼度スコアリング対象に統合する。issue の reason には `(Codex)` / `(Copilot)` を付記。
 
 ### Step 4: Confidence Scoring (Haiku Agents)
 
