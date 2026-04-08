@@ -3,12 +3,12 @@ name: gemini
 allowed-tools: Bash(gemini:*)
 argument-hint: "<prompt>"
 description: >-
-  Executes Gemini CLI for AI-powered conversations and code assistance.
-  Use when consulting Gemini, starting collaboration, or when the user says
-  "gemini", "ask gemini", "gemini chat", or "Geminiと相談".
+  Executes Gemini CLI for search, research, and information gathering.
+  Use when searching codebases, looking up documentation, investigating issues,
+  or when the user says "gemini", "ask gemini", "調べて", or "検索して".
 ---
 
-# Gemini Chat
+# Gemini Search
 
 ## Context
 
@@ -17,17 +17,18 @@ description: >-
 
 ## Your task
 
-Execute Gemini CLI for AI-powered conversations and code assistance. Follow the collaboration patterns defined in CLAUDE.md.
+Gemini CLI を使用して検索・調査・情報収集を行い、結果をClaude側で統合・報告する。
+Gemini の役割は検索と調査に限定する。レビューや修正は行わない。
 
 ## Execution
 
 ```bash
 # CLAUDE.md standard prompt template
 gemini <<EOF
-役割: [専門家の役割]
-タスク: [具体的なタスク]
+役割: [調査・検索の専門家]
+タスク: [検索・調査すべき内容]
 コンテキスト: [対象ファイルや関連情報]
-制約条件: [遵守すべきルール]
+制約条件: [検索・調査のみ。レビューや修正提案は不要]
 出力形式: [期待する出力の形式]
 EOF
 ```
@@ -35,14 +36,17 @@ EOF
 ### Common patterns
 
 ```bash
-# Code review
-git diff | gemini -p "Review these changes and suggest improvements"
+# Codebase search with context
+gemini -p "Search for all usages of X and explain the patterns"
 
-# Single prompt with file context
-gemini --all_files -p "Review this codebase"
+# Documentation / API lookup
+gemini -p "Find documentation about X and summarize key points"
 
-# Interactive chat
-gemini -p "Help me understand this codebase"
+# Issue investigation
+gemini -p "Investigate how X is implemented and trace the call chain"
+
+# Dependency analysis
+gemini --all_files -p "List all files that depend on X and explain why"
 ```
 
 ## Integration with Claude
@@ -50,13 +54,13 @@ gemini -p "Help me understand this codebase"
 結果を以下の形式で報告:
 
 ```markdown
-**Gemini ➜** [Geminiの分析結果]
+**Gemini ➜** [Geminiの調査結果]
 
-**Claude ➜** [Claudeの補足分析・統合案]
+**Claude ➜** [Claudeの分析・判断・次のアクション]
 ```
 
 ## Notes
 
 - 未インストール時: `npm install -g @google/gemini-cli`
 - `--all_files` は控えめに使用（コンテキスト過多に注意）
-- `--yolo` は変更を確認なしで適用するため慎重に使用
+- レビューや修正はCodexに委譲すること
