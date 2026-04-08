@@ -180,4 +180,4 @@ while [ "$(visible_len "$OUTPUT")" -gt "$COLS" ] && [ "${#PARTS[@]}" -gt 1 ]; do
     done
 done
 
-echo -e "$OUTPUT"
+printf '%s\n' "$OUTPUT"
