@@ -160,7 +160,7 @@ if git rev-parse --git-dir > /dev/null 2>&1; then
     BRANCH=$(git branch --show-current 2>/dev/null)
     if [ -n "$BRANCH" ]; then
         DIRTY=""
-        git diff --quiet HEAD 2>/dev/null || DIRTY="*"
+        git diff --quiet 2>/dev/null || DIRTY="*"
         git diff --cached --quiet HEAD 2>/dev/null || DIRTY+="+"
         PARTS+=("$(printf '%b%s%b' "$DIM" "${BRANCH}${DIRTY}" "$RESET")")
     fi
