@@ -107,6 +107,14 @@ fmt_rate() {
     fi
 }
 
+# Strip ANSI escape sequences to measure visible width
+visible_len() {
+    printf '%s' "$1" | sed 's/\x1b\[[0-9;]*m//g' | wc -m | tr -d ' '
+}
+
+# Terminal width
+COLS=$(tput cols 2>/dev/null || echo 120)
+
 # Context window usage
 CTX_PCT=0
 if [ "$CURRENT_TOKENS" != "null" ] && [ "$CONTEXT_SIZE" != "null" ] && [ "$CONTEXT_SIZE" != "0" ]; then
@@ -116,37 +124,59 @@ fi
 [ "$CTX_PCT" -gt 100 ] && CTX_PCT=100
 [ "$CTX_PCT" -lt 0 ] && CTX_PCT=0
 
-# Format context metric with token counts
+# Build parts array: each element is an ANSI-formatted string
+# Priority order (rightmost gets dropped first):
+#   1. [Model] ctx bar tokens  (always shown)
+#   2. 5h rate limit
+#   3. 7d rate limit
+#   4. git branch
+PARTS=()
+
+# Part 0: model + context (always shown)
 CTX_COLOR=$(color_by_pct "$CTX_PCT")
-CTX_OUTPUT=$(printf '%bctx%b %b%s%b %b%s/%s%b' \
+PARTS+=("$(printf '[%s] %bctx%b %b%s%b %b%s/%s%b' \
+    "$MODEL" \
     "$DIM" "$RESET" \
     "$CTX_COLOR" "$(bar_gauge "$CTX_PCT")" "$RESET" \
-    "$CTX_COLOR" "$(format_tokens "$CURRENT_TOKENS")" "$(format_tokens "$CONTEXT_SIZE")" "$RESET")
+    "$CTX_COLOR" "$(format_tokens "$CURRENT_TOKENS")" "$(format_tokens "$CONTEXT_SIZE")" "$RESET")")
 
-# Build output
-OUTPUT="$CTX_OUTPUT"
-
-# Rate limits (only show when >= 20%)
+# Part 1: 5h rate limit (only when >= 20%)
 if [ -n "$FIVE_HOUR" ]; then
     FIVE_INT=${FIVE_HOUR%.*}
     [ "$FIVE_INT" -gt 100 ] 2>/dev/null && FIVE_INT=100
-    [ "${FIVE_INT:-0}" -ge 20 ] && OUTPUT+="  $(fmt_rate "5h" "$FIVE_INT" "$FIVE_RESET")"
+    [ "${FIVE_INT:-0}" -ge 20 ] && PARTS+=("$(fmt_rate "5h" "$FIVE_INT" "$FIVE_RESET")")
 fi
+
+# Part 2: 7d rate limit (only when >= 20%)
 if [ -n "$SEVEN_DAY" ]; then
     SEVEN_INT=${SEVEN_DAY%.*}
     [ "$SEVEN_INT" -gt 100 ] 2>/dev/null && SEVEN_INT=100
-    [ "${SEVEN_INT:-0}" -ge 20 ] && OUTPUT+="  $(fmt_rate "7d" "$SEVEN_INT" "$SEVEN_RESET")"
+    [ "${SEVEN_INT:-0}" -ge 20 ] && PARTS+=("$(fmt_rate "7d" "$SEVEN_INT" "$SEVEN_RESET")")
 fi
 
-# Git branch with dirty indicator
+# Part 3: git branch
 if git rev-parse --git-dir > /dev/null 2>&1; then
     BRANCH=$(git branch --show-current 2>/dev/null)
     if [ -n "$BRANCH" ]; then
         DIRTY=""
         git diff --quiet HEAD 2>/dev/null || DIRTY="*"
         git diff --cached --quiet HEAD 2>/dev/null || DIRTY+="+"
-        OUTPUT+="  ${DIM}${BRANCH}${DIRTY}${RESET}"
+        PARTS+=("$(printf '%b%s%b' "$DIM" "${BRANCH}${DIRTY}" "$RESET")")
     fi
 fi
 
-echo -e "[$MODEL] $OUTPUT"
+# Assemble: join with "  ", drop rightmost parts until it fits
+OUTPUT="${PARTS[0]}"
+for ((i = 1; i < ${#PARTS[@]}; i++)); do
+    OUTPUT+="  ${PARTS[$i]}"
+done
+
+while [ "$(visible_len "$OUTPUT")" -gt "$COLS" ] && [ "${#PARTS[@]}" -gt 1 ]; do
+    unset 'PARTS[${#PARTS[@]}-1]'
+    OUTPUT="${PARTS[0]}"
+    for ((i = 1; i < ${#PARTS[@]}; i++)); do
+        OUTPUT+="  ${PARTS[$i]}"
+    done
+done
+
+echo -e "$OUTPUT"
