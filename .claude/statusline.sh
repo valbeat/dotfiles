@@ -1,6 +1,24 @@
 #!/bin/bash
 input=$(cat)
 
+# Guards
+[ -z "$input" ] && echo "" && exit 0
+command -v jq >/dev/null 2>&1 || { echo "[no jq]"; exit 0; }
+
+# Single jq call to extract all values
+IFS=$'\t' read -r MODEL CONTEXT_SIZE CURRENT_TOKENS FIVE_HOUR SEVEN_DAY <<< "$(
+  echo "$input" | jq -r '[
+    .model.display_name,
+    (.context_window.context_window_size // 0),
+    ((.context_window.current_usage // {}) | ((.input_tokens // 0) + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0))),
+    (.rate_limits.five_hour.used_percentage // ""),
+    (.rate_limits.seven_day.used_percentage // "")
+  ] | @tsv'
+)"
+
+RESET='\033[0m'
+DIM='\033[2m'
+
 # ANSI color by percentage: green(0%) -> yellow(50%) -> red(100%)
 color_by_pct() {
     local pct=$1
@@ -14,9 +32,6 @@ color_by_pct() {
     fi
     printf '\033[38;2;%d;%d;0m' "$r" "$g"
 }
-
-RESET='\033[0m'
-DIM='\033[2m'
 
 # Bar gauge using block characters (8 steps per char, 5 chars = 40 steps)
 bar_gauge() {
@@ -38,39 +53,72 @@ bar_gauge() {
     echo -n "$bar"
 }
 
-# Format a metric with color and bar
-fmt_metric() {
+# Format token count as human-readable (e.g., 450k, 1.2M)
+format_tokens() {
+    local t=$1
+    if [ "$t" -ge 1000000 ]; then
+        local major=$((t / 1000000))
+        local minor=$(((t % 1000000) / 100000))
+        if [ "$minor" -gt 0 ]; then
+            printf '%d.%dM' "$major" "$minor"
+        else
+            printf '%dM' "$major"
+        fi
+    elif [ "$t" -ge 1000 ]; then
+        printf '%dk' $((t / 1000))
+    else
+        printf '%d' "$t"
+    fi
+}
+
+# Format rate limit metric with color and bar
+fmt_rate() {
     local label=$1 pct=$2
     local c
     c=$(color_by_pct "$pct")
     printf '%b%s%b %b%s%b %b%3d%%%b' "$DIM" "$label" "$RESET" "$c" "$(bar_gauge "$pct")" "$RESET" "$c" "$pct" "$RESET"
 }
 
-# Model name
-MODEL=$(echo "$input" | jq -r '.model.display_name')
-
 # Context window usage
-CONTEXT_SIZE=$(echo "$input" | jq -r '.context_window.context_window_size')
-USAGE=$(echo "$input" | jq '.context_window.current_usage')
 CTX_PCT=0
-if [ "$USAGE" != "null" ] && [ "$CONTEXT_SIZE" != "null" ] && [ "$CONTEXT_SIZE" != "0" ]; then
-    CURRENT_TOKENS=$(echo "$USAGE" | jq '(.input_tokens // 0) + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0)')
+if [ "$CURRENT_TOKENS" != "null" ] && [ "$CONTEXT_SIZE" != "null" ] && [ "$CONTEXT_SIZE" != "0" ]; then
     CTX_PCT=$((CURRENT_TOKENS * 100 / CONTEXT_SIZE))
 fi
+# Clamp to 0-100
+[ "$CTX_PCT" -gt 100 ] && CTX_PCT=100
+[ "$CTX_PCT" -lt 0 ] && CTX_PCT=0
 
-# Rate limits
-FIVE_HOUR=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
-SEVEN_DAY=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+# Format context metric with token counts
+CTX_COLOR=$(color_by_pct "$CTX_PCT")
+CTX_OUTPUT=$(printf '%bctx%b %b%s%b %b%s/%s%b' \
+    "$DIM" "$RESET" \
+    "$CTX_COLOR" "$(bar_gauge "$CTX_PCT")" "$RESET" \
+    "$CTX_COLOR" "$(format_tokens "$CURRENT_TOKENS")" "$(format_tokens "$CONTEXT_SIZE")" "$RESET")
 
 # Build output
-OUTPUT="$(fmt_metric "ctx" "$CTX_PCT")"
-[ -n "$FIVE_HOUR" ] && OUTPUT+="  $(fmt_metric "5h" "${FIVE_HOUR%.*}")"
-[ -n "$SEVEN_DAY" ] && OUTPUT+="  $(fmt_metric "7d" "${SEVEN_DAY%.*}")"
+OUTPUT="$CTX_OUTPUT"
 
-# Git branch
+# Rate limits (only show when >= 20%)
+if [ -n "$FIVE_HOUR" ]; then
+    FIVE_INT=${FIVE_HOUR%.*}
+    [ "$FIVE_INT" -gt 100 ] 2>/dev/null && FIVE_INT=100
+    [ "${FIVE_INT:-0}" -ge 20 ] && OUTPUT+="  $(fmt_rate "5h" "$FIVE_INT")"
+fi
+if [ -n "$SEVEN_DAY" ]; then
+    SEVEN_INT=${SEVEN_DAY%.*}
+    [ "$SEVEN_INT" -gt 100 ] 2>/dev/null && SEVEN_INT=100
+    [ "${SEVEN_INT:-0}" -ge 20 ] && OUTPUT+="  $(fmt_rate "7d" "$SEVEN_INT")"
+fi
+
+# Git branch with dirty indicator
 if git rev-parse --git-dir > /dev/null 2>&1; then
     BRANCH=$(git branch --show-current 2>/dev/null)
-    [ -n "$BRANCH" ] && OUTPUT+="  ${DIM}${BRANCH}${RESET}"
+    if [ -n "$BRANCH" ]; then
+        DIRTY=""
+        git diff --quiet HEAD 2>/dev/null || DIRTY="*"
+        git diff --cached --quiet HEAD 2>/dev/null || DIRTY+="+"
+        OUTPUT+="  ${DIM}${BRANCH}${DIRTY}${RESET}"
+    fi
 fi
 
 echo -e "[$MODEL] $OUTPUT"
