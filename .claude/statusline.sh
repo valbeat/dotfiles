@@ -109,7 +109,8 @@ fmt_rate() {
 
 # Strip ANSI escape sequences to measure visible width
 visible_len() {
-    printf '%s' "$1" | sed 's/\x1b\[[0-9;]*m//g' | wc -m | tr -d ' '
+    local esc=$(printf '\033')
+    printf '%s' "$1" | sed "s/${esc}\[[0-9;]*m//g" | wc -m | tr -d ' '
 }
 
 # Terminal width
