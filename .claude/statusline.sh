@@ -6,13 +6,15 @@ input=$(cat)
 command -v jq >/dev/null 2>&1 || { echo "[no jq]"; exit 0; }
 
 # Single jq call to extract all values
-IFS=$'\t' read -r MODEL CONTEXT_SIZE CURRENT_TOKENS FIVE_HOUR SEVEN_DAY <<< "$(
+IFS=$'\t' read -r MODEL CONTEXT_SIZE CURRENT_TOKENS FIVE_HOUR FIVE_RESET SEVEN_DAY SEVEN_RESET <<< "$(
   echo "$input" | jq -r '[
     .model.display_name,
     (.context_window.context_window_size // 0),
     ((.context_window.current_usage // {}) | ((.input_tokens // 0) + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0))),
     (.rate_limits.five_hour.used_percentage // ""),
-    (.rate_limits.seven_day.used_percentage // "")
+    (.rate_limits.five_hour.resets_at // ""),
+    (.rate_limits.seven_day.used_percentage // ""),
+    (.rate_limits.seven_day.resets_at // "")
   ] | @tsv'
 )"
 
@@ -71,12 +73,38 @@ format_tokens() {
     fi
 }
 
-# Format rate limit metric with color and bar
+# Format remaining time until reset (e.g., "2h13m", "3d5h")
+format_remaining() {
+    local resets_at=$1
+    [ -z "$resets_at" ] && return
+    local now remaining
+    now=$(date +%s)
+    remaining=$((resets_at - now))
+    [ "$remaining" -le 0 ] && return
+    local days=$((remaining / 86400))
+    local hours=$(((remaining % 86400) / 3600))
+    local mins=$(((remaining % 3600) / 60))
+    if [ "$days" -gt 0 ]; then
+        printf '%dd%dh' "$days" "$hours"
+    elif [ "$hours" -gt 0 ]; then
+        printf '%dh%02dm' "$hours" "$mins"
+    else
+        printf '%dm' "$mins"
+    fi
+}
+
+# Format rate limit metric with color, bar, and reset countdown
 fmt_rate() {
-    local label=$1 pct=$2
+    local label=$1 pct=$2 resets_at=$3
     local c
     c=$(color_by_pct "$pct")
-    printf '%b%s%b %b%s%b %b%3d%%%b' "$DIM" "$label" "$RESET" "$c" "$(bar_gauge "$pct")" "$RESET" "$c" "$pct" "$RESET"
+    local reset_str
+    reset_str=$(format_remaining "$resets_at")
+    if [ -n "$reset_str" ]; then
+        printf '%b%s%b %b%s%b %b%3d%%%b %b⟳%s%b' "$DIM" "$label" "$RESET" "$c" "$(bar_gauge "$pct")" "$RESET" "$c" "$pct" "$RESET" "$DIM" "$reset_str" "$RESET"
+    else
+        printf '%b%s%b %b%s%b %b%3d%%%b' "$DIM" "$label" "$RESET" "$c" "$(bar_gauge "$pct")" "$RESET" "$c" "$pct" "$RESET"
+    fi
 }
 
 # Context window usage
@@ -102,12 +130,12 @@ OUTPUT="$CTX_OUTPUT"
 if [ -n "$FIVE_HOUR" ]; then
     FIVE_INT=${FIVE_HOUR%.*}
     [ "$FIVE_INT" -gt 100 ] 2>/dev/null && FIVE_INT=100
-    [ "${FIVE_INT:-0}" -ge 20 ] && OUTPUT+="  $(fmt_rate "5h" "$FIVE_INT")"
+    [ "${FIVE_INT:-0}" -ge 20 ] && OUTPUT+="  $(fmt_rate "5h" "$FIVE_INT" "$FIVE_RESET")"
 fi
 if [ -n "$SEVEN_DAY" ]; then
     SEVEN_INT=${SEVEN_DAY%.*}
     [ "$SEVEN_INT" -gt 100 ] 2>/dev/null && SEVEN_INT=100
-    [ "${SEVEN_INT:-0}" -ge 20 ] && OUTPUT+="  $(fmt_rate "7d" "$SEVEN_INT")"
+    [ "${SEVEN_INT:-0}" -ge 20 ] && OUTPUT+="  $(fmt_rate "7d" "$SEVEN_INT" "$SEVEN_RESET")"
 fi
 
 # Git branch with dirty indicator
