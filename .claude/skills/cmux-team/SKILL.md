@@ -76,6 +76,7 @@ TASK
 ```bash
 WS=$(cmux --json new-workspace "team-manager" | jq -r '.workspace')
 S=$(cmux --json list-pane-surfaces --workspace "$WS" | jq -r '.[0].surface')
+cmux rename-tab --surface "$S" "$S manager"
 cmux send --surface "$S" "claude --dangerously-skip-permissions\n"
 sleep 5
 cmux send --surface "$S" "$(cat <<'PROMPT'
@@ -132,6 +133,7 @@ git worktree add "$WORKTREE" -b "$BRANCH" 2>/dev/null || git worktree add "$WORK
 # 2. Spawn Agent in new workspace
 WS=$(cmux --json new-workspace "agent-$TASK_ID" | jq -r '.workspace')
 S=$(cmux --json list-pane-surfaces --workspace "$WS" | jq -r '.[0].surface')
+cmux rename-tab --surface "$S" "$S agent-$TASK_ID"
 cmux send --surface "$S" "cd $WORKTREE && claude --dangerously-skip-permissions\n"
 sleep 5
 

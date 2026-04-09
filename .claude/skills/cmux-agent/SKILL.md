@@ -33,10 +33,13 @@ WS=$(cmux --json new-workspace "$TASK_NAME" | jq -r '.workspace')
 # 2. Get the surface in the new workspace
 S=$(cmux --json list-pane-surfaces --workspace "$WS" | jq -r '.[0].surface')
 
-# 3. Launch Claude Code (headless, skip permissions for autonomous execution)
+# 3. Label the tab with surface ref for identification
+cmux rename-tab --surface "$S" "$S $TASK_NAME"
+
+# 4. Launch Claude Code (headless, skip permissions for autonomous execution)
 cmux send --surface "$S" "claude --dangerously-skip-permissions\n"
 
-# 4. Wait for Claude to be ready (prompt detection)
+# 5. Wait for Claude to be ready (prompt detection)
 for i in $(seq 1 30); do
   SCREEN=$(cmux read-screen --surface "$S" --lines 5)
   if echo "$SCREEN" | grep -qE '(>|❯|claude)'; then
@@ -45,7 +48,7 @@ for i in $(seq 1 30); do
   sleep 1
 done
 
-# 5. Send the task prompt
+# 6. Send the task prompt
 cmux send --surface "$S" "${PROMPT}"
 cmux send-key --surface "$S" return
 
@@ -81,6 +84,7 @@ Other skills can spawn sub-agents by running the commands directly:
 TASK_NAME="review-auth"
 WS=$(cmux --json new-workspace "$TASK_NAME" | jq -r '.workspace')
 S=$(cmux --json list-pane-surfaces --workspace "$WS" | jq -r '.[0].surface')
+cmux rename-tab --surface "$S" "$S $TASK_NAME"
 cmux send --surface "$S" "claude --dangerously-skip-permissions\n"
 sleep 5
 cmux send --surface "$S" "Review the auth middleware for security issues\n"
@@ -100,6 +104,7 @@ for TASK in "review models/" "review controllers/" "review middleware/"; do
   TASK_NAME="review-$(echo "$TASK" | tr ' /' '-')"
   WS=$(cmux --json new-workspace "$TASK_NAME" | jq -r '.workspace')
   S=$(cmux --json list-pane-surfaces --workspace "$WS" | jq -r '.[0].surface')
+  cmux rename-tab --surface "$S" "$S $TASK_NAME"
   cmux send --surface "$S" "claude --dangerously-skip-permissions\n"
   sleep 5
   cmux send --surface "$S" "${TASK}\n"
