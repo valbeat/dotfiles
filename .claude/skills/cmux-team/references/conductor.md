@@ -45,7 +45,8 @@ log "Worktree created at $WORKTREE"
 # --- 3. Spawn Agent in new workspace ---
 WS=$(cmux --json new-workspace "agent-$TASK_ID" | jq -r '.workspace')
 S=$(cmux --json list-pane-surfaces --workspace "$WS" | jq -r '.[0].surface')
-log "Workspace $WS, surface $S"
+cmux rename-tab --surface "$S" "$S agent-$TASK_ID"
+log "Workspace $WS, surface $S (tab labeled)"
 
 WORKTREE_ABS=$(cd "$WORKTREE" && pwd)
 cmux send --surface "$S" "cd ${WORKTREE_ABS} && claude --dangerously-skip-permissions\n"
