@@ -53,7 +53,8 @@ credentials
 .profile
 
 # Ignore configs
-.config
+.config/*
+!.config/ghostty/
 .vscode
 .aws
 # Ignore local config
