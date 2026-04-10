@@ -4,12 +4,9 @@ window-inherit-working-directory = true
 # セッション復元
 window-save-state = always
 
-# Shift+Enterで改行
-keybind = shift+enter=text:\x1b\r
-
 # 外観
-theme = Kanagawa Dragon
+theme = Vercel
 font-family = "Source Han Code JP"
 font-size = 16
-macos-titlebar-style = tabs
-unfocused-split-opacity = 1
+background-opacity = 0.70
+background-blur-radius = 0
