@@ -1,0 +1,12 @@
+# .mdファイルをcmux markdown openでプレビュー
+[opener]
+md-preview = [
+	{ run = 'cmux markdown open "$1"', orphan = true, desc = "Preview Markdown in cmux" },
+]
+
+[open]
+prepend_rules = [
+	{ name = "*.md", use = "md-preview" },
+	{ name = "*.mdx", use = "md-preview" },
+	{ name = "*.markdown", use = "md-preview" },
+]

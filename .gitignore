@@ -55,6 +55,7 @@ credentials
 # Ignore configs
 .config/*
 !.config/ghostty/
+!.config/yazi/
 .vscode
 .aws
 # Ignore local config

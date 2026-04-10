@@ -8,7 +8,7 @@ window-save-state = always
 keybind = shift+enter=text:\x1b\r
 
 # 外観
-theme = Vercel
+theme = Kanagawa Dragon
 font-family = "Source Han Code JP"
 font-size = 16
 macos-titlebar-style = tabs

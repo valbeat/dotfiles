@@ -1,0 +1,11 @@
+# T: 右ペインにターミナルを開く
+[[mgr.prepend_keymap]]
+on   = [ "T" ]
+run  = "shell 'SURFACE=$(cmux --json new-split right | jq -r .surface_ref) && sleep 1.0 && cmux send --surface \"$SURFACE\" \"cd \\\"$0\\\"\\n\"' --orphan"
+desc = "Open cmux right split in hovered folder"
+
+# C: 右ペインでClaude Codeを起動
+[[mgr.prepend_keymap]]
+on   = [ "C" ]
+run  = "shell 'SURFACE=$(cmux --json new-split right | jq -r .surface_ref) && sleep 1.0 && cmux send --surface \"$SURFACE\" \"cd \\\"$0\\\" && claude\\n\"' --orphan"
+desc = "Open Claude Code in hovered folder"
