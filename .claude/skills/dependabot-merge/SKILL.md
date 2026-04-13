@@ -4,18 +4,20 @@ allowed-tools: Bash(gh:*)
 disable-model-invocation: true
 description: >-
   Auto-reviews and enables auto-merge for all open Dependabot PRs.
+  Supports single repo, org-wide, or multi-repo processing.
   Use when merging dependency updates, or when the user says "merge dependabot",
-  "auto-merge deps", or "handle dependabot PRs".
-argument-hint: "[--dry-run] [--include-major]"
+  "auto-merge deps", "handle dependabot PRs", or "org全体のdependabot".
+argument-hint: "[--dry-run] [--include-major] [--org <name>] [--repo <owner/name>]"
 ---
 
 # Dependabot Auto-Merge Skill
 
-Automatically review and enable auto-merge for all open Dependabot PRs in the current repository.
+Automatically review and enable auto-merge for all open Dependabot PRs.
+Supports single repo, org-wide, or specific repo targeting.
 
 ## Context
 
-- **Repository**: Current git repository
+- **Repository**: Current git repository, specific repo, or all repos in an org
 - **Target**: PRs authored by `app/dependabot`
 - **State**: Open PRs only
 
@@ -23,17 +25,49 @@ Automatically review and enable auto-merge for all open Dependabot PRs in the cu
 
 - `--dry-run`: Preview mode. Shows what would be processed without making any changes.
 - `--include-major`: Include major version updates (normally skipped for safety).
+- `--org <name>`: Process all non-archived repos in the specified GitHub organization.
+- `--repo <owner/name>`: Process a specific repository (can be repeated).
+
+## Scope Resolution
+
+Determine the target scope based on arguments:
+
+### Single Repo (default)
+No `--org` or `--repo` specified. Uses the current git repository.
+
+### Org-Wide (`--org <name>`)
+Fetch all non-archived repos in the org, then process each:
+```bash
+gh repo list <org> --no-archived --source --json nameWithOwner --limit 500 -q '.[].nameWithOwner'
+```
+- Archived repositories are **always excluded** via `--no-archived`
+- Forks are excluded via `--source` (Dependabot doesn't run on forks by default)
+- Only repos with open Dependabot PRs are processed (skip repos with 0 PRs)
+
+### Specific Repo (`--repo <owner/name>`)
+Process only the specified repo(s). Multiple `--repo` flags can be used.
 
 ## Steps
 
 1. **Verify Prerequisites**
    - Confirm `gh` CLI is authenticated: `gh auth status`
-   - Confirm current directory is a git repository
+   - If no `--org` or `--repo`: confirm current directory is a git repository
 
-2. **Fetch Open Dependabot PRs**
+2. **Resolve Target Repos**
+   - **Default**: current repo only
+   - **`--org`**: fetch repo list (see Scope Resolution above)
+   - **`--repo`**: use specified repos directly
+   - Log the number of target repos before processing
+
+3. **For Each Target Repo, Fetch Open Dependabot PRs**
    ```bash
+   # Single repo (current directory)
    gh pr list --author app/dependabot --state open --json number,title,url,headRefName
+
+   # Specific repo or org-wide iteration
+   gh pr list --repo <owner/name> --author app/dependabot --state open --json number,title,url,headRefName
    ```
+   - Skip repos with 0 open Dependabot PRs (no output needed for skipped repos)
 
 3. **For Each PR, Determine Update Type**
    - Parse the PR title to detect version change
@@ -45,7 +79,10 @@ Automatically review and enable auto-merge for all open Dependabot PRs in the cu
 
 5. **Fetch PR Diff**
    ```bash
+   # Current repo
    gh pr diff <number>
+   # Specific repo
+   gh pr diff <number> --repo <owner/name>
    ```
 
 6. **Review the Changes**
@@ -55,22 +92,22 @@ Automatically review and enable auto-merge for all open Dependabot PRs in the cu
 
 7. **Post Review Comment** (skip in dry-run)
    ```bash
-   gh pr comment <number> -b "<review comment>"
+   gh pr comment <number> -b "<review comment>" [--repo <owner/name>]
    ```
 
 8. **Approve the PR** (skip in dry-run)
    ```bash
-   gh pr review <number> --approve -b "LGTM - automated review by Claude"
+   gh pr review <number> --approve -b "LGTM - automated review by Claude" [--repo <owner/name>]
    ```
 
 9. **Enable Auto-Merge** (skip in dry-run)
    ```bash
-   gh pr merge <number> --auto --merge
+   gh pr merge <number> --auto --merge [--repo <owner/name>]
    ```
 
 10. **Output Summary**
-    - Display table of all processed PRs
-    - Show statistics (total, processed, skipped, failed)
+    - Display table of all processed PRs grouped by repository (for org/multi-repo mode)
+    - Show per-repo and overall statistics (total, processed, skipped, failed)
 
 ## Version Detection
 
@@ -107,7 +144,7 @@ This update has been reviewed and approved for auto-merge.
 
 ## Output Format
 
-After processing all PRs, display:
+### Single Repo Mode
 
 ```markdown
 ## Dependabot Auto-Merge Summary
@@ -120,6 +157,34 @@ After processing all PRs, display:
 | #125 | react | 17.0.1 → 17.0.2 (patch) | ❌ Failed |
 
 ### Statistics
+- **Total PRs**: X
+- **Processed**: Y
+- **Skipped (major)**: Z
+- **Failed**: W
+```
+
+### Org / Multi-Repo Mode
+
+Group results by repository:
+
+```markdown
+## Dependabot Auto-Merge Summary — org: <org-name>
+
+### <owner/repo-a> (3 PRs)
+| PR# | Package | Update | Status |
+|-----|---------|--------|--------|
+| #10 | lodash | 4.17.20 → 4.17.21 (patch) | ✅ Auto-merge enabled |
+| #11 | webpack | 4.x → 5.x (major) | ⏭️ Skipped (major) |
+| #12 | eslint | 8.50.0 → 8.51.0 (minor) | ✅ Auto-merge enabled |
+
+### <owner/repo-b> (1 PR)
+| PR# | Package | Update | Status |
+|-----|---------|--------|--------|
+| #5 | typescript | 5.2.0 → 5.3.0 (minor) | ✅ Auto-merge enabled |
+
+### Overall Statistics
+- **Repos scanned**: N
+- **Repos with Dependabot PRs**: M
 - **Total PRs**: X
 - **Processed**: Y
 - **Skipped (major)**: Z
