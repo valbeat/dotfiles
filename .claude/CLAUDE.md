@@ -93,6 +93,37 @@ EOF
 - 修正・リファクタリングの実行
 - 最終仕上げ・ポリッシュ
 
+## `claude -p` (非対話モード) のサブスクリプション対象外化への対応
+
+Claude Code Max サブスクリプションは `claude -p` / `claude --print` の呼び出しを対象外とし、API クレジットでの個別課金となる方針。dotfiles ではこれを抑制するため以下の運用ルールを設ける。
+
+### 代替方針
+
+- **Skill 内部で `claude -p` を呼ぶ場合** → Claude Code の **agent (Task ツールの `subagent_type` 指定)** で代替する。同一セッション内で実行されサブスク内で完結
+- **Skill 外の script (Python/TS/sh) で `claude -p` を spawn する場合** → **codex CLI** (`codex exec`) に置換する。テキスト生成用途なら意味的に等価
+- **claude の挙動自体を測る script** (skill-creator/run_eval.py, vercel/benchmark-runner.ts 等) は codex 置換できないため、`CLAUDE_ALLOW_PRINT=1` の環境変数で **明示 opt-in** したときのみ動作させる
+- **対話モード** (`claude --dangerously-skip-permissions`、cmux-agent 経由) は対象外 → サブスク内のまま
+
+### 予防策
+
+- `~/.claude/hooks/guard.sh` が Bash ツールで `claude -p` / `claude --print` を BLOCK する
+- 例外的に許可したい場合のみ `CLAUDE_ALLOW_PRINT=1` を環境変数に付与
+- BLOCK ログは `~/.claude/logs/guard-YYYY-MM-DD.jsonl` に記録される
+
+### プラグインキャッシュ向けパッチ運用
+
+外部プラグイン (skill-creator / vercel) のキャッシュ配下に `claude -p` が残っているため、`tools/patches/apply.sh` で書き換える：
+
+```bash
+make patches    # または bash tools/patches/apply.sh
+```
+
+- 冪等動作。再実行しても二重適用しない（marker チェック）
+- プラグインアップデートでパッチが上書きされたら再実行する
+- 必要環境変数:
+  - codex CLI 認証: `codex login` を済ませる、または `OPENAI_API_KEY` を設定
+  - 明示 opt-in で API 課金を許容する場合は `CLAUDE_ALLOW_PRINT=1`
+
 ## cmux Integration
 
 cmux 内で実行中の場合、cmux系スキルを活用してマルチペイン・マルチエージェント操作を行う。

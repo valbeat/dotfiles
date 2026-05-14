@@ -26,6 +26,10 @@ update: ## Fetch changes for this repo
 .PHONY: install
 install: clean deploy ## Run make deploy, init
 
+.PHONY: patches
+patches: ## Apply claude -p replacement patches to plugin caches
+	@bash $(DOTPATH)/tools/patches/apply.sh
+
 .PHONY: backup
 backup: ## Copy target dotfiles to repository
 	@echo "Start to backup dotfiles to repository."
