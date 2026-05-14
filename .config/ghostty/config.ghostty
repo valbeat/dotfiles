@@ -5,8 +5,5 @@ window-inherit-working-directory = true
 window-save-state = always
 
 # 外観
-theme = Vercel
 font-family = "Source Han Code JP"
-font-size = 16
-background-opacity = 0.70
-background-blur-radius = 0
+font-size = 14
