@@ -70,6 +70,18 @@ case "$TOOL_NAME" in
       exit 2
     fi
 
+    # === BLOCK: claude -p / --print (サブスク対象外、API 課金) ===
+    # 対話モード (claude --dangerously-skip-permissions など) は -p を含まないので素通り。
+    # 明示的に許可したい場合のみ CLAUDE_ALLOW_PRINT=1 を付与する。
+    if echo "$CMD" | grep -qE '(^|[[:space:]|;&])claude([[:space:]]+[^|;&]*)?[[:space:]]+(-p|--print)([[:space:]]|$)'; then
+      if [ "${CLAUDE_ALLOW_PRINT:-0}" != "1" ]; then
+        log_event "BLOCK" "claude-print-mode" "$CMD"
+        echo "BLOCKED: claude -p / --print はサブスクリプション対象外（API 課金）です。Skill 内なら Task ツールで agent 起動、外部 script なら codex CLI を検討。明示許可は CLAUDE_ALLOW_PRINT=1: $CMD" >&2
+        exit 2
+      fi
+      log_event "WARN" "claude-print-mode-allowed" "$CMD"
+    fi
+
     # === WARN: 本番系キーワード ===
     if echo "$CMD" | grep -qiE '(production|prod)\s.*(deploy|push|release)'; then
       log_event "WARN" "production-operation" "$CMD"
