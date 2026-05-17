@@ -1,0 +1,66 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# https://docs.coderabbit.ai/reference/configuration
+
+language: en-US
+tone_instructions: "Be concise. Prefer concrete file/line suggestions over abstract advice."
+early_access: false
+
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: true
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+  path_filters:
+    - "!.claude/projects/**"
+    - "!.claude/cache/**"
+    - "!.claude/logs/**"
+    - "!.claude/file-history/**"
+    - "!.claude/history.jsonl"
+    - "!.claude/sessions/**"
+    - "!.claude/statsig/**"
+    - "!.claude/todos/**"
+    - "!.claude/shell-snapshots/**"
+    - "!.codex/.tmp/**"
+    - "!.vim/dein/**"
+    - "!.vim/undo/**"
+    - "!.vim/bookmark/**"
+  path_instructions:
+    - path: "**/*.sh"
+      instructions: "POSIX/bash 互換性、`set -euo pipefail` の有無、quoting、ShellCheck 警告を確認する。"
+    - path: ".zshrc"
+      instructions: "PATH/fpath の重複や順序、対話シェル限定の処理が `[[ -o interactive ]]` などで保護されているかを確認する。"
+    - path: ".claude/hooks/*.sh"
+      instructions: "Claude Code hook の終了コード規約 (0=allow, 2=deny) と stdin から渡される JSON の扱いを確認する。"
+    - path: "tools/patches/**"
+      instructions: "冪等性 (再実行で二重適用されない marker チェック) とロールバック手段の有無を確認する。"
+    - path: "**/CLAUDE.md"
+      instructions: "ルールが具体的で、ファイル参照や手順が現存するか軽くチェックする。長文化を避ける指摘を優先する。"
+
+tools:
+  shellcheck:
+    enabled: true
+  markdownlint:
+    enabled: true
+  yamllint:
+    enabled: true
+  actionlint:
+    enabled: true
+  gitleaks:
+    enabled: true
+
+knowledge_base:
+  opt_out: false
+  learnings:
+    scope: auto
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "**/CLAUDE.md"
+      - "AGENTS.md"
