@@ -103,10 +103,10 @@
   "theme": "dark-daltonized",
   "editorMode": "vim",
   "verbose": true,
-  "remoteControlAtStartup": true,
-  "skipAutoPermissionPrompt": true,
   "teammateMode": "auto",
+  "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
   "voiceEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754087207880
