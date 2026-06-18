@@ -105,6 +105,7 @@
   "verbose": true,
   "teammateMode": "auto",
   "remoteControlAtStartup": true,
+  "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "voiceEnabled": true,

@@ -1,12 +1,13 @@
 approval_policy = "never"
 hide_agent_reasoning = true
 mmodel_reasoning_effort = "medium"
-model = "gpt-5.4"
+model = "gpt-5.5"
 network_access = true
 personality = "pragmatic"
 reasoning_level = "high"
 sandbox_mode = "workspace-write"
 web_search_request = true
+model_reasoning_effort = "medium"
 
 [notice]
 "hide_gpt-5.1-codex-max_migration_prompt" = true
