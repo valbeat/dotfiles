@@ -37,6 +37,12 @@ brew-dump: ## Update Brewfile from current environment
 	@echo "Start to dump Brewfile from current environment."
 	@echo ""
 	@brew bundle dump --force --file=$(DOTPATH)/Brewfile
+	@# Drop redundant built-in taps that brew bundle re-adds on every dump.
+	@sed -i '' -E '/^tap "homebrew\/(brewdler|bundle|cask|cask-versions|core|services)"$$/d' $(DOTPATH)/Brewfile
+	@echo ""
+	@echo "Brewfile regenerated. Review 'git diff Brewfile' before committing:"
+	@echo "  - EOL/deprecated packages (e.g. openssl@1.1, imagemagick@6) may reappear."
+	@echo "  - run 'brew uninstall' to remove them from the system, not just this file."
 
 .PHONY: patches
 patches: ## Apply claude -p replacement patches to plugin caches

@@ -123,8 +123,6 @@ brew "emojify"
 brew "wxwidgets"
 # Programming language for highly scalable real-time systems
 brew "erlang"
-# Modern replacement for 'ls'
-brew "exa"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
 # Play, record, convert, and stream select audio and video codecs
@@ -215,8 +213,6 @@ brew "hugo"
 brew "libheif"
 # Tools and libraries to manipulate images in select formats
 brew "imagemagick"
-# Tools and libraries to manipulate images in many formats
-brew "imagemagick@6"
 # CLI wrapper for basic network utilities on macOS - ip command
 brew "iproute2mac"
 # JSON output from a shell
@@ -271,8 +267,6 @@ brew "nb"
 brew "nghttp2"
 # C library to read whole-slide images (a.k.a. virtual slides)
 brew "openslide"
-# Cryptography and SSL/TLS Toolkit
-brew "openssl@1.1"
 # Small collection of programs that operate on patch files
 brew "patchutils"
 # Simplistic interactive filtering tool
@@ -287,8 +281,6 @@ brew "pstree"
 brew "pyenv"
 # Pyenv plugin to manage virtualenv
 brew "pyenv-virtualenv"
-# Interpreted, interactive, object-oriented programming language
-brew "python@3.12"
 # Tiny command-line DNS client with support for UDP, TCP, DoT, DoH, DoQ and ODoH
 brew "q"
 # QR Code generation
@@ -471,7 +463,6 @@ vscode "zhuangtongfa.material-theme"
 go "github.com/GoogleCloudPlatform/cloudsql-proxy/cmd/cloud_sql_proxy"
 go "github.com/daixiang0/gci"
 go "github.com/ramya-rao-a/go-outline"
-go "golang.org/dl/go1.22.3"
 go "github.com/stamblerre/gocode"
 go "github.com/rogpeppe/godef"
 go "golang.org/x/tools/cmd/goimports"

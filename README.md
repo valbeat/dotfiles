@@ -23,6 +23,12 @@ After installing or removing packages, refresh the `Brewfile`:
 $ make brew-dump
 ```
 
+`brew-dump` regenerates the whole `Brewfile` from the current environment.
+Redundant built-in taps are stripped automatically, but EOL/deprecated
+packages reappear if they are still installed. Review `git diff Brewfile`
+after running it, and use `brew uninstall` to remove unwanted packages from
+the system rather than only deleting their lines here.
+
 ## Contribution
 
 1. Fork ([https://github.com/valbeat/dotfiles/fork](https://github.com/valbeat/dotfiles/fork))
