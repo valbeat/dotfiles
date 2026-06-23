@@ -123,8 +123,6 @@ brew "emojify"
 brew "wxwidgets"
 # Programming language for highly scalable real-time systems
 brew "erlang"
-# Modern, maintained replacement for ls (successor to exa)
-brew "eza"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
 # Play, record, convert, and stream select audio and video codecs
@@ -207,6 +205,8 @@ brew "helmfile"
 brew "highlight"
 # Improved top (interactive process viewer)
 brew "htop"
+# Add GitHub support to git on the command-line
+brew "hub"
 # Configurable static site generator
 brew "hugo"
 # ISO/IEC 23008-12:2017 HEIF file format decoder and encoder

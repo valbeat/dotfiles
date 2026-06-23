@@ -887,7 +887,7 @@ function fzf-src-remote () {
 
   if [[ "${selected}" =~ ^github.com.*  ]]; then
     local repo=$(echo ${selected} | rev | cut -d "/" -f -2 | rev)
-    BUFFER="gh browse -R ${repo}"
+    BUFFER="hub browse ${repo}"
     zle accept-line
   fi
   # for others
