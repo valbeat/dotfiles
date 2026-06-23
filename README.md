@@ -9,6 +9,20 @@ $ make install
 ```
 This will create symlinks from this repo to your home folder.
 
+## Homebrew packages
+
+Install the packages declared in the `Brewfile`:
+
+```shell
+$ make brew
+```
+
+After installing or removing packages, refresh the `Brewfile`:
+
+```shell
+$ make brew-dump
+```
+
 ## Contribution
 
 1. Fork ([https://github.com/valbeat/dotfiles/fork](https://github.com/valbeat/dotfiles/fork))
