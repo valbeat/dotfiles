@@ -26,6 +26,18 @@ update: ## Fetch changes for this repo
 .PHONY: install
 install: clean deploy ## Run make deploy, init
 
+.PHONY: brew
+brew: ## Install packages from Brewfile
+	@echo "Start to install packages from Brewfile."
+	@echo ""
+	@brew bundle --file=$(DOTPATH)/Brewfile
+
+.PHONY: brew-dump
+brew-dump: ## Update Brewfile from current environment
+	@echo "Start to dump Brewfile from current environment."
+	@echo ""
+	@brew bundle dump --force --file=$(DOTPATH)/Brewfile
+
 .PHONY: patches
 patches: ## Apply claude -p replacement patches to plugin caches
 	@bash $(DOTPATH)/tools/patches/apply.sh
