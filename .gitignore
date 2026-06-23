@@ -62,6 +62,14 @@ credentials
 # Ignore local config
 .gitconfig.local
 
+# === Nix / nix-darwin ===
+# Build output symlinks (point into /nix/store, must never be committed).
+# flake.nix / flake.lock / darwin/*.nix are intentionally tracked.
+result
+result-*
+# nix develop + direnv cache (.envrc is ignored in .gitignore_global)
+.direnv/
+
 .claude/*
 !.claude/settings.json
 !.claude/CLAUDE.md
