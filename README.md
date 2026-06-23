@@ -29,6 +29,28 @@ packages reappear if they are still installed. Review `git diff Brewfile`
 after running it, and use `brew uninstall` to remove unwanted packages from
 the system rather than only deleting their lines here.
 
+## nix-darwin (experimental, Phase 1)
+
+macOS system settings are being migrated from the imperative `.osx` script to
+declarative [nix-darwin](https://github.com/nix-darwin/nix-darwin). Phase 1
+covers `system.defaults` only; see [docs/nix-darwin-design.md](docs/nix-darwin-design.md)
+for the full plan. `.osx` is kept until the migration is verified.
+
+Prerequisites: install Nix (flakes enabled), e.g. the Determinate Systems installer:
+
+```shell
+$ /bin/sh -c "$(curl --proto '=https' --tlsv1.2 -sSfL https://install.determinate.systems/nix)" -- install
+```
+
+Bootstrap once, then rebuild on changes:
+
+```shell
+$ nix run nix-darwin -- switch --flake ~/dotfiles#takumas-MacBook-Pro
+$ darwin-rebuild switch --flake ~/dotfiles#takumas-MacBook-Pro
+```
+
+Roll back with `darwin-rebuild --rollback`.
+
 ## Contribution
 
 1. Fork ([https://github.com/valbeat/dotfiles/fork](https://github.com/valbeat/dotfiles/fork))
