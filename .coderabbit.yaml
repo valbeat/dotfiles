@@ -14,7 +14,7 @@ reviews:
   collapse_walkthrough: true
   auto_review:
     enabled: true
-    drafts: false
+    drafts: true
     base_branches:
       - main
   path_filters:
@@ -42,18 +42,17 @@ reviews:
       instructions: "冪等性 (再実行で二重適用されない marker チェック) とロールバック手段の有無を確認する。"
     - path: "**/CLAUDE.md"
       instructions: "ルールが具体的で、ファイル参照や手順が現存するか軽くチェックする。長文化を避ける指摘を優先する。"
-
-tools:
-  shellcheck:
-    enabled: true
-  markdownlint:
-    enabled: true
-  yamllint:
-    enabled: true
-  actionlint:
-    enabled: true
-  gitleaks:
-    enabled: true
+  tools:
+    shellcheck:
+      enabled: true
+    markdownlint:
+      enabled: true
+    yamllint:
+      enabled: true
+    actionlint:
+      enabled: true
+    gitleaks:
+      enabled: true
 
 knowledge_base:
   opt_out: false
