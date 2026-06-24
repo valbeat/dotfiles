@@ -32,11 +32,10 @@ the system rather than only deleting their lines here.
 ## nix-darwin
 
 macOS system settings are managed declaratively with
-[nix-darwin](https://github.com/nix-darwin/nix-darwin). Phase 1 (the former
-`.osx` script) is migrated to `system.defaults`; see
-[docs/nix-darwin-design.md](docs/nix-darwin-design.md) for the staged plan
-(Homebrew is the next phase). This host uses Determinate Nix, so nix-darwin's
-own Nix management is disabled (`nix.enable = false`).
+[nix-darwin](https://github.com/nix-darwin/nix-darwin). The former `.osx`
+script is migrated to `system.defaults` (Homebrew is the planned next phase).
+This host uses Determinate Nix, so nix-darwin's own Nix management is disabled
+(`nix.enable = false`).
 
 Prerequisites: install Nix (flakes enabled), e.g. the Determinate Systems installer:
 
@@ -44,13 +43,19 @@ Prerequisites: install Nix (flakes enabled), e.g. the Determinate Systems instal
 $ /bin/sh -c "$(curl --proto '=https' --tlsv1.2 -sSfL https://install.determinate.systems/nix)" -- install
 ```
 
+The flake exposes one configuration per host under `darwinConfigurations` in
+`flake.nix`. Use your host name (`scutil --get LocalHostName`) in place of
+`$MY_HOST` below; a fork should add a matching entry in `flake.nix` first.
+(`HOST` is read-only in zsh, so a different variable name is used.)
+
 Activation must run as root. Bootstrap once with `nix run`, then use
 `darwin-rebuild` for subsequent changes (run from the repository directory so
 the `.` flake reference resolves):
 
 ```shell
-$ sudo nix run nix-darwin -- switch --flake .#takumas-MacBook-Pro
-$ sudo darwin-rebuild switch --flake .#takumas-MacBook-Pro
+$ MY_HOST=$(scutil --get LocalHostName)
+$ sudo nix run nix-darwin -- switch --flake ".#$MY_HOST"
+$ sudo darwin-rebuild switch --flake ".#$MY_HOST"
 ```
 
 Roll back with `sudo darwin-rebuild --rollback`.
