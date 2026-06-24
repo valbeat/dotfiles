@@ -11,7 +11,8 @@
     { self, nixpkgs, nix-darwin }:
     {
       # One entry per host; the attribute name must match `scutil --get LocalHostName`.
-      # Forks: add your own host here (and adjust `system` for Intel: x86_64-darwin).
+      # Forks: add your own host here. For Intel, set `system = "x86_64-darwin"`
+      # AND `nixpkgs.hostPlatform` in darwin/configuration.nix to match.
       darwinConfigurations."takumas-MacBook-Pro" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [ ./darwin/configuration.nix ];
