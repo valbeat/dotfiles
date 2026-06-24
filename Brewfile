@@ -273,6 +273,8 @@ brew "patchutils"
 brew "peco"
 # Draw UML diagrams
 brew "plantuml"
+# Save clipboard image as PNG (karabiner-config: iTerm2 Cmd+V image paste for Claude Code)
+brew "pngpaste"
 # PDF rendering library (based on the xpdf-3.0 code base)
 brew "poppler"
 # Show ps output as a tree
