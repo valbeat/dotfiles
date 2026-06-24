@@ -10,8 +10,8 @@
   outputs =
     { self, nixpkgs, nix-darwin }:
     {
-      # Bootstrap: nix run nix-darwin -- switch --flake ~/dotfiles#takumas-MacBook-Pro
-      # Thereafter: darwin-rebuild switch --flake ~/dotfiles#takumas-MacBook-Pro
+      # One entry per host; the attribute name must match `scutil --get LocalHostName`.
+      # Forks: add your own host here (and adjust `system` for Intel: x86_64-darwin).
       darwinConfigurations."takumas-MacBook-Pro" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [ ./darwin/configuration.nix ];
