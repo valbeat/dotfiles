@@ -55,6 +55,11 @@ $ sudo darwin-rebuild switch --flake .#takumas-MacBook-Pro
 
 Roll back with `sudo darwin-rebuild --rollback`.
 
+Recent nix-darwin no longer auto-escalates, so activation must run as root
+(`darwin-rebuild` prints `system activation must now be run as root` otherwise).
+The `$HOME ... is not owned by you` warning printed under `sudo` is benign —
+the flake still evaluates and every setting is applied correctly.
+
 ## Contribution
 
 1. Fork ([https://github.com/valbeat/dotfiles/fork](https://github.com/valbeat/dotfiles/fork))
