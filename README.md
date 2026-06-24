@@ -32,11 +32,10 @@ the system rather than only deleting their lines here.
 ## nix-darwin
 
 macOS system settings are managed declaratively with
-[nix-darwin](https://github.com/nix-darwin/nix-darwin). Phase 1 (the former
-`.osx` script) is migrated to `system.defaults`; see
-[docs/nix-darwin-design.md](docs/nix-darwin-design.md) for the staged plan
-(Homebrew is the next phase). This host uses Determinate Nix, so nix-darwin's
-own Nix management is disabled (`nix.enable = false`).
+[nix-darwin](https://github.com/nix-darwin/nix-darwin). The former `.osx`
+script is migrated to `system.defaults` (Homebrew is the planned next phase).
+This host uses Determinate Nix, so nix-darwin's own Nix management is disabled
+(`nix.enable = false`).
 
 Prerequisites: install Nix (flakes enabled), e.g. the Determinate Systems installer:
 
