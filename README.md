@@ -29,12 +29,14 @@ packages reappear if they are still installed. Review `git diff Brewfile`
 after running it, and use `brew uninstall` to remove unwanted packages from
 the system rather than only deleting their lines here.
 
-## nix-darwin (experimental, Phase 1)
+## nix-darwin
 
-macOS system settings are being migrated from the imperative `.osx` script to
-declarative [nix-darwin](https://github.com/nix-darwin/nix-darwin). Phase 1
-covers `system.defaults` only; see [docs/nix-darwin-design.md](docs/nix-darwin-design.md)
-for the full plan. `.osx` is kept until the migration is verified.
+macOS system settings are managed declaratively with
+[nix-darwin](https://github.com/nix-darwin/nix-darwin). Phase 1 (the former
+`.osx` script) is migrated to `system.defaults`; see
+[docs/nix-darwin-design.md](docs/nix-darwin-design.md) for the staged plan
+(Homebrew is the next phase). This host uses Determinate Nix, so nix-darwin's
+own Nix management is disabled (`nix.enable = false`).
 
 Prerequisites: install Nix (flakes enabled), e.g. the Determinate Systems installer:
 
@@ -42,14 +44,21 @@ Prerequisites: install Nix (flakes enabled), e.g. the Determinate Systems instal
 $ /bin/sh -c "$(curl --proto '=https' --tlsv1.2 -sSfL https://install.determinate.systems/nix)" -- install
 ```
 
-Bootstrap once, then rebuild on changes:
+Activation must run as root. Bootstrap once with `nix run`, then use
+`darwin-rebuild` for subsequent changes (run from the repository directory so
+the `.` flake reference resolves):
 
 ```shell
-$ nix run nix-darwin -- switch --flake ~/dotfiles#takumas-MacBook-Pro
-$ darwin-rebuild switch --flake ~/dotfiles#takumas-MacBook-Pro
+$ sudo nix run nix-darwin -- switch --flake .#takumas-MacBook-Pro
+$ sudo darwin-rebuild switch --flake .#takumas-MacBook-Pro
 ```
 
-Roll back with `darwin-rebuild --rollback`.
+Roll back with `sudo darwin-rebuild --rollback`.
+
+Recent nix-darwin no longer auto-escalates, so activation must run as root
+(`darwin-rebuild` prints `system activation must now be run as root` otherwise).
+The `$HOME ... is not owned by you` warning printed under `sudo` is benign —
+the flake still evaluates and every setting is applied correctly.
 
 ## Contribution
 
