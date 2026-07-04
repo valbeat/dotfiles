@@ -83,7 +83,8 @@ result-*
 !.gemini/commands/
 
 # Codex local artifacts
+# config.toml is intentionally untracked: codex CLI writes machine-local
+# state (project trust entries, notice flags) into it on every run.
 .codex/*
-!.codex/config.toml
 !.codex/prompts/
 !.codex/AGENTS.md
