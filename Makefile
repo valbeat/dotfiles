@@ -2,7 +2,7 @@
 test: deploy ## Test for successful initialization
 DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 CANDIDATES := $(wildcard .??*)
-EXCLUSIONS := .DS_Store .git .gitmodules .github
+EXCLUSIONS := .DS_Store .git .gitattributes .gitmodules .github
 DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 
 .DEFAULT_GOAL := help
@@ -24,7 +24,13 @@ update: ## Fetch changes for this repo
 	@git submodule foreach git pull origin master
 
 .PHONY: install
-install: clean deploy ## Run make deploy, init
+install: clean deploy git-filters ## Run make deploy, init
+
+.PHONY: git-filters
+git-filters: ## Register git filters (strip codex trust entries from commits)
+	@git config filter.codex-config.clean "bash $(DOTPATH)/tools/git/codex-config-clean.sh"
+	@git config filter.codex-config.required true
+	@git -C $(DOTPATH) add --renormalize .codex/config.toml
 
 .PHONY: brew
 brew: ## Install packages from Brewfile
