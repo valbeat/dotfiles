@@ -75,6 +75,19 @@ Optional fields: `allowed-tools`, `argument-hint`, `model`, `user-invocable`, `d
 - **One level deep**: All reference files link directly from SKILL.md (no nested chains)
 - **Appropriate freedom**: Match specificity to fragility (exact scripts for fragile ops, general guidance for flexible tasks)
 - **Consistent terminology**: Choose one term and use it throughout
+- **Model-robust**: Write skills so quality holds even on smaller models (Sonnet/Haiku):
+  - Replace vague judgment ("generate appropriately") with decision tables, priority
+    orders, and concrete rules
+  - Embed FULL prompt templates for any sub-agent the skill spawns — never a
+    one-line description the orchestrator must expand
+  - For destructive operations (editing PR/issue bodies, overwriting files):
+    spell out a save → modify → verify → apply procedure; pass bodies via
+    `--body-file` / heredoc, never inline quoting
+  - Give every loop an iteration limit and an escalation path ("after 3 failures,
+    report to user")
+  - End multi-step workflows with a completion checklist of command-verifiable
+    conditions
+  - Forbid placeholders (`[TBD]`) in final outputs explicitly
 
 See @references/skill-template.md for templates and field reference.
 

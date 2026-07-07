@@ -89,26 +89,15 @@ Create PR
    ```
 
 5. **PRタイトルを生成**
-   - 最新のコミットメッセージまたは複数コミットの要約
-   - Conventional Commit形式を維持
-   - 例:
-     - 単一コミット: そのコミットメッセージを使用
-     - 複数コミット: 主要な変更を要約
-   ```bash
-   # 最新コミットのメッセージを取得
-   LATEST_COMMIT=$(git log -1 --format="%s")
-   
-   # コミット数を確認
-   COMMIT_COUNT=$(git rev-list --count origin/$BASE_BRANCH..HEAD)
-   
-   # タイトル決定
-   if [ $COMMIT_COUNT -eq 1 ]; then
-     PR_TITLE="$LATEST_COMMIT"
-   else
-     # 複数コミットの場合は要約を生成
-     PR_TITLE="feat: $(git log origin/$BASE_BRANCH..HEAD --format="%s" | head -1 | sed 's/^[^:]*: //')"
-   fi
-   ```
+
+   スクリプトで機械的に生成せず、以下のルールで自分で決定する:
+
+   1. **単一コミット**: そのコミットメッセージをそのままタイトルにする
+   2. **複数コミット・同一タイプ**: そのタイプを維持し、変更全体を要約する
+      （例: `fix(auth): resolve token refresh and session expiry issues`）
+   3. **複数コミット・異なるタイプ**: 優先順位 `feat` > `fix` > `refactor` > その他 で
+      最上位のタイプを使い、そのタイプに属する主要な変更を要約する
+   4. Conventional Commit形式（`<type>(<scope>): <subject>`）、50文字以内、英語
 
 6. **PR説明文を生成**
 
@@ -122,39 +111,28 @@ Create PR
    **デフォルトの構造**（テンプレートがない場合）:
    ```markdown
    ## Summary
-   [変更の概要を自動生成]
+   [変更の目的と影響を1-3文で。差分から読み取れる事実のみ書く]
 
    ## Changes
-   [コミットメッセージから主要な変更を抽出]
-   - feat: 新機能の追加
-   - fix: バグ修正
-   - refactor: リファクタリング
-   - docs: ドキュメント更新
-
-   ## Commits
-   [すべてのコミットをリスト]
-
-   ## Files Changed
-   - [変更されたファイルの要約]
-   - Added: X files
-   - Modified: Y files
-   - Deleted: Z files
+   [コミットメッセージをタイプ別にグループ化して箇条書き]
 
    ## Testing
-   - [ ] ローカルでテスト済み
-   - [ ] CI/CDパイプラインの確認
+   - [実際に実行したテスト・確認内容。未実施なら「未実施」と書く]
 
    ## Related Issues
-   [コミットメッセージから Issue 番号を抽出]
-
-   ## Architecture & Flow Diagram
-   ```mermaid
-   [変更内容に応じて以下のいずれかを自動生成]
-   - Architecture changes (if any)
-   - Data flow modifications
-   - Component relationships
-   - Process flows affected by the changes
+   [コミットメッセージ・ブランチ名から #番号 を抽出。なければセクションごと省略]
    ```
+
+   **記述ルール**:
+   - プレースホルダー（`[...]`や`TBD`）を残したままPRを作成しない。書けないセクションは削除する
+   - Mermaid図は「アーキテクチャ変更・データフロー変更・コンポーネント間の関係変更」が
+     差分に含まれる場合のみ追加する。単純な修正・設定変更では追加しない
+   - 生成した本文は一時ファイルに保存する:
+   ```bash
+   # 本文をファイルに書き出す（--body-file で使用。変数展開のクォート事故を防ぐ）
+   cat > /tmp/pr-body.md <<'EOF'
+   [生成した本文]
+   EOF
    ```
 
 7. **ブランチをプッシュ**
@@ -165,20 +143,15 @@ Create PR
 
 8. **PRを作成**
    ```bash
-   # CLAUDE.mdの指定に従ってPRを作成
+   # CLAUDE.mdの指定に従ってPRを作成（本文は Step 6 の /tmp/pr-body.md を使用）
    gh pr create \
-     --title "$PR_TITLE" \
-     --body "$PR_BODY" \
+     --title "<Step 5 で決定したタイトル>" \
+     --body-file /tmp/pr-body.md \
      --base "$BASE_BRANCH" \
      --assignee @me \
      --draft
-   
-   # または --no-draft オプションが指定された場合
-   gh pr create \
-     --title "$PR_TITLE" \
-     --body "$PR_BODY" \
-     --base "$BASE_BRANCH" \
-     --assignee @me
+
+   # --no-draft オプションが指定された場合のみ --draft を外す
    ```
 
 9. **作成したPRを確認**
@@ -244,3 +217,11 @@ EOF
 - PR作成後、必要に応じて手動でレビュー準備完了にする
 - 既存のPRがある場合は警告を表示
 - コミットメッセージが適切に書かれていることが前提
+
+## 完了前チェックリスト
+
+- [ ] PRテンプレートの有無を確認した（存在する場合はその構造に従った）
+- [ ] タイトルは Conventional Commit形式・英語・50文字以内
+- [ ] 本文にプレースホルダーが残っていない
+- [ ] `--assignee @me --draft` を付けた（`--no-draft` 指定時を除く）
+- [ ] 作成したPRのURLをユーザーに報告した

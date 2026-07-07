@@ -90,6 +90,15 @@ Create `docs/DESIGN.md` with following structure:
 [Files/modules affected by changes]
 ```
 
+**Quality requirements (MUST)**:
+- Impact Scope: list actual file paths verified to exist via Glob/Read — never invent paths
+- Functional Requirements: each item must be a verifiable statement
+  (bad: "fast search" / good: "search returns results for a 10k-record dataset")
+- Technology Choices: only propose libraries already in the project's dependencies,
+  unless adding a new one is explicitly part of the task
+- No placeholders like `[TBD]` in the final document — unresolved items go to the
+  interview phase instead
+
 ### User Approval
 
 Get approval with AskUserQuestion:
@@ -156,6 +165,12 @@ Based on DESIGN.md, decompose into TDD cycles:
 - [ ] [GREEN] Implement: [Implementation content]
 - [ ] [REFACTOR] Refactor
 ```
+
+**Quality requirements (MUST)**:
+- Each [RED] task names the target test file path and what the test verifies
+- Each [GREEN] task names the file/function to implement
+- Phases are ordered by dependency: earlier phases must not depend on later ones
+- Keep phases small: one phase = one independently testable behavior
 
 ### User Approval
 

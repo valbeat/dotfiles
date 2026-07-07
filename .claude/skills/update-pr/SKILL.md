@@ -31,12 +31,17 @@ Update PR #<pr-number>
 
 1. **PRの現在の情報を取得**
    ```bash
-   # PR情報を取得
+   # PR情報を取得（既存本文は必ず保存してから作業する）
    gh pr view <pr-number> --json title,body,baseRefName,headRefName
-   
+   gh pr view <pr-number> --json body -q .body > /tmp/pr-body-old.md
+
    # PRブランチにチェックアウト
    gh pr checkout <pr-number>
    ```
+
+   **重要**: `/tmp/pr-body-old.md` を Read で読み、人間が手動で書いたと思われる内容
+   （チェック済みのチェックリスト、レビュー向けの補足、スクリーンショット等）を特定する。
+   これらは新しい本文にそのまま引き継ぐこと。
 
 2. **ベースブランチとの差分を分析**
    ```bash
@@ -66,12 +71,13 @@ Update PR #<pr-number>
    - 技術的詳細の抽出
 
 5. **PRタイトルの生成**
-   ```bash
-   # Conventional Commit形式でタイトルを生成
-   # 例: "feat: add user authentication system"
-   #     "fix: resolve memory leak in data processor"
-   #     "refactor: improve database query performance"
-   ```
+
+   以下のルールで決定する（スクリプトで機械生成しない）:
+   1. **単一コミット**: そのコミットメッセージをそのまま使用
+   2. **複数コミット・同一タイプ**: タイプを維持して変更全体を要約
+   3. **複数コミット・異なるタイプ**: 優先順位 `feat` > `fix` > `refactor` > その他で決定
+   4. Conventional Commit形式、50文字以内、英語
+   5. 既存タイトルが上記ルールを満たしていれば変更しない
 
 6. **PR説明文の生成**
    ```markdown
@@ -97,15 +103,16 @@ Update PR #<pr-number>
    ```
 
 7. **PRの更新**
+
+   新しい本文は一時ファイルに書き出してから `--body-file` で渡す
+   （インライン `--body` はクォート事故の原因になるため使わない）:
    ```bash
-   # タイトルのみ更新
-   gh pr edit <pr-number> --title "<new-title>"
-   
-   # 説明のみ更新
-   gh pr edit <pr-number> --body "<new-body>"
-   
-   # タイトルと説明を同時に更新
-   gh pr edit <pr-number> --title "<new-title>" --body "<new-body>"
+   cat > /tmp/pr-body-new.md <<'EOF'
+   [生成した本文（Step 1 で特定した手動記載の内容を含める）]
+   EOF
+
+   # タイトルと説明を更新
+   gh pr edit <pr-number> --title "<new-title>" --body-file /tmp/pr-body-new.md
    ```
 
 8. **更新内容の確認**
@@ -158,6 +165,7 @@ EOF
 ## Notes
 
 - PRの作成者でない場合、編集権限がない可能性がある
-- 既存の説明を完全に置き換えるため、手動で追加した情報は保持されない
+- **既存本文の手動記載（チェックリストの状態、補足、画像等）は必ず新しい本文に引き継ぐ**
 - 必要に応じて `--editor` オプションで手動編集が可能
 - コミットメッセージが適切に書かれていると、より良い説明が生成される
+- プレースホルダー（`[...]`）を残したまま更新しない。書けないセクションは削除する

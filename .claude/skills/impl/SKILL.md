@@ -30,6 +30,13 @@ Strictly adheres to the RED→GREEN→REFACTOR cycle with a test-first approach.
 - If `$ARGUMENTS` exists: Use as-is
 - If empty: Ask with AskUserQuestion
 
+### Branch Guard
+
+This command commits during the TDD cycle. Before starting, check the current branch:
+if on `main`/`master`, create a feature branch first
+(`git switch -c feat/<short-description>` or `fix/<short-description>`).
+Never commit directly to the base branch.
+
 ### Check Existing Documents
 
 Check for `docs/DESIGN.md` and `docs/TODO.md` using Read tool.
@@ -62,22 +69,31 @@ Manage current phase tasks with TodoWrite.
 1. Update TodoWrite to `in_progress`
 2. Write test based on expected input/output
 3. Run `/check --test`, **confirm failure**
-4. Commit on failure (proves test is correct)
-5. Update TodoWrite to `completed`
+4. **Verify the test fails for the RIGHT reason**:
+   - Correct: assertion failure (expected vs actual mismatch)
+   - Wrong: compile error, import error, syntax error, missing fixture
+   - If it fails for the wrong reason, fix the test setup and re-run until the
+     failure is an assertion failure
+5. Commit on failure (proves test is correct). Commit message: `test: <what the test verifies>`
+6. Update TodoWrite to `completed`
 
 #### GREEN (Implement)
 
 1. Update TodoWrite to `in_progress`
 2. Write **minimal implementation** to pass test
 3. Run `/check --test`, **confirm success**
-4. Update TodoWrite to `completed`
+4. **Do NOT modify the test to make it pass.** If the test itself looks wrong,
+   stop and confirm with the user before changing it
+5. If tests still fail after 3 fix attempts, stop and report the failure output to the user
+6. Update TodoWrite to `completed`
 
 #### REFACTOR
 
 1. Update TodoWrite to `in_progress`
 2. Improve code quality following design principles
-3. Run `/check --test`, **maintain success**
-4. Update TodoWrite to `completed`
+3. Run `/check --test`, **maintain success** (tests must not be modified)
+4. If nothing needs refactoring, state so explicitly and skip (do not invent changes)
+5. Update TodoWrite to `completed`
 
 **Design Principles Checklist**:
 
@@ -107,7 +123,8 @@ Report Critical/Warning issues only.
 1. Fix issues
 2. Confirm success with `/check --test`
 3. Run self review again
-4. Repeat until no issues
+4. Repeat until no issues (max 3 rounds — if issues remain after 3 rounds,
+   report the remaining issues to the user and ask how to proceed)
 
 ### Step 2: Quality Check
 
