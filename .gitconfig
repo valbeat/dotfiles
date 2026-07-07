@@ -168,3 +168,5 @@
 [user]
 	name = Takuma Kajikawa
 	email = kj1ktk@gmail.com
+[fetch]
+	prune = true
