@@ -37,7 +37,6 @@
     "ask": [],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -188,6 +187,7 @@
   "alwaysThinkingEnabled": true,
   "tui": "default",
   "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
   "theme": "dark-daltonized",
   "editorMode": "vim",
   "verbose": true,
@@ -199,6 +199,5 @@
   "voiceEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754087207880
-  },
-  "skipWorkflowUsageWarning": true
+  }
 }
