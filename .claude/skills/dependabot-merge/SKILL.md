@@ -69,15 +69,15 @@ Process only the specified repo(s). Multiple `--repo` flags can be used.
    ```
    - Skip repos with 0 open Dependabot PRs (no output needed for skipped repos)
 
-3. **For Each PR, Determine Update Type**
+4. **For Each PR, Determine Update Type**
    - Parse the PR title to detect version change
-   - Classify as `patch`, `minor`, or `major`
+   - Classify as `patch`, `minor`, or `major` (see Version Detection below)
 
-4. **Skip Major Updates** (unless `--include-major` specified)
+5. **Skip Major Updates** (unless `--include-major` specified)
    - Major updates may contain breaking changes
    - Log skipped PRs for manual review
 
-5. **Fetch PR Diff**
+6. **Fetch PR Diff**
    ```bash
    # Current repo
    gh pr diff <number>
@@ -85,27 +85,27 @@ Process only the specified repo(s). Multiple `--repo` flags can be used.
    gh pr diff <number> --repo <owner/name>
    ```
 
-6. **Review the Changes**
+7. **Review the Changes**
    - Analyze the diff to understand what changed
    - Check for any suspicious or unexpected changes
    - Verify it's a standard dependency update
 
-7. **Post Review Comment** (skip in dry-run)
+8. **Post Review Comment** (skip in dry-run)
    ```bash
    gh pr comment <number> -b "<review comment>" [--repo <owner/name>]
    ```
 
-8. **Approve the PR** (skip in dry-run)
+9. **Approve the PR** (skip in dry-run)
    ```bash
    gh pr review <number> --approve -b "LGTM - automated review by Claude" [--repo <owner/name>]
    ```
 
-9. **Enable Auto-Merge** (skip in dry-run)
-   ```bash
-   gh pr merge <number> --auto --merge [--repo <owner/name>]
-   ```
+10. **Enable Auto-Merge** (skip in dry-run)
+    ```bash
+    gh pr merge <number> --auto --merge [--repo <owner/name>]
+    ```
 
-10. **Output Summary**
+11. **Output Summary**
     - Display table of all processed PRs grouped by repository (for org/multi-repo mode)
     - Show per-repo and overall statistics (total, processed, skipped, failed)
 
@@ -119,6 +119,14 @@ Version change classification:
 - **Major**: First number changes (e.g., 1.x.x → 2.x.x)
 - **Minor**: Second number changes (e.g., 1.1.x → 1.2.x)
 - **Patch**: Third number changes (e.g., 1.1.1 → 1.1.2)
+
+Safety rules (treat as major = skip by default):
+- **0.x versions**: a minor bump on 0.x (e.g., 0.3.x → 0.4.0) may be breaking per semver
+  convention — classify as `major`
+- **Grouped updates** (one PR bumping multiple packages): classify by the LARGEST bump
+  among all packages in the PR
+- **Unparseable version** (no clear old→new semver in the title): classify as `major`
+  and log it for manual review — never guess
 
 ## Review Comment Template
 

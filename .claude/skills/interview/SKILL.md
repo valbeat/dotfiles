@@ -48,7 +48,12 @@ Based on DESIGN.md content, conduct deep-dive interview using AskUserQuestion.
 
 **Important rules**:
 - **Don't ask obvious questions** - Skip what's already in DESIGN.md or clearly answered
+- **Never re-ask** - Before each round, list topics already covered (in DESIGN.md or
+  earlier answers) and exclude them
 - **Deep-dive** - Explore implicit assumptions and undecided matters, not surface-level confirmations
+- **Concrete options** - Every question must offer 2-4 realistic options with the
+  trade-off stated in each description (the user can always pick "Other")
+- **Batch size** - 1-2 questions per AskUserQuestion call (max 4)
 - **Continue** - Keep interviewing until user says "done" or sufficient information gathered
 
 ### Interview Flow

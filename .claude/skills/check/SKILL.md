@@ -37,7 +37,12 @@ Execute project quality checks. Identify the project type and run appropriate ch
    - `pyproject.toml` / `setup.cfg` → Python
    - `Makefile` → Make-based
 
-2. **Run checks** in order (for `--all`):
+2. **Resolve commands** by priority:
+   1. Project-defined commands: `package.json` scripts / `Makefile` targets /
+      commands used in `.github/workflows/`
+   2. Only if none exist, fall back to the language defaults below
+
+3. **Run checks** in order (for `--all`):
    - Formatter (auto-fix first)
    - Linter (catch issues)
    - Build (compile check)
@@ -144,6 +149,7 @@ When called from `/impl`:
 ## Notes
 
 - Run formatter before linter to auto-fix issues
-- If a check fails, report the error and stop (for `--all` mode)
+- If a check fails, report the failing command and its actual output verbatim, then stop (for `--all` mode)
+- Never report PASSED without having actually run the command
 - Check project's README for specific instructions
 - For CI alignment, ensure local checks match pipeline

@@ -222,6 +222,18 @@ Comprehensively handle GitHub PR fixes including CI failures, merge conflicts, r
     gh pr edit <pr-number> --add-reviewer <reviewer1>,<reviewer2>
     ```
 
+## Completion Criteria
+
+Do NOT declare the PR fixed until ALL of the following are true (verified by command output, not assumption):
+
+- [ ] `gh pr checks <pr-number>` shows all checks passing (or pending with fixes pushed)
+- [ ] Unresolved review thread count is 0 (Step 11 query returns `0`)
+- [ ] `mergeable` is `MERGEABLE` (no conflicts)
+- [ ] All fixes are pushed (`git status` clean, branch up to date with remote)
+
+If any criterion cannot be met (e.g., a check requires external approval), report exactly
+which criterion failed and why, instead of claiming success.
+
 ## Notes
 
 - Direct commits to the PR branch may be restricted depending on the PR author's settings. In that case, create a new branch and open a separate PR.

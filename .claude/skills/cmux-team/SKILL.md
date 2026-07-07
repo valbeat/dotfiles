@@ -37,9 +37,21 @@ See @references/layers.md for detailed layer specifications.
 When invoked:
 
 1. **Initialize** — Create `.cmux-team/` directory structure
-2. **Decompose** — Break the user's goal into discrete task files
+2. **Decompose** — Break the user's goal into discrete task files (rules below)
 3. **Launch Manager** — Spawn the Manager in a dedicated cmux workspace
 4. **Monitor** — Report progress as tasks complete
+
+### Decomposition Rules
+
+- **Independent**: tasks run in parallel worktrees — two tasks must never modify the
+  same files. If they would, merge them into one task
+- **Self-contained**: each task file must be executable by an agent with NO access to
+  this conversation. Include all context (file paths, constraints, relevant decisions)
+  in the task body
+- **Verifiable**: every task has Acceptance Criteria written as checkable statements
+  (commands to run, expected behavior), not vague goals
+- **Right-sized**: one task = one PR-sized change. Split anything larger into
+  sequential tasks; do not create tasks that depend on another task's uncommitted output
 
 ## Quick Start
 

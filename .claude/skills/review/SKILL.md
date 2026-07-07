@@ -87,22 +87,76 @@ Launch all review agents in parallel. Internal agents and external AI tools run 
 model: sonnet
 ```
 
-Each agent receives the diff and CLAUDE.md paths from Step 2, and returns issues with reasons. 各 issue の reason には `(Claude Sonnet)` を付記する。
+各エージェントには**必ず以下のテンプレートをそのまま使い**、`{...}` を埋めて渡す。
+プロンプトを要約・省略しないこと。各 issue の reason には `(Claude Sonnet)` を付記する。
+
+全エージェント共通の出力形式（テンプレート末尾に必ず含める）:
+
+```
+Output format (return ONLY this, no preamble):
+For each issue found:
+- file: <path>:<line>
+- issue: <one-sentence description of the defect>
+- reason: <why this is a problem, citing evidence (rule, history, comment, or pattern)>
+- suggestion: <concrete fix>
+If no issues: return exactly "No issues found."
+Do NOT report: style nitpicks, pre-existing issues on unmodified lines,
+anything a linter/typechecker would catch, or speculative issues without evidence.
+```
 
 **Agent #1 — CLAUDE.md Compliance**
-Audit the changes against CLAUDE.md rules. Not all CLAUDE.md instructions apply to every change; focus on directly relevant ones.
+```
+You are a code reviewer checking ONLY for CLAUDE.md rule violations.
+Read the diff at /tmp/review-diff.txt and these CLAUDE.md files: {paths from Step 2}.
+For each rule that is directly relevant to the changed code, check whether the change
+violates it. Cite the exact rule text in the reason. Not all rules apply to every
+change; skip rules that are irrelevant to this diff. Do not flag general quality
+issues that no CLAUDE.md rule mentions.
+{common output format}
+```
 
 **Agent #2 — Bug Detection (Shallow Scan)**
-Read only the changed lines. Focus on obvious bugs. Avoid nitpicks. Ignore likely false positives.
+```
+You are a code reviewer hunting for bugs INTRODUCED BY this change.
+Read the diff at /tmp/review-diff.txt. Focus on the changed lines only.
+Look for: null/undefined dereference, off-by-one, inverted conditions, wrong variable
+used, missing await/error handling, resource leaks, broken edge cases (empty list,
+zero, unicode), incorrect API usage. For each candidate bug, state the concrete input
+or state that triggers it. If you cannot describe a failure scenario, do not report it.
+{common output format}
+```
 
 **Agent #3 — Git History Context**
-Read `git blame` and history of modified code. Identify bugs or regressions in light of historical context.
+```
+You are a code reviewer using git history as evidence.
+Read the diff at /tmp/review-diff.txt. For each modified file, run git blame and
+git log on the changed regions. Look for: changes that undo a past bugfix (check the
+fixing commit's message), violations of invariants described in past commit messages,
+and repeated regressions. Cite the commit hash and message in the reason.
+{common output format}
+```
 
 **Agent #4 — Code Comment Compliance**
-Read code comments (TODO, FIXME, doc comments) in modified files. Ensure changes comply with any guidance in the comments.
+```
+You are a code reviewer checking the change against in-code guidance.
+Read the diff at /tmp/review-diff.txt, then Read each modified file and collect
+comments near the changed code: TODO, FIXME, WARNING, doc comments, invariant notes.
+Report cases where the change contradicts or ignores that guidance (e.g. a comment
+says "must be called under lock" and the new call is not). Quote the comment in the
+reason.
+{common output format}
+```
 
 **Agent #5 — Pattern & Consistency**
-Check that changes follow existing patterns in the codebase (naming, structure, error handling). Flag deviations from established conventions.
+```
+You are a code reviewer checking consistency with the existing codebase.
+Read the diff at /tmp/review-diff.txt. For each changed file, find 2-3 sibling files
+(same directory or same layer) and compare: naming conventions, error handling style,
+logging, module structure, test placement. Report only clear deviations where the
+codebase is consistent and the change breaks that consistency. Cite the sibling
+file(s) that establish the pattern.
+{common output format}
+```
 
 #### External AI Review (Optional, in parallel)
 
@@ -152,6 +206,29 @@ Score confidence (0-100):
 | 100 | Definitely real, confirmed with evidence. Happens frequently in practice. |
 
 For CLAUDE.md-flagged issues, the agent must verify the CLAUDE.md actually calls it out specifically.
+
+スコアリングエージェントには以下のテンプレートを使う:
+
+```
+subagent_type: general-purpose
+model: haiku
+prompt: |
+  You are a skeptical review-verification agent. Your default stance is that the
+  issue below is a FALSE POSITIVE; only score it high if the evidence holds up.
+
+  Issue: {issue description, file:line, reason, suggestion}
+  Diff: read /tmp/review-diff.txt
+  CLAUDE.md files: {paths from Step 2}
+
+  Verify:
+  1. Is the flagged line actually changed in this diff (not pre-existing)?
+  2. Read the file at the flagged location. Does the issue reproduce as described?
+  3. If flagged as a CLAUDE.md violation, quote the exact rule. If no rule states it
+     specifically, cap the score at 25.
+  4. Would a linter/typechecker/compiler catch this? If yes, score 0.
+
+  Return ONLY: a score (0/25/50/75/100 per the rubric) and a one-sentence justification.
+```
 
 ### Step 5: Filter & Report
 
