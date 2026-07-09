@@ -361,6 +361,8 @@ brew "zplug"
 brew "zsh"
 # Additional completion definitions for zsh
 brew "zsh-completions"
+# Speech-to-text system
+cask "aqua-voice"
 # The Art of Reading Markdown.
 cask "arto-app/tap/arto"
 # Securely stores and accesses AWS credentials in a development environment
