@@ -72,6 +72,7 @@ id: "001"
 name: implement-auth
 status: pending
 branch: team/001-implement-auth
+model: sonnet
 ---
 
 Implement JWT authentication middleware.
@@ -83,13 +84,24 @@ Implement JWT authentication middleware.
 TASK
 ```
 
+#### Model Selection (per task)
+
+`model:` は省略可（省略時は `sonnet` — Conductor がデフォルトを適用する）。タスクの性質で選ぶ:
+
+| model | 用途 |
+|-------|------|
+| `sonnet` | 既定。仕様が明確な PR サイズの実装・テスト・調査タスク |
+| `opus` | 複雑な実装、影響範囲の広い変更、セキュリティ関連タスク（Fable は refusal リスクがあるため使わない） |
+| `fable` | 判断が品質を決める最難関タスクのみ（大規模リファクタの設計、曖昧さの残る問題）。コストは opus の2倍 |
+
 ### 3. Launch Manager
 
 ```bash
 WS=$(cmux --json new-workspace "team-manager" | jq -r '.workspace')
 S=$(cmux --json list-pane-surfaces --workspace "$WS" | jq -r '.[0].surface')
 cmux rename-tab --surface "$S" "$S manager"
-cmux send --surface "$S" "claude --dangerously-skip-permissions\n"
+# Manager はポーリングと bash 実行だけなので軽量モデルで十分
+cmux send --surface "$S" "claude --dangerously-skip-permissions --model sonnet\n"
 sleep 5
 cmux send --surface "$S" "$(cat <<'PROMPT'
 You are the Manager in a cmux-team hierarchy.
@@ -137,6 +149,9 @@ See @references/conductor.md for the full script. Core flow:
 TASK_FILE="$1"
 TASK_ID=$(grep '^id:' "$TASK_FILE" | tr -d '"' | awk '{print $2}')
 BRANCH=$(grep '^branch:' "$TASK_FILE" | awk '{print $2}')
+MODEL=$(awk '/^model:/{print $2; exit}' "$TASK_FILE")  # first match only; awk so absence doesn't abort under set -e
+MODEL="${MODEL:-sonnet}"
+MODEL_FLAG=" --model $MODEL"
 
 # 1. Create git worktree
 WORKTREE=".cmux-team/worktrees/$TASK_ID"
@@ -146,7 +161,7 @@ git worktree add "$WORKTREE" -b "$BRANCH" 2>/dev/null || git worktree add "$WORK
 WS=$(cmux --json new-workspace "agent-$TASK_ID" | jq -r '.workspace')
 S=$(cmux --json list-pane-surfaces --workspace "$WS" | jq -r '.[0].surface')
 cmux rename-tab --surface "$S" "$S agent-$TASK_ID"
-cmux send --surface "$S" "cd $WORKTREE && claude --dangerously-skip-permissions\n"
+cmux send --surface "$S" "cd $WORKTREE && claude --dangerously-skip-permissions$MODEL_FLAG\n"
 sleep 5
 
 # 3. Send task prompt

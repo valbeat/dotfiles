@@ -230,9 +230,44 @@ prompt: |
   Return ONLY: a score (0/25/50/75/100 per the rubric) and a one-sentence justification.
 ```
 
+### Step 4.5: Borderline Adjudication (Fable Agent)
+
+Step 4 のスコアが **50 または 75** の指摘（ボーダーライン）が1件以上ある場合のみ実行する。
+0 / 25 / 100 はスコア確定として扱い、このステップをスキップして Step 5 へ。
+
+全ボーダーライン指摘を**単一の Fable エージェント**にまとめて渡し、最終裁定させる。
+Fable はレビュー1回につき最大1エージェント（指摘ごとに起動しない）。
+
+```
+subagent_type: general-purpose
+model: fable
+prompt: |
+  You are the final adjudicator for a code review. Each issue below was flagged
+  by a reviewer and pre-scored by a fast verifier, but sits on the borderline
+  (score 50 or 75). Your job is to settle each one definitively.
+
+  Diff: read /tmp/review-diff.txt
+  CLAUDE.md files: {paths from Step 2}
+
+  Issues:
+  {for each borderline issue: description, file:line, reason, suggestion, provisional score}
+
+  For each issue:
+  1. Read the actual file at the flagged location and trace the concrete failure
+     scenario (or the exact CLAUDE.md rule text, for compliance issues).
+  2. Decide: is this a real, change-introduced, non-nitpick issue a senior
+     engineer would flag? Apply the same 0/25/50/75/100 rubric as the verifier.
+  3. Do not split the difference — commit to a final score, citing evidence.
+
+  Return ONLY one line per issue:
+  <final score> | <file:line> | <one-sentence verdict with evidence>
+```
+
+裁定後のスコアで Step 4 の暫定スコアを上書きする。
+
 ### Step 5: Filter & Report
 
-Filter out issues scoring below 75.
+Filter out issues scoring below 75 (Step 4.5 の裁定があった指摘は裁定後スコアを使用).
 
 **False positive examples (filter these out):**
 - Pre-existing issues (not introduced by this change)

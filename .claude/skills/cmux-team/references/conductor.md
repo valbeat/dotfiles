@@ -12,8 +12,13 @@ TASK_FILE="$1"
 TASK_ID=$(grep '^id:' "$TASK_FILE" | tr -d '"' | awk '{print $2}')
 TASK_NAME=$(grep '^name:' "$TASK_FILE" | awk '{print $2}')
 BRANCH=$(grep '^branch:' "$TASK_FILE" | awk '{print $2}')
-TIMEOUT_MIN=$(grep '^timeout_min:' "$TASK_FILE" | awk '{print $2}')
+# optional fields — awk (not grep) so a missing field doesn't abort under set -e;
+# `exit` on first match so a same-prefix line in the task body can't corrupt the value
+TIMEOUT_MIN=$(awk '/^timeout_min:/{print $2; exit}' "$TASK_FILE")
 TIMEOUT_MIN="${TIMEOUT_MIN:-30}"
+MODEL=$(awk '/^model:/{print $2; exit}' "$TASK_FILE")
+MODEL="${MODEL:-sonnet}"
+MODEL_FLAG=" --model $MODEL"
 
 LOG=".cmux-team/logs/conductor-${TASK_ID}.log"
 WORKTREE=".cmux-team/worktrees/$TASK_ID"
@@ -49,7 +54,7 @@ cmux rename-tab --surface "$S" "$S agent-$TASK_ID"
 log "Workspace $WS, surface $S (tab labeled)"
 
 WORKTREE_ABS=$(cd "$WORKTREE" && pwd)
-cmux send --surface "$S" "cd ${WORKTREE_ABS} && claude --dangerously-skip-permissions\n"
+cmux send --surface "$S" "cd ${WORKTREE_ABS} && claude --dangerously-skip-permissions${MODEL_FLAG}\n"
 
 # --- 4. Wait for Claude to be ready ---
 READY=false
@@ -142,4 +147,5 @@ bash .cmux-team/conductor.sh .cmux-team/tasks/001-implement-auth.md
 - The worktree is preserved after completion so the Master can review changes and create PRs
 - `sed -i ''` is macOS-compatible; for Linux use `sed -i`
 - The timeout is per-task, configured in the task file's `timeout_min` field
+- The Agent model is per-task via the optional `model` field (`sonnet` / `opus` / `fable`) — see SKILL.md § Model Selection
 - Logs are per-conductor at `.cmux-team/logs/conductor-<id>.log`

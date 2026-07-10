@@ -29,6 +29,21 @@
 - 常に新規ファイル作成より既存ファイルの編集を優先
 - 要求された場合はテスト駆動開発（TDD）の原則に従う
 
+## Model Selection Policy
+
+原則: **「探索・機械的作業は安いモデルに散らし、判断・裁定・長期自律実行だけ Fable に集約する」**
+
+- **メインセッション**: Opus 4.8（settings.json の `"model": "opus"`）。日常の対話・実装・設計はこれで行う
+- **Fable 5** (`model: fable`): 判断が品質を決める場面に限定して明示指定する
+  - `/review` Step 4.5 のボーダーライン裁定（レビュー1回につき最大1エージェント）
+  - `/spec` の DESIGN.md 設計レビュー（同上）
+  - `code-reviewer` / `debugger` エージェント（`~/.claude/agents/`）
+  - team 系スキル（cmux-team / herdr-team）でタスクファイルに `model: fable` を指定した場合
+  - deep-research や Workflow の verify / judge ステージ
+- **Sonnet / Haiku**: 探索・検索・整形・分類などのサブエージェント。team 系の実装 Agent は既定 `sonnet`
+- **セキュリティ監査・脆弱性調査には Fable を使わない**: サイバー系の安全分類器による refusal 誤検知リスクがあるため、Opus 4.8 を使う（`/security-review`, `autoresearch:security` 等）
+- Fable のコストは Opus の2倍（$10/$50 per 1M tokens）。指摘ごと・ファイルごとに Fable を起動する構成にしない
+
 ## Git Workflow
 
 - **フィーチャーブランチの作成**: ベースブランチに直接コミットしない
