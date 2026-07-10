@@ -171,3 +171,26 @@ cmux identify --json &>/dev/null
 - socket API 系サブコマンドは `{"id":..,"result":{..}}` 形状の JSON を返す。`jq` で `.result` 配下を参照
 - エージェント完了検知は画面 grep ではなく **`herdr wait agent-status <pane> --status idle`**（per-pane の agent_status をネイティブ追跡）が信頼できる
 - worktree は `herdr worktree create --branch … --base …` でブランチと workspace を一括生成
+
+## iTerm2 (plain) Integration
+
+cmux も herdr も使わない**素の iTerm2** セッションでは、`iterm2` スキルで cmux 互換のペイン操作を行う。バックエンドは `it2` CLI（iTerm2 Python API ラッパー）。
+
+### 判定と使い分け
+
+- `$CMUX_WORKSPACE_ID` あり → **cmux 系スキル**を優先
+- cmux 外で `herdr status server` が running → **herdr 系スキル**
+- どちらでもない素の iTerm2（`$TERM_PROGRAM=iTerm.app`）→ **`iterm2` スキル**
+
+### 前提（初回のみ）
+
+1. iTerm2 > Settings > General > Magic > **Enable Python API** を有効化
+2. `it2` 導入: `uv tool install it2`
+3. **Automation 権限の承認**: `it2 session list` を一度実行し、ダイアログを許可（cookie 取得のため）。確実な代替は iTerm2 の Scripts メニュー経由起動（`ITERM2_COOKIE` 自動注入）
+4. 診断: `bash ~/.claude/skills/iterm2/scripts/it2-doctor.sh`（OK/NG と修復手順を出力）
+
+### 要点
+
+- cmux 概念との対応: Window=ウィンドウ / Workspace=タブ / Pane・Surface=session（分割ペイン）
+- 現 session ID は `${ITERM_SESSION_ID##*:}` で取得（列挙不要）
+- ブラウザ自動化は iTerm2 組み込みブラウザではなく **claude-in-chrome** を使う（WKWebView は外部制御口がなく、ネットワーク傍受も不可のため）
