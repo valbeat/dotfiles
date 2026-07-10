@@ -48,6 +48,11 @@ brew-dump: ## Update Brewfile from current environment
 patches: ## Apply claude -p replacement patches to plugin caches
 	@bash $(DOTPATH)/tools/patches/apply.sh
 
+.PHONY: hunk-skill
+hunk-skill: ## Re-sync bundled hunk-review skill from the installed hunk
+	@cp "$$(hunk skill path)" $(DOTPATH)/.claude/skills/hunk-review/SKILL.md
+	@echo "Synced .claude/skills/hunk-review/SKILL.md from $$(hunk --version)"
+
 .PHONY: backup
 backup: ## Copy target dotfiles to repository
 	@echo "Start to backup dotfiles to repository."
