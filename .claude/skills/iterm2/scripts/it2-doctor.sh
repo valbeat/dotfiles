@@ -37,19 +37,32 @@ else
   info "iTerm2 > Settings > General > Magic > 'Enable Python API' をオンにする。"
 fi
 
-# 4. 実接続テスト（Automation 権限 / cookie の最終確認）
+# 4. it2 の websockets バージョン（>=11 は iterm2 2.20 と非互換で RecursionError）
+IT2_PY="$HOME/.local/share/uv/tools/it2/bin/python"
+WS_VER="$("$IT2_PY" -c 'import importlib.metadata as m; print(m.version("websockets"))' 2>/dev/null)"
+if [ -n "$WS_VER" ]; then
+  if [ "${WS_VER%%.*}" -lt 11 ] 2>/dev/null; then
+    ok "it2 の websockets = $WS_VER (<11, 互換)"
+  else
+    ng "it2 の websockets = $WS_VER (>=11 は RecursionError で接続不可)"
+    info "再インストールで <11 に固定:"
+    info "  uv tool install --force it2 --with 'websockets<11'"
+  fi
+else
+  info "it2 の websockets バージョン未取得（uv tool 以外の導入かも）"
+fi
+
+# 5. 実接続テスト
 if [ -x "$IT2" ]; then
   OUT="$(timeout 20 "$IT2" session list 2>&1)"
-  if printf '%s' "$OUT" | grep -qiE 'not running inside|not enabled|connection error'; then
-    ng "it2 が iTerm2 に接続できない (Automation 権限 / cookie 未取得)"
-    info "初回のみ次の許可が必要:"
-    info "  1) it2 を一度手で実行し、表示される 2つのダイアログを許可する"
-    info "     ('X wants to control iTerm2' と Automation の許可)"
-    info "  2) それでも失敗する場合: System Settings > Privacy & Security >"
-    info "     Automation で、ターミナル/claude が iTerm2 を制御するのを許可"
-    info "  3) 代替: iTerm2 の Scripts メニュー経由なら ITERM2_COOKIE が注入され確実"
-    info "  --- it2 の生出力 ---"
-    printf '%s\n' "$OUT" | sed 's/^/       | /'
+  if printf '%s' "$OUT" | grep -qiE 'not running inside|not enabled|connection error|no close frame|recursion'; then
+    ng "it2 が iTerm2 に接続できない"
+    info "確認順（この順で潰す）:"
+    info "  1) 上の websockets が <11 に固定されているか"
+    info "  2) Enable Python API をオンにした後、iTerm2 を再起動したか（設定反映に必要）"
+    info "  3) 初回接続時に iTerm2 が出す API クライアント許可ダイアログを Allow したか"
+    info "  --- it2 の生出力（末尾） ---"
+    printf '%s\n' "$OUT" | tail -3 | sed 's/^/       | /'
   else
     ok "it2 → iTerm2 接続 OK (session list 応答あり)"
   fi

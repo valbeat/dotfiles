@@ -30,13 +30,19 @@ bash ~/.claude/skills/iterm2/scripts/it2-doctor.sh
 
 診断が確認する前提:
 1. iTerm2 内で実行中（`$ITERM_SESSION_ID` あり）
-2. `it2` CLI 導入済み（無ければ `uv tool install it2`）
-3. iTerm2 Settings > General > Magic > **Enable Python API** が有効
-4. **Automation 権限 / cookie**: 初回は `it2` を手で1回実行し、表示される
-   「control iTerm2」ダイアログと Automation 許可を承認する。確実な代替は
-   iTerm2 の Scripts メニュー経由起動（`ITERM2_COOKIE` が自動注入される）。
+2. `it2` CLI を **websockets を <11 に固定**して導入する。既定の 16.x は同梱の
+   iterm2 2.20 と非互換で接続時に `RecursionError` になる:
+   ```bash
+   uv tool install --force it2 --with 'websockets<11'
+   ```
+3. iTerm2 Settings > General > Magic > **Enable Python API** を有効化し、
+   **iTerm2 を再起動**（設定反映に再起動が要る）
+4. 初回接続時に iTerm2 が API クライアント接続の許可ダイアログを出したら **Allow**。
+   cookie / Automation 権限は自動取得されるため、通常ここは問題にならない。
 
-接続不能時は原因の 9 割がこの Automation 権限。**診断スクリプトの指示に従う**こと。
+接続不能（`no close frame` / `RecursionError` / `not enabled`）の切り分けは、
+**2（websockets ピン）→ 3（API 有効化 + 再起動）→ 4（接続許可）** の順。
+`scripts/it2-doctor.sh` がこの順で診断する。
 
 ## Core Concepts（cmux との対応）
 
