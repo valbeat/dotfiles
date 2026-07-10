@@ -12,9 +12,13 @@ TASK_FILE="$1"
 TASK_ID=$(grep '^id:'      "$TASK_FILE" | tr -d '"' | awk '{print $2}')
 TASK_NAME=$(grep '^name:'   "$TASK_FILE" | awk '{print $2}')
 BRANCH=$( grep '^branch:'    "$TASK_FILE" | awk '{print $2}')
-TIMEOUT_MIN=$(grep '^timeout_min:' "$TASK_FILE" | awk '{print $2}')
+# optional fields — awk (not grep) so a missing field doesn't abort under set -e
+TIMEOUT_MIN=$(awk '/^timeout_min:/{print $2}' "$TASK_FILE")
 TIMEOUT_MIN="${TIMEOUT_MIN:-30}"
 TIMEOUT_MS=$((TIMEOUT_MIN * 60 * 1000))
+MODEL=$(awk '/^model:/{print $2}' "$TASK_FILE")
+MODEL_FLAG=""
+[ -n "$MODEL" ] && MODEL_FLAG=" --model $MODEL"
 
 LOG=".herdr-team/logs/conductor-${TASK_ID}.log"
 RESULT_FILE=".herdr-team/results/${TASK_ID}.md"
@@ -41,7 +45,7 @@ P=$( echo "$CREATE" | jq -r '.result.root_pane.pane_id // .result.pane.pane_id')
 log "Worktree workspace $WS, pane $P"
 
 # --- 3. Launch the Agent ---
-herdr pane run "$P" "claude --dangerously-skip-permissions"
+herdr pane run "$P" "claude --dangerously-skip-permissions${MODEL_FLAG}"
 
 # --- 4. Wait for Claude to be ready ---
 if ! herdr wait output "$P" --match '(❯|>|Claude Code)' --regex --timeout 30000 >>"$LOG" 2>&1; then
@@ -111,4 +115,5 @@ bash .herdr-team/conductor.sh .herdr-team/tasks/001-implement-auth.md
   it later with `herdr worktree remove --workspace <ID> --force`.
 - `sed -i ''` is macOS-compatible; on Linux use `sed -i`.
 - Timeout is per-task via the task file's `timeout_min` field (default 30).
+- The Agent model is per-task via the optional `model` field (`sonnet` / `opus` / `fable`) — see SKILL.md § Model Selection.
 - Logs are per-conductor at `.herdr-team/logs/conductor-<id>.log`.

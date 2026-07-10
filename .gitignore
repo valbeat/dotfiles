@@ -73,6 +73,7 @@ result-*
 .claude/*
 !.claude/settings.json
 !.claude/CLAUDE.md
+!.claude/agents/
 !.claude/skills/
 !.claude/hooks/
 !.claude/statusline.sh

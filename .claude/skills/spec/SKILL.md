@@ -99,6 +99,33 @@ Create `docs/DESIGN.md` with following structure:
 - No placeholders like `[TBD]` in the final document — unresolved items go to the
   interview phase instead
 
+### Design Review (Fable Agent)
+
+DESIGN.md のドラフト作成後、ユーザー承認の**前に**、単一の Fable エージェントで
+設計レビューを行う（1回の /spec につき最大1エージェント）:
+
+```
+subagent_type: general-purpose
+model: fable
+prompt: |
+  You are a skeptical software architect reviewing a design document before
+  it reaches the user. Read docs/DESIGN.md and the files it references.
+
+  Check:
+  1. Are the trade-offs real? Flag any technology choice where a simpler
+     alternative already in the project's dependencies would suffice.
+  2. Is the Impact Scope complete? List files likely affected but missing
+     (verify candidates exist with Glob before listing them).
+  3. Is every functional requirement verifiable as written?
+  4. What is the single riskiest assumption in this design?
+
+  Return: a short list of concrete revisions with evidence,
+  or exactly "Design is sound." if none.
+```
+
+指摘があれば DESIGN.md に反映してからユーザー承認に進む。
+"Design is sound." の場合はそのまま進む。
+
 ### User Approval
 
 Get approval with AskUserQuestion:

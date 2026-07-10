@@ -73,6 +73,7 @@ id: "001"
 name: implement-auth
 status: pending
 branch: team/001-implement-auth
+model: sonnet
 ---
 
 Implement JWT authentication middleware.
@@ -84,13 +85,24 @@ Implement JWT authentication middleware.
 TASK
 ```
 
+#### Model Selection (per task)
+
+`model:` は省略可（省略時は claude のデフォルトモデル）。タスクの性質で選ぶ:
+
+| model | 用途 |
+|-------|------|
+| `sonnet` | 既定。仕様が明確な PR サイズの実装・テスト・調査タスク |
+| `opus` | 複雑な実装、影響範囲の広い変更、セキュリティ関連タスク（Fable は refusal リスクがあるため使わない） |
+| `fable` | 判断が品質を決める最難関タスクのみ（大規模リファクタの設計、曖昧さの残る問題）。コストは opus の2倍 |
+
 ### 3. Launch Manager
 
 ```bash
 CREATE=$(herdr workspace create --label team-manager --no-focus)
 WS=$(echo "$CREATE" | jq -r '.result.workspace.workspace_id')
 P=$(echo  "$CREATE" | jq -r '.result.root_pane.pane_id')
-herdr pane run "$P" "claude --dangerously-skip-permissions"
+# Manager はポーリングと bash 実行だけなので軽量モデルで十分
+herdr pane run "$P" "claude --dangerously-skip-permissions --model sonnet"
 herdr wait output "$P" --match '(❯|>|Claude Code)' --regex --timeout 30000
 
 herdr pane send-text "$P" "$(cat <<'PROMPT'
@@ -135,6 +147,9 @@ isolation in one call):
 TASK_FILE="$1"
 TASK_ID=$(grep '^id:'     "$TASK_FILE" | tr -d '"' | awk '{print $2}')
 BRANCH=$( grep '^branch:'  "$TASK_FILE" | awk '{print $2}')
+MODEL=$(awk '/^model:/{print $2}' "$TASK_FILE")  # optional field — awk so absence doesn't abort under set -e
+MODEL_FLAG=""
+[ -n "$MODEL" ] && MODEL_FLAG=" --model $MODEL"
 
 # 1. Create worktree + its workspace in one shot
 CREATE=$(herdr worktree create --branch "$BRANCH" --base main --label "agent-$TASK_ID" --no-focus)
@@ -142,7 +157,7 @@ WS=$(echo "$CREATE" | jq -r '.result.workspace.workspace_id // .result.workspace
 P=$( echo "$CREATE" | jq -r '.result.root_pane.pane_id // .result.pane.pane_id')
 
 # 2. Launch the Agent
-herdr pane run "$P" "claude --dangerously-skip-permissions"
+herdr pane run "$P" "claude --dangerously-skip-permissions$MODEL_FLAG"
 herdr wait output "$P" --match '(❯|>|Claude Code)' --regex --timeout 30000
 
 # 3. Send the task body as the prompt
