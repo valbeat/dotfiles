@@ -1,10 +1,179 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "agentPushNotifEnabled": true,
+  "alwaysThinkingEnabled": true,
   "cleanupPeriodDays": 30,
+  "editorMode": "vim",
+  "enabledPlugins": {
+    "claude-md-management@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "codex@openai-codex": true,
+    "modularity@vladikk-modularity": true,
+    "ralph-loop@claude-plugins-official": true,
+    "slack@claude-plugins-official": true,
+    "vercel@claude-plugins-official": true
+  },
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "repo": "openai/codex-plugin-cc",
+        "source": "github"
+      }
+    },
+    "vladikk-modularity": {
+      "source": {
+        "repo": "vladikk/modularity",
+        "source": "github"
+      }
+    }
+  },
+  "feedbackSurveyState": {
+    "lastShownTime": 1754087207880
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "~/.config/iterm2/cc-status",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "~/.config/iterm2/cc-status",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/format.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "Write|Edit|MultiEdit"
+      },
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/log-tooluse.sh",
+            "type": "command"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "~/.config/iterm2/cc-status",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/guard.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash|Write|Edit|MultiEdit"
+      },
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "~/.config/iterm2/cc-status",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "~/.config/iterm2/cc-status",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "~/.config/iterm2/cc-status",
+            "type": "command"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "command": "bash '/Users/takuma/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "*"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "~/.config/iterm2/cc-status",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "~/.config/iterm2/cc-status",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "~/.config/iterm2/cc-status",
+            "type": "command"
+          }
+        ]
+      }
+    ]
+  },
   "includeCoAuthoredBy": false,
+  "inputNeededNotifEnabled": true,
+  "language": "Japanese",
+  "model": "opus",
   "permissions": {
     "allow": [
       "Bash",
@@ -19,6 +188,8 @@
       "TodoWrite",
       "NotebookEdit"
     ],
+    "ask": [],
+    "defaultMode": "auto",
     "deny": [
       "Bash(sudo rm -rf *)",
       "Bash(sudo mkfs *)",
@@ -33,181 +204,20 @@
       "Read(~/.docker/config.json)",
       "Read(~/.config/gcloud/**)",
       "Read(~/.azure/**)"
-    ],
-    "ask": [],
-    "defaultMode": "auto"
-  },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash|Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/guard.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/format.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/log-tooluse.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PermissionRequest": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "StopFailure": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
     ]
   },
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh",
-    "padding": 0
-  },
-  "enabledPlugins": {
-    "code-review@claude-plugins-official": true,
-    "ralph-loop@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
-    "slack@claude-plugins-official": true,
-    "codex@openai-codex": true,
-    "vercel@claude-plugins-official": true,
-    "modularity@vladikk-modularity": true
-  },
-  "extraKnownMarketplaces": {
-    "openai-codex": {
-      "source": {
-        "source": "github",
-        "repo": "openai/codex-plugin-cc"
-      }
-    },
-    "vladikk-modularity": {
-      "source": {
-        "source": "github",
-        "repo": "vladikk/modularity"
-      }
-    }
-  },
-  "language": "Japanese",
-  "alwaysThinkingEnabled": true,
-  "tui": "default",
+  "remoteControlAtStartup": true,
+  "skipAutoPermissionPrompt": true,
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
-  "theme": "dark-daltonized",
-  "editorMode": "vim",
-  "verbose": true,
-  "teammateMode": "auto",
-  "remoteControlAtStartup": true,
-  "inputNeededNotifEnabled": true,
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true,
-  "feedbackSurveyState": {
-    "lastShownTime": 1754087207880
+  "statusLine": {
+    "command": "~/.claude/statusline.sh",
+    "padding": 0,
+    "type": "command"
   },
-  "model": "opus"
+  "teammateMode": "auto",
+  "theme": "dark-daltonized",
+  "tui": "default",
+  "verbose": true,
+  "voiceEnabled": true
 }
