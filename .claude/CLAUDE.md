@@ -144,3 +144,30 @@ cmux identify --json &>/dev/null
 
 - cmux 内で実行中の場合、`cmux-*` スキル群を積極的に活用する
 - 各スキルの description にトリガーフレーズが定義されているため、自然言語で自動選択される
+
+## herdr Integration
+
+ターミナルネイティブ（TUI + headless サーバ、SSH リモート対応）のワークスペースマネージャー。cmux の GUI が使えない／リモート・ヘッドレス環境では herdr 系スキルを使う。cmux 系スキルと1:1対応する `herdr-*` スキルを用意している。
+
+### herdr / cmux の使い分け
+
+- `CMUX_WORKSPACE_ID` が設定されている（= cmux 内）→ **cmux 系スキルを優先**
+- cmux 外で、`herdr status server` が `status: running` を返す → **herdr 系スキルを使う**
+- SSH リモート・ヘッドレス・軽量に済ませたい → herdr（`herdr --remote` でリモートアタッチ）
+
+### スキル対応表
+
+| herdr | cmux | 役割 |
+|-------|------|------|
+| `herdr-core` | `cmux` | トポロジ制御（workspace/tab/pane/worktree） |
+| `herdr-agent` | `cmux-agent` | headless サブエージェント起動 |
+| `herdr-fork` | `cmux-fork` | 現セッションを split pane にフォーク |
+| `herdr-team` | `cmux-team` | 4層マルチエージェントオーケストレーション |
+| （なし） | `cmux-browser` | herdr は webview 非対応 → `claude-in-chrome` MCP で代替 |
+| （なし） | `cmux-markdown` | herdr は GUI ビューア非対応 |
+
+### herdr の CLI 要点
+
+- socket API 系サブコマンドは `{"id":..,"result":{..}}` 形状の JSON を返す。`jq` で `.result` 配下を参照
+- エージェント完了検知は画面 grep ではなく **`herdr wait agent-status <pane> --status idle`**（per-pane の agent_status をネイティブ追跡）が信頼できる
+- worktree は `herdr worktree create --branch … --base …` でブランチと workspace を一括生成
