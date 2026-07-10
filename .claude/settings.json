@@ -1,181 +1,181 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "agentPushNotifEnabled": true,
-  "alwaysThinkingEnabled": true,
-  "cleanupPeriodDays": 30,
-  "editorMode": "vim",
-  "enabledPlugins": {
-    "claude-md-management@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true,
-    "codex@openai-codex": true,
-    "modularity@vladikk-modularity": true,
-    "ralph-loop@claude-plugins-official": true,
-    "slack@claude-plugins-official": true,
-    "vercel@claude-plugins-official": true
+  "$schema" : "https:\/\/json.schemastore.org\/claude-code-settings.json",
+  "agentPushNotifEnabled" : true,
+  "alwaysThinkingEnabled" : true,
+  "cleanupPeriodDays" : 30,
+  "editorMode" : "vim",
+  "enabledPlugins" : {
+    "claude-md-management@claude-plugins-official" : true,
+    "code-review@claude-plugins-official" : true,
+    "codex@openai-codex" : true,
+    "modularity@vladikk-modularity" : true,
+    "ralph-loop@claude-plugins-official" : true,
+    "slack@claude-plugins-official" : true,
+    "vercel@claude-plugins-official" : true
   },
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  "env" : {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS" : "1"
   },
-  "extraKnownMarketplaces": {
-    "openai-codex": {
-      "source": {
-        "repo": "openai/codex-plugin-cc",
-        "source": "github"
+  "extraKnownMarketplaces" : {
+    "openai-codex" : {
+      "source" : {
+        "repo" : "openai\/codex-plugin-cc",
+        "source" : "github"
       }
     },
-    "vladikk-modularity": {
-      "source": {
-        "repo": "vladikk/modularity",
-        "source": "github"
+    "vladikk-modularity" : {
+      "source" : {
+        "repo" : "vladikk\/modularity",
+        "source" : "github"
       }
     }
   },
-  "feedbackSurveyState": {
-    "lastShownTime": 1754087207880
+  "feedbackSurveyState" : {
+    "lastShownTime" : 1754087207880
   },
-  "hooks": {
-    "Notification": [
+  "hooks" : {
+    "Notification" : [
       {
-        "hooks": [
+        "hooks" : [
           {
-            "async": true,
-            "command": "~/.config/iterm2/cc-status",
-            "type": "command"
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
           }
         ]
       }
     ],
-    "PermissionRequest": [
+    "PermissionRequest" : [
       {
-        "hooks": [
+        "hooks" : [
           {
-            "async": true,
-            "command": "~/.config/iterm2/cc-status",
-            "type": "command"
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
           }
         ]
       }
     ],
-    "PostToolUse": [
+    "PostToolUse" : [
       {
-        "hooks": [
+        "hooks" : [
           {
-            "command": "~/.claude/hooks/format.sh",
-            "type": "command"
+            "command" : "~\/.claude\/hooks\/format.sh",
+            "type" : "command"
           }
         ],
-        "matcher": "Write|Edit|MultiEdit"
+        "matcher" : "Write|Edit|MultiEdit"
       },
       {
-        "hooks": [
+        "hooks" : [
           {
-            "command": "~/.claude/hooks/log-tooluse.sh",
-            "type": "command"
+            "command" : "~\/.claude\/hooks\/log-tooluse.sh",
+            "type" : "command"
           }
         ]
       },
       {
-        "hooks": [
+        "hooks" : [
           {
-            "async": true,
-            "command": "~/.config/iterm2/cc-status",
-            "type": "command"
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
           }
         ]
       }
     ],
-    "PreToolUse": [
+    "PreToolUse" : [
       {
-        "hooks": [
+        "hooks" : [
           {
-            "command": "~/.claude/hooks/guard.sh",
-            "type": "command"
+            "command" : "~\/.claude\/hooks\/guard.sh",
+            "type" : "command"
           }
         ],
-        "matcher": "Bash|Write|Edit|MultiEdit"
+        "matcher" : "Bash|Write|Edit|MultiEdit"
       },
       {
-        "hooks": [
+        "hooks" : [
           {
-            "async": true,
-            "command": "~/.config/iterm2/cc-status",
-            "type": "command"
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
           }
         ]
       }
     ],
-    "SessionEnd": [
+    "SessionEnd" : [
       {
-        "hooks": [
+        "hooks" : [
           {
-            "async": true,
-            "command": "~/.config/iterm2/cc-status",
-            "type": "command"
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
           }
         ]
       }
     ],
-    "SessionStart": [
+    "SessionStart" : [
       {
-        "hooks": [
+        "hooks" : [
           {
-            "async": true,
-            "command": "~/.config/iterm2/cc-status",
-            "type": "command"
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
           }
         ]
       },
       {
-        "hooks": [
+        "hooks" : [
           {
-            "command": "bash '/Users/takuma/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10,
-            "type": "command"
+            "command" : "bash '\/Users\/takuma\/.claude\/hooks\/herdr-agent-state.sh' session",
+            "timeout" : 10,
+            "type" : "command"
           }
         ],
-        "matcher": "*"
+        "matcher" : "*"
       }
     ],
-    "Stop": [
+    "Stop" : [
       {
-        "hooks": [
+        "hooks" : [
           {
-            "async": true,
-            "command": "~/.config/iterm2/cc-status",
-            "type": "command"
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
           }
         ]
       }
     ],
-    "StopFailure": [
+    "StopFailure" : [
       {
-        "hooks": [
+        "hooks" : [
           {
-            "async": true,
-            "command": "~/.config/iterm2/cc-status",
-            "type": "command"
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
           }
         ]
       }
     ],
-    "UserPromptSubmit": [
+    "UserPromptSubmit" : [
       {
-        "hooks": [
+        "hooks" : [
           {
-            "async": true,
-            "command": "~/.config/iterm2/cc-status",
-            "type": "command"
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
           }
         ]
       }
     ]
   },
-  "includeCoAuthoredBy": false,
-  "inputNeededNotifEnabled": true,
-  "language": "Japanese",
-  "model": "opus",
-  "permissions": {
-    "allow": [
+  "includeCoAuthoredBy" : false,
+  "inputNeededNotifEnabled" : true,
+  "language" : "Japanese",
+  "model" : "opus",
+  "permissions" : {
+    "allow" : [
       "Bash",
       "Read",
       "Write",
@@ -188,36 +188,38 @@
       "TodoWrite",
       "NotebookEdit"
     ],
-    "ask": [],
-    "defaultMode": "auto",
-    "deny": [
+    "ask" : [
+
+    ],
+    "defaultMode" : "auto",
+    "deny" : [
       "Bash(sudo rm -rf *)",
       "Bash(sudo mkfs *)",
       "Bash(sudo dd *)",
-      "Bash(rm -rf /)",
+      "Bash(rm -rf \/)",
       "Bash(chmod 777 *)",
       "Read(.env)",
       "Read(.env.*)",
-      "Read(~/.ssh/**)",
-      "Read(~/.aws/**)",
-      "Read(~/.kube/config)",
-      "Read(~/.docker/config.json)",
-      "Read(~/.config/gcloud/**)",
-      "Read(~/.azure/**)"
+      "Read(~\/.ssh\/**)",
+      "Read(~\/.aws\/**)",
+      "Read(~\/.kube\/config)",
+      "Read(~\/.docker\/config.json)",
+      "Read(~\/.config\/gcloud\/**)",
+      "Read(~\/.azure\/**)"
     ]
   },
-  "remoteControlAtStartup": true,
-  "skipAutoPermissionPrompt": true,
-  "skipDangerousModePermissionPrompt": true,
-  "skipWorkflowUsageWarning": true,
-  "statusLine": {
-    "command": "~/.claude/statusline.sh",
-    "padding": 0,
-    "type": "command"
+  "remoteControlAtStartup" : true,
+  "skipAutoPermissionPrompt" : true,
+  "skipDangerousModePermissionPrompt" : true,
+  "skipWorkflowUsageWarning" : true,
+  "statusLine" : {
+    "command" : "~\/.claude\/statusline.sh",
+    "padding" : 0,
+    "type" : "command"
   },
-  "teammateMode": "auto",
-  "theme": "dark-daltonized",
-  "tui": "default",
-  "verbose": true,
-  "voiceEnabled": true
+  "teammateMode" : "auto",
+  "theme" : "dark-daltonized",
+  "tui" : "default",
+  "verbose" : true,
+  "voiceEnabled" : true
 }
