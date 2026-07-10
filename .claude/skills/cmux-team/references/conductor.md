@@ -12,12 +12,13 @@ TASK_FILE="$1"
 TASK_ID=$(grep '^id:' "$TASK_FILE" | tr -d '"' | awk '{print $2}')
 TASK_NAME=$(grep '^name:' "$TASK_FILE" | awk '{print $2}')
 BRANCH=$(grep '^branch:' "$TASK_FILE" | awk '{print $2}')
-# optional fields — awk (not grep) so a missing field doesn't abort under set -e
-TIMEOUT_MIN=$(awk '/^timeout_min:/{print $2}' "$TASK_FILE")
+# optional fields — awk (not grep) so a missing field doesn't abort under set -e;
+# `exit` on first match so a same-prefix line in the task body can't corrupt the value
+TIMEOUT_MIN=$(awk '/^timeout_min:/{print $2; exit}' "$TASK_FILE")
 TIMEOUT_MIN="${TIMEOUT_MIN:-30}"
-MODEL=$(awk '/^model:/{print $2}' "$TASK_FILE")
-MODEL_FLAG=""
-[ -n "$MODEL" ] && MODEL_FLAG=" --model $MODEL"
+MODEL=$(awk '/^model:/{print $2; exit}' "$TASK_FILE")
+MODEL="${MODEL:-sonnet}"
+MODEL_FLAG=" --model $MODEL"
 
 LOG=".cmux-team/logs/conductor-${TASK_ID}.log"
 WORKTREE=".cmux-team/worktrees/$TASK_ID"

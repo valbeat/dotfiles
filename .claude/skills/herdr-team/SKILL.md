@@ -87,7 +87,7 @@ TASK
 
 #### Model Selection (per task)
 
-`model:` は省略可（省略時は claude のデフォルトモデル）。タスクの性質で選ぶ:
+`model:` は省略可（省略時は `sonnet` — Conductor がデフォルトを適用する）。タスクの性質で選ぶ:
 
 | model | 用途 |
 |-------|------|
@@ -147,9 +147,9 @@ isolation in one call):
 TASK_FILE="$1"
 TASK_ID=$(grep '^id:'     "$TASK_FILE" | tr -d '"' | awk '{print $2}')
 BRANCH=$( grep '^branch:'  "$TASK_FILE" | awk '{print $2}')
-MODEL=$(awk '/^model:/{print $2}' "$TASK_FILE")  # optional field — awk so absence doesn't abort under set -e
-MODEL_FLAG=""
-[ -n "$MODEL" ] && MODEL_FLAG=" --model $MODEL"
+MODEL=$(awk '/^model:/{print $2; exit}' "$TASK_FILE")  # first match only; awk so absence doesn't abort under set -e
+MODEL="${MODEL:-sonnet}"
+MODEL_FLAG=" --model $MODEL"
 
 # 1. Create worktree + its workspace in one shot
 CREATE=$(herdr worktree create --branch "$BRANCH" --base main --label "agent-$TASK_ID" --no-focus)
