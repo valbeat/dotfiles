@@ -207,6 +207,8 @@ brew "helmfile"
 brew "highlight"
 # Improved top (interactive process viewer)
 brew "htop"
+# Review-first terminal diff viewer for agent-authored changesets
+brew "hunk"
 # Configurable static site generator
 brew "hugo"
 # ISO/IEC 23008-12:2017 HEIF file format decoder and encoder
