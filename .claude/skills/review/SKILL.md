@@ -18,7 +18,7 @@ argument-hint: "[--uncommitted|--staged|--brief|--commit <sha>|<file>]"
 | (none) | Review current branch vs base branch |
 | `--uncommitted` | Review uncommitted changes (`git diff HEAD`) |
 | `--staged` | Review staged changes (`git diff --cached`) |
-| `--brief` | Output issues with confidence >= 75 only (for `/impl` integration) |
+| `--brief` | Output issues with confidence >= 75 only (for `/dev-workflow:impl` integration) |
 | `--commit <sha>` | Review specific commit |
 | `<file_path>` | Review specific file(s) |
 
@@ -307,7 +307,7 @@ No significant issues found. Checked for bugs and CLAUDE.md compliance.
 
 ### Brief Output (--brief)
 
-For `/impl` integration:
+For `/dev-workflow:impl` integration:
 
 ```
 PASSED: No issues with confidence >= 75
