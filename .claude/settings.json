@@ -187,7 +187,13 @@
     "modularity@vladikk-modularity": true,
     "ralph-loop@claude-plugins-official": true,
     "slack@claude-plugins-official": true,
-    "vercel@claude-plugins-official": true
+    "vercel@claude-plugins-official": true,
+    "personal-tools@valbeat-plugins-private": true,
+    "writing@valbeat-plugins": true,
+    "design@valbeat-plugins": true,
+    "git-workflow@valbeat-plugins": true,
+    "dev-workflow@valbeat-plugins": true,
+    "skill-tools@valbeat-plugins": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
@@ -200,6 +206,18 @@
       "source": {
         "source": "github",
         "repo": "vladikk/modularity"
+      }
+    },
+    "valbeat-plugins-private": {
+      "source": {
+        "source": "github",
+        "repo": "valbeat/claude-plugins-private"
+      }
+    },
+    "valbeat-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "valbeat/claude-plugins"
       }
     }
   },

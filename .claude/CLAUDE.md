@@ -36,7 +36,7 @@
 - **メインセッション**: Opus 4.8（settings.json の `"model": "opus"`）。日常の対話・実装・設計はこれで行う
 - **Fable 5** (`model: fable`): 判断が品質を決める場面に限定して明示指定する
   - `/review` Step 4.5 のボーダーライン裁定（レビュー1回につき最大1エージェント）
-  - `/spec` の DESIGN.md 設計レビュー（同上）
+  - `/dev-workflow:spec` の DESIGN.md 設計レビュー（同上）
   - `code-reviewer` / `debugger` エージェント（`~/.claude/agents/`）
   - team 系スキル（cmux-team / herdr-team）でタスクファイルに `model: fable` を指定した場合
   - deep-research や Workflow の verify / judge ステージ
