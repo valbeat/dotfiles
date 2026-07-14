@@ -3,9 +3,9 @@
 ## Installing
 
 ```shell
-$ git clone git@github.com:valbeat/dotfiles.git $HOME/dotfiles
-$ cd $HOME/dotfiles
-$ make install
+git clone git@github.com:valbeat/dotfiles.git $HOME/dotfiles
+cd $HOME/dotfiles
+make install
 ```
 This will create symlinks from this repo to your home folder.
 
@@ -14,13 +14,13 @@ This will create symlinks from this repo to your home folder.
 Install the packages declared in the `Brewfile`:
 
 ```shell
-$ make brew
+make brew
 ```
 
 After installing or removing packages, refresh the `Brewfile`:
 
 ```shell
-$ make brew-dump
+make brew-dump
 ```
 
 `brew-dump` regenerates the whole `Brewfile` from the current environment.
@@ -28,6 +28,56 @@ Redundant built-in taps are stripped automatically, but EOL/deprecated
 packages reappear if they are still installed. Review `git diff Brewfile`
 after running it, and use `brew uninstall` to remove unwanted packages from
 the system rather than only deleting their lines here.
+
+## Claude Code plugins
+
+Generic and personal skills live in two private plugin marketplaces instead
+of `.claude/skills/`:
+
+- [valbeat/claude-plugins](https://github.com/valbeat/claude-plugins) —
+  `writing`, `design`, `git-workflow`, `dev-workflow`, `skill-tools`
+- [valbeat/claude-plugins-private](https://github.com/valbeat/claude-plugins-private) —
+  `personal-tools`
+
+Skills are invoked with plugin namespaces (e.g. `/git-workflow:commit`,
+`/dev-workflow:spec`). Environment-coupled skills (cmux, herdr, iterm2,
+hunk-review, etc.) remain in `.claude/skills/` here.
+
+### Setup on a new machine
+
+Both marketplaces are private repos, so SSH access to GitHub (or `gh auth
+login`) must work first. Then:
+
+```shell
+cd $HOME/dotfiles && git pull   # syncs .claude/settings.json via symlink
+```
+
+`extraKnownMarketplaces` and `enabledPlugins` in `.claude/settings.json`
+declare everything; Claude Code picks them up on next launch. If plugins do
+not install automatically:
+
+```shell
+claude plugin marketplace add valbeat/claude-plugins
+claude plugin marketplace add valbeat/claude-plugins-private
+claude plugin install writing@valbeat-plugins        # repeat for the rest
+claude plugin list                                   # verify all 6 enabled
+```
+
+### Updating skills
+
+Edit skills in the marketplace clones
+(`~/src/github.com/valbeat/claude-plugins{,-private}`), not here. After
+pushing, sync each machine with:
+
+```shell
+claude plugin marketplace update
+claude plugin update
+```
+
+Plugins are versioned by commit SHA, so pushing is enough for `update` to
+pick up changes. Dotfiles-resident skills still sync via plain `git pull`.
+For background auto-update of the private marketplaces, set `GITHUB_TOKEN`
+in the environment; manual `marketplace update` needs no token.
 
 ## nix-darwin
 
@@ -40,7 +90,7 @@ This host uses Determinate Nix, so nix-darwin's own Nix management is disabled
 Prerequisites: install Nix (flakes enabled), e.g. the Determinate Systems installer:
 
 ```shell
-$ /bin/sh -c "$(curl --proto '=https' --tlsv1.2 -sSfL https://install.determinate.systems/nix)" -- install
+/bin/sh -c "$(curl --proto '=https' --tlsv1.2 -sSfL https://install.determinate.systems/nix)" -- install
 ```
 
 The flake exposes one configuration per host under `darwinConfigurations` in
@@ -53,9 +103,9 @@ Activation must run as root. Bootstrap once with `nix run`, then use
 the `.` flake reference resolves):
 
 ```shell
-$ MY_HOST=$(scutil --get LocalHostName)
-$ sudo nix run nix-darwin -- switch --flake ".#$MY_HOST"
-$ sudo darwin-rebuild switch --flake ".#$MY_HOST"
+MY_HOST=$(scutil --get LocalHostName)
+sudo nix run nix-darwin -- switch --flake ".#$MY_HOST"
+sudo darwin-rebuild switch --flake ".#$MY_HOST"
 ```
 
 Roll back with `sudo darwin-rebuild --rollback`.
