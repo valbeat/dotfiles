@@ -29,6 +29,56 @@ packages reappear if they are still installed. Review `git diff Brewfile`
 after running it, and use `brew uninstall` to remove unwanted packages from
 the system rather than only deleting their lines here.
 
+## Claude Code plugins
+
+Generic and personal skills live in two private plugin marketplaces instead
+of `.claude/skills/`:
+
+- [valbeat/claude-plugins](https://github.com/valbeat/claude-plugins) —
+  `writing`, `design`, `git-workflow`, `dev-workflow`, `skill-tools`
+- [valbeat/claude-plugins-private](https://github.com/valbeat/claude-plugins-private) —
+  `personal-tools`
+
+Skills are invoked with plugin namespaces (e.g. `/git-workflow:commit`,
+`/dev-workflow:spec`). Environment-coupled skills (cmux, herdr, iterm2,
+hunk-review, etc.) remain in `.claude/skills/` here.
+
+### Setup on a new machine
+
+Both marketplaces are private repos, so SSH access to GitHub (or `gh auth
+login`) must work first. Then:
+
+```shell
+$ cd $HOME/dotfiles && git pull   # syncs .claude/settings.json via symlink
+```
+
+`extraKnownMarketplaces` and `enabledPlugins` in `.claude/settings.json`
+declare everything; Claude Code picks them up on next launch. If plugins do
+not install automatically:
+
+```shell
+$ claude plugin marketplace add valbeat/claude-plugins
+$ claude plugin marketplace add valbeat/claude-plugins-private
+$ claude plugin install writing@valbeat-plugins        # repeat for the rest
+$ claude plugin list                                   # verify all 6 enabled
+```
+
+### Updating skills
+
+Edit skills in the marketplace clones
+(`~/src/github.com/valbeat/claude-plugins{,-private}`), not here. After
+pushing, sync each machine with:
+
+```shell
+$ claude plugin marketplace update
+$ claude plugin update
+```
+
+Plugins are versioned by commit SHA, so pushing is enough for `update` to
+pick up changes. Dotfiles-resident skills still sync via plain `git pull`.
+For background auto-update of the private marketplaces, set `GITHUB_TOKEN`
+in the environment; manual `marketplace update` needs no token.
+
 ## nix-darwin
 
 macOS system settings are managed declaratively with
