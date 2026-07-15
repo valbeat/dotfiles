@@ -31,13 +31,14 @@ the system rather than only deleting their lines here.
 
 ## Claude Code plugins
 
-Generic and personal skills live in two private plugin marketplaces instead
-of `.claude/skills/`:
+Generic and personal skills live in two plugin marketplaces instead of
+`.claude/skills/`:
 
-- [valbeat/claude-plugins](https://github.com/valbeat/claude-plugins) —
-  `writing`, `design`, `git-workflow`, `dev-workflow`, `skill-tools`
-- [valbeat/claude-plugins-private](https://github.com/valbeat/claude-plugins-private) —
-  `personal-tools`
+- [valbeat/claude-plugins](https://github.com/valbeat/claude-plugins)
+  (public) — `writing`, `design`, `git-workflow`, `dev-workflow`,
+  `skill-tools`
+- [valbeat/claude-plugins-private](https://github.com/valbeat/claude-plugins-private)
+  (private) — `personal-tools`
 
 Skills are invoked with plugin namespaces (e.g. `/git-workflow:commit`,
 `/dev-workflow:spec`). Environment-coupled skills (cmux, herdr, iterm2,
@@ -45,8 +46,8 @@ hunk-review, etc.) remain in `.claude/skills/` here.
 
 ### Setup on a new machine
 
-Both marketplaces are private repos, so SSH access to GitHub (or `gh auth
-login`) must work first. Then:
+The private marketplace requires SSH access to GitHub (or `gh auth login`)
+to work first. Then:
 
 ```shell
 cd $HOME/dotfiles && git pull   # syncs .claude/settings.json via symlink
@@ -74,10 +75,11 @@ claude plugin marketplace update
 claude plugin update
 ```
 
-Plugins are versioned by commit SHA, so pushing is enough for `update` to
-pick up changes. Dotfiles-resident skills still sync via plain `git pull`.
-For background auto-update of the private marketplaces, set `GITHUB_TOKEN`
-in the environment; manual `marketplace update` needs no token.
+Plugins declare a `version` in `plugin.json`; `update` skips a plugin until
+its version is bumped, so bump it when releasing changes. Dotfiles-resident
+skills still sync via plain `git pull`. For background auto-update of the
+private marketplace, set `GITHUB_TOKEN` in the environment; manual
+`marketplace update` needs no token.
 
 ## nix-darwin
 
