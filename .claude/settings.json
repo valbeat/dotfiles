@@ -1,15 +1,212 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "cleanupPeriodDays": 30,
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  "$schema" : "https:\/\/json.schemastore.org\/claude-code-settings.json",
+  "agentPushNotifEnabled" : true,
+  "alwaysThinkingEnabled" : true,
+  "attribution" : {
+    "sessionUrl" : false
   },
-  "includeCoAuthoredBy": false,
-  "attribution": {
-    "sessionUrl": false
+  "cleanupPeriodDays" : 30,
+  "editorMode" : "vim",
+  "enabledPlugins" : {
+    "claude-md-management@claude-plugins-official" : true,
+    "code-review@claude-plugins-official" : true,
+    "codex@openai-codex" : true,
+    "design@valbeat-plugins" : true,
+    "dev-workflow@valbeat-plugins" : true,
+    "git-workflow@valbeat-plugins" : true,
+    "modularity@vladikk-modularity" : true,
+    "personal-tools@valbeat-plugins-private" : true,
+    "ralph-loop@claude-plugins-official" : true,
+    "skill-tools@valbeat-plugins" : true,
+    "slack@claude-plugins-official" : true,
+    "vercel@claude-plugins-official" : true,
+    "writing@valbeat-plugins" : true
   },
-  "permissions": {
-    "allow": [
+  "env" : {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS" : "1"
+  },
+  "extraKnownMarketplaces" : {
+    "openai-codex" : {
+      "source" : {
+        "repo" : "openai\/codex-plugin-cc",
+        "source" : "github"
+      }
+    },
+    "valbeat-plugins" : {
+      "source" : {
+        "repo" : "valbeat\/claude-plugins",
+        "source" : "github"
+      }
+    },
+    "valbeat-plugins-private" : {
+      "source" : {
+        "repo" : "valbeat\/claude-plugins-private",
+        "source" : "github"
+      }
+    },
+    "vladikk-modularity" : {
+      "source" : {
+        "repo" : "vladikk\/modularity",
+        "source" : "github"
+      }
+    }
+  },
+  "feedbackSurveyState" : {
+    "lastShownTime" : 1754087207880
+  },
+  "hooks" : {
+    "Notification" : [
+      {
+        "hooks" : [
+          {
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest" : [
+      {
+        "hooks" : [
+          {
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
+          }
+        ]
+      }
+    ],
+    "PostToolUse" : [
+      {
+        "hooks" : [
+          {
+            "command" : "~\/.claude\/hooks\/format.sh",
+            "type" : "command"
+          }
+        ],
+        "matcher" : "Write|Edit|MultiEdit"
+      },
+      {
+        "hooks" : [
+          {
+            "command" : "~\/.claude\/hooks\/log-tooluse.sh",
+            "type" : "command"
+          }
+        ]
+      },
+      {
+        "hooks" : [
+          {
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
+          }
+        ]
+      }
+    ],
+    "PreToolUse" : [
+      {
+        "hooks" : [
+          {
+            "command" : "~\/.claude\/hooks\/guard.sh",
+            "type" : "command"
+          }
+        ],
+        "matcher" : "Bash|Write|Edit|MultiEdit"
+      },
+      {
+        "hooks" : [
+          {
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
+          }
+        ]
+      }
+    ],
+    "SessionEnd" : [
+      {
+        "hooks" : [
+          {
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
+          }
+        ]
+      }
+    ],
+    "SessionStart" : [
+      {
+        "hooks" : [
+          {
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
+          }
+        ]
+      },
+      {
+        "hooks" : [
+          {
+            "command" : "bash '\/Users\/takuma\/.claude\/hooks\/herdr-agent-state.sh' session",
+            "timeout" : 10,
+            "type" : "command"
+          }
+        ],
+        "matcher" : "*"
+      }
+    ],
+    "Stop" : [
+      {
+        "hooks" : [
+          {
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
+          }
+        ]
+      }
+    ],
+    "StopFailure" : [
+      {
+        "hooks" : [
+          {
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
+          }
+        ]
+      }
+    ],
+    "SubagentStop" : [
+      {
+        "hooks" : [
+          {
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit" : [
+      {
+        "hooks" : [
+          {
+            "async" : true,
+            "command" : "\/Users\/takuma\/.config\/iterm2\/cc-status",
+            "type" : "command"
+          }
+        ]
+      }
+    ]
+  },
+  "includeCoAuthoredBy" : false,
+  "inputNeededNotifEnabled" : true,
+  "language" : "Japanese",
+  "model" : "claude-fable-5[1m]",
+  "permissions" : {
+    "allow" : [
       "Bash",
       "Read",
       "Write",
@@ -22,223 +219,38 @@
       "TodoWrite",
       "NotebookEdit"
     ],
-    "deny": [
+    "ask" : [
+
+    ],
+    "defaultMode" : "auto",
+    "deny" : [
       "Bash(sudo rm -rf *)",
       "Bash(sudo mkfs *)",
       "Bash(sudo dd *)",
-      "Bash(rm -rf /)",
+      "Bash(rm -rf \/)",
       "Bash(chmod 777 *)",
       "Read(.env)",
       "Read(.env.*)",
-      "Read(~/.ssh/**)",
-      "Read(~/.aws/**)",
-      "Read(~/.kube/config)",
-      "Read(~/.docker/config.json)",
-      "Read(~/.config/gcloud/**)",
-      "Read(~/.azure/**)"
-    ],
-    "ask": [],
-    "defaultMode": "auto"
-  },
-  "model": "claude-fable-5[1m]",
-  "hooks": {
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/takuma/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PermissionRequest": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/takuma/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/format.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/log-tooluse.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/takuma/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash|Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/guard.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/takuma/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/takuma/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/takuma/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      },
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash '/Users/takuma/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/takuma/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "StopFailure": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/takuma/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/takuma/.config/iterm2/cc-status",
-            "async": true
-          }
-        ]
-      }
+      "Read(~\/.ssh\/**)",
+      "Read(~\/.aws\/**)",
+      "Read(~\/.kube\/config)",
+      "Read(~\/.docker\/config.json)",
+      "Read(~\/.config\/gcloud\/**)",
+      "Read(~\/.azure\/**)"
     ]
   },
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh",
-    "padding": 0
+  "remoteControlAtStartup" : true,
+  "skipAutoPermissionPrompt" : true,
+  "skipDangerousModePermissionPrompt" : true,
+  "skipWorkflowUsageWarning" : true,
+  "statusLine" : {
+    "command" : "~\/.claude\/statusline.sh",
+    "padding" : 0,
+    "type" : "command"
   },
-  "enabledPlugins": {
-    "claude-md-management@claude-plugins-official": true,
-    "code-review@claude-plugins-official": true,
-    "codex@openai-codex": true,
-    "modularity@vladikk-modularity": true,
-    "ralph-loop@claude-plugins-official": true,
-    "slack@claude-plugins-official": true,
-    "vercel@claude-plugins-official": true,
-    "personal-tools@valbeat-plugins-private": true,
-    "writing@valbeat-plugins": true,
-    "design@valbeat-plugins": true,
-    "git-workflow@valbeat-plugins": true,
-    "dev-workflow@valbeat-plugins": true,
-    "skill-tools@valbeat-plugins": true
-  },
-  "extraKnownMarketplaces": {
-    "openai-codex": {
-      "source": {
-        "source": "github",
-        "repo": "openai/codex-plugin-cc"
-      }
-    },
-    "vladikk-modularity": {
-      "source": {
-        "source": "github",
-        "repo": "vladikk/modularity"
-      }
-    },
-    "valbeat-plugins-private": {
-      "source": {
-        "source": "github",
-        "repo": "valbeat/claude-plugins-private"
-      }
-    },
-    "valbeat-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "valbeat/claude-plugins"
-      }
-    }
-  },
-  "language": "Japanese",
-  "alwaysThinkingEnabled": true,
-  "tui": "default",
-  "skipDangerousModePermissionPrompt": true,
-  "skipWorkflowUsageWarning": true,
-  "theme": "dark-daltonized",
-  "editorMode": "vim",
-  "verbose": true,
-  "teammateMode": "auto",
-  "remoteControlAtStartup": true,
-  "inputNeededNotifEnabled": true,
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true,
-  "feedbackSurveyState": {
-    "lastShownTime": 1754087207880
-  }
+  "teammateMode" : "auto",
+  "theme" : "dark-daltonized",
+  "tui" : "default",
+  "verbose" : true,
+  "voiceEnabled" : true
 }
