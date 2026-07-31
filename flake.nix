@@ -5,17 +5,30 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:nix-darwin/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
-    { self, nixpkgs, nix-darwin }:
+    { self, nixpkgs, nix-darwin, home-manager }:
     {
       # One entry per host; the attribute name must match `scutil --get LocalHostName`.
       # Forks: add your own host here. For Intel, set `system = "x86_64-darwin"`
       # AND `nixpkgs.hostPlatform` in darwin/configuration.nix to match.
       darwinConfigurations."takumas-MacBook-Pro" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
-        modules = [ ./darwin/configuration.nix ];
+        modules = [
+          ./darwin/configuration.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            # Files already in the way (e.g. symlinks made by `make deploy`)
+            # are renamed with this suffix instead of aborting activation.
+            home-manager.backupFileExtension = "hm-backup";
+            home-manager.users.takuma = import ./darwin/home.nix;
+          }
+        ];
       };
 
       apps.aarch64-darwin =
