@@ -18,20 +18,37 @@
         modules = [ ./darwin/configuration.nix ];
       };
 
-      # `nix run .#build` — dry-run build of the darwin system without activating.
-      # Used by CI (.github/workflows/nix-build.yml) and as a local preflight check.
-      apps.aarch64-darwin.build =
+      apps.aarch64-darwin =
         let
           pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+          app = name: script: {
+            type = "app";
+            program = toString (pkgs.writeShellScript name script);
+          };
         in
         {
-          type = "app";
-          program = toString (
-            pkgs.writeShellScript "build-dry-run" ''
-              exec nix build --dry-run --no-link \
-                "${self}#darwinConfigurations.takumas-MacBook-Pro.system" "$@"
-            ''
-          );
+          # `nix run .#build` — dry-run build of the darwin system without activating.
+          # Used by CI (.github/workflows/nix-build.yml) and as a local preflight check.
+          build = app "build-dry-run" ''
+            exec nix build --dry-run --no-link \
+              "${self}#darwinConfigurations.takumas-MacBook-Pro.system" "$@"
+          '';
+
+          # `nix run .#switch` — build and activate the darwin system for this host.
+          # Activation must run as root; the host name comes from LocalHostName so
+          # forks with their own darwinConfigurations entry can use it as-is.
+          switch = app "darwin-switch" ''
+            exec sudo darwin-rebuild switch \
+              --flake "${self}#$(scutil --get LocalHostName)" "$@"
+          '';
+
+          # `nix run .#update` — pull the latest main and sync submodules to their
+          # remote default branches (replaces `make update`). Run from the repo root.
+          update = app "repo-update" ''
+            set -euo pipefail
+            git pull origin main
+            git submodule update --init --remote
+          '';
         };
     };
 }
