@@ -17,5 +17,21 @@
         system = "aarch64-darwin";
         modules = [ ./darwin/configuration.nix ];
       };
+
+      # `nix run .#build` — dry-run build of the darwin system without activating.
+      # Used by CI (.github/workflows/nix-build.yml) and as a local preflight check.
+      apps.aarch64-darwin.build =
+        let
+          pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+        in
+        {
+          type = "app";
+          program = toString (
+            pkgs.writeShellScript "build-dry-run" ''
+              exec nix build --dry-run --no-link \
+                "${self}#darwinConfigurations.takumas-MacBook-Pro.system" "$@"
+            ''
+          );
+        };
     };
 }
