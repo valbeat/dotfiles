@@ -18,7 +18,15 @@ TIMEOUT_MIN=$(awk '/^timeout_min:/{print $2; exit}' "$TASK_FILE")
 TIMEOUT_MIN="${TIMEOUT_MIN:-30}"
 TIMEOUT_MS=$((TIMEOUT_MIN * 60 * 1000))
 MODEL=$(awk '/^model:/{print $2; exit}' "$TASK_FILE")
-MODEL="${MODEL:-sonnet}"
+# Default model follows the budget tier (L2 -> opus, otherwise sonnet).
+# An explicit `model:` in the task file always wins. Never fails: pace.sh exits
+# 0 even when it cannot decide, and anything but L2 falls through to sonnet.
+if [ -z "$MODEL" ]; then
+  case "$(bash ~/.claude/skills/rate-pace/scripts/pace.sh tier 2>/dev/null)" in
+    L2) MODEL=opus ;;
+    *)  MODEL=sonnet ;;
+  esac
+fi
 MODEL_FLAG=" --model $MODEL"
 
 LOG=".herdr-team/logs/conductor-${TASK_ID}.log"

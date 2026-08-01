@@ -31,18 +31,63 @@
 
 ## Model Selection Policy
 
-原則: **「探索・機械的作業は安いモデルに散らし、判断・裁定・長期自律実行だけ Fable に集約する」**
+原則: **「制約はコストではなくレート制限。5h 枠は繰り越されないので使い残しは損。7d に余剰がある限り、判断の質が効く場面から順に上のモデルへ回す」**
 
-- **メインセッション**: Opus 4.8（settings.json の `"model": "opus"`）。日常の対話・実装・設計はこれで行う
-- **Fable 5** (`model: fable`): 判断が品質を決める場面に限定して明示指定する
-  - `/review` Step 4.5 のボーダーライン裁定（レビュー1回につき最大1エージェント）
-  - `/dev-workflow:spec` の DESIGN.md 設計レビュー（同上）
+Max サブスクリプションなので従量課金は発生しない。効くのは 5h / 7d の枠だけ。
+
+- **メインセッション**: Opus 4.8（起動時の既定モデル。settings.json では固定しない）。日常の対話・実装・設計はこれで行う
+- **Fable 5** (`model: fable`): 判断が品質を決める場面に指定する
+  - `/review` Step 4.5 のボーダーライン裁定
+  - `/dev-workflow:spec` の DESIGN.md 設計レビュー
   - `code-reviewer` / `debugger` エージェント（`~/.claude/agents/`）
   - team 系スキル（cmux-team / herdr-team）でタスクファイルに `model: fable` を指定した場合
   - deep-research や Workflow の verify / judge ステージ
-- **Sonnet / Haiku**: 探索・検索・整形・分類などのサブエージェント。team 系の実装 Agent は既定 `sonnet`
-- **セキュリティ監査・脆弱性調査には Fable を使わない**: サイバー系の安全分類器による refusal 誤検知リスクがあるため、Opus 4.8 を使う（`/security-review`, `autoresearch:security` 等）
-- Fable のコストは Opus の2倍（$10/$50 per 1M tokens）。指摘ごと・ファイルごとに Fable を起動する構成にしない
+- **Sonnet / Haiku**: 探索・検索・整形・分類などのサブエージェント
+- **セキュリティ監査・脆弱性調査には Fable を使わない**: サイバー系の安全分類器による refusal 誤検知リスクがあるため、Opus 4.8 を使う（`/security-review`, `autoresearch:security` 等）。**この例外は budget tier に関わらず常に優先する**
+
+### Budget Tier（自動格上げ）
+
+余剰の判定は **7d のペース差のみ**で行う（5h は表示専用で判定に使わない）。
+
+```bash
+bash ~/.claude/skills/rate-pace/scripts/pace.sh tier   # -> L0 | L1 | L2
+```
+
+7d の1日ぶん = 100 / 7 = **14.29pt**。これが閾値の単位。
+
+| tier | 条件 | 方針 |
+|------|------|------|
+| `L0` | 余剰 < +15pt、または stale / 取得失敗 | 現状維持。格上げしない |
+| `L1` | 余剰 ≥ +15pt（約1日ぶんの貯金） | 補助ステップ（haiku → sonnet）を格上げ。Fable 同時起動上限 1 → 3 |
+| `L2` | 余剰 ≥ +30pt（約2日ぶんの貯金） | 主ステップ（sonnet → opus）も格上げ。並列数を増やす。Fable 上限 5 |
+
+判定の詳細・stale の扱い・窓長の検証は `~/.claude/skills/rate-pace/SKILL.md` を参照。
+
+#### 各スキルの格上げ内容
+
+| 対象 | `L0` | `L1` | `L2` |
+|------|------|------|------|
+| `/review` Step 2 Gather Context | haiku | sonnet | sonnet |
+| `/review` Step 4 Confidence Scoring | haiku | sonnet | sonnet |
+| `/review` Step 3 レビュアーのモデル | sonnet | sonnet | opus |
+| `/review` Step 3 レビュアー体数 | 5 | 5 | 7 |
+| `/review` Step 4.5 Fable 上限 | 1 | 3 | 5 |
+| `/dev-workflow:spec` 設計レビュー | fable ×1 | fable ×1 | fable ×2（2体目は反証役） |
+| team 系 既定モデル（`model:` 省略時のみ） | sonnet | sonnet | opus |
+| team 系 最大同時 Conductor | 3 | 4 | 6 |
+
+#### ルール
+
+- **fail closed**: 判定できないときは `L0`。エラーは握りつぶして従来どおり続行する
+- **明示指定が最優先**: `--model` やタスクファイルの `model:` があれば tier は無視する
+- **1実行につき1回だけ読む**: スキル起動時に tier を確定し、ステップごとに再取得しない（実行中に揺れて設定が混ざるのを防ぐ）
+- **格上げは上の表に載っている項目だけ**。「余ってそうだから他も上げる」はしない
+- **ユーザー確認は取らない。報告は1行のみ**:
+  `Budget tier: L1 (+18.3pt) — Step 2/4 を sonnet、Fable 上限 3`
+- **絶対上限**: どの tier でも Fable は1回の実行で最大5エージェント、team の同時 Conductor は最大6、`/review` のレビュアーは最大7
+- **ループ内実行は L1 が上限**: `/review --brief`（`/dev-workflow:impl` から反復呼び出しされる）のような経路では L2 に上げない
+- **格上げ対象外**: セキュリティ系（上記）、`suite-eval`（モデル指定が測定の独立変数のため自動格上げすると計測が壊れる）
+- 格上げは自己制動する。消費すれば余剰が減り、次回の起動で自動的に降格する
 
 ## Git Workflow
 
