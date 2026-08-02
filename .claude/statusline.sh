@@ -52,6 +52,10 @@ rate_pace_write() {
     # Throttle. statusLine can fire several times a second; this caps writes at
     # 4/min. The skip path is builtins only — no extra fork.
     [ "$((NOW - pat))" -ge 15 ] || return 0
+    # The cache dir is gitignored, so a fresh checkout does not have it. Create
+    # it on the write path, which the throttle has already made rare — and once
+    # it exists this is a builtin test, not a fork.
+    [ -d "${f%/*}" ] || mkdir -p "${f%/*}" || return 0
 
     local rem=$((SEVEN_RESET - NOW))
     [ "$rem" -lt 0 ] && rem=0
@@ -72,7 +76,7 @@ rate_pace_write() {
         "$ana" "$anr" "$wm" "$FIVE_USED_X10" "${FIVE_RESET:-0}" \
         > "$f.$$" && mv -f "$f.$$" "$f"
 }
-if [ -n "$SEVEN_RESET" ] && [ -z "${SEVEN_RESET//[0-9]/}" ] && [ -d "$HOME/.claude/cache" ]; then
+if [ -n "$SEVEN_RESET" ] && [ -z "${SEVEN_RESET//[0-9]/}" ]; then
     rate_pace_write 2>/dev/null || :
 fi
 
