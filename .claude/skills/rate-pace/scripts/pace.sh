@@ -1,105 +1,100 @@
 #!/bin/bash
 # Decide a budget tier from the 7d rate-limit pace.
 #
-# Reads the cache that statusline.sh publishes and answers one question:
-# are we far enough ahead of the weekly burn rate to justify spending more?
+# Asks Anthropic for the current utilisation and answers one question: are we
+# far enough ahead of the weekly burn rate to justify spending more?
 #
-#   pace.sh          -> tier=L1 pace=+15.2 used=74.0 elapsed=89.2 left=26.0 age=4 conf=high reason=ok
+#   pace.sh          -> tier=L1 pace=+18.3 used=31.2 elapsed=49.5 left=68.8 reason=ok
 #   pace.sh tier     -> L1
 #
 # Always exits 0. Callers run under `set -e`; the verdict travels in `tier=`,
 # never in the exit status. Anything unknown resolves to L0 (change nothing).
 
-CACHE="${RATE_PACE_CACHE:-$HOME/.claude/cache/rate-pace.tsv}"
-
 # All percentages are integers in tenths of a percent, so no float ever reaches
 # bash arithmetic. 1000 == 100.0%.
-WINDOW=604800                                  # 7d, verified against resets_at
 L1_X10="${RATE_PACE_L1_X10:-150}"              # +15.0pt ~= one day of weekly budget
 L2_X10="${RATE_PACE_L2_X10:-300}"              # +30.0pt ~= two days
-# No separate "budget left" floor is needed: elapsed never exceeds 100.0, so
-# pace = elapsed - used <= 100 - used = left, identically. Clearing the L1 pace
-# bar already guarantees at least that much of the week is unspent.
-STALE_SOFT=300                                 # beyond this, never upgrade
-STALE_HARD=1800                                # beyond this, refuse to answer
+# Measured, not assumed: a real rollover was observed on 2026-08-02 and the
+# window came back to exactly 604800s. See the sanity check below.
+WINDOW=604800
+ENDPOINT="${RATE_PACE_ENDPOINT:-https://api.anthropic.com/api/oauth/usage}"
 
 MODE="${1:-full}"
 
-is_num() { case "$1" in ''|*[!0-9-]*) return 1 ;; *) return 0 ;; esac; }
-
-# tenths -> "12.3", with an explicit sign when asked
-fmt() {
+fmt() {  # tenths -> "12.3"; pass a second arg to force a leading +
     local v=$1 sign=''
     [ "$v" -lt 0 ] && { sign='-'; v=$(( -v )); }
     [ -n "$2" ] && [ "$sign" = '' ] && sign='+'
     printf '%s%d.%d' "$sign" $((v / 10)) $((v % 10))
 }
 
-emit() {  # tier pace_x10 used_x10 elapsed_x10 left_x10 age conf reason
+emit() {  # tier pace_x10 used_x10 elapsed_x10 left_x10 reason
     if [ "$MODE" = tier ]; then
         printf '%s\n' "$1"
     else
-        printf 'tier=%s pace=%s used=%s elapsed=%s left=%s age=%s conf=%s reason=%s\n' \
-            "$1" "$(fmt "$2" +)" "$(fmt "$3")" "$(fmt "$4")" "$(fmt "$5")" "$6" "$7" "$8"
+        printf 'tier=%s pace=%s used=%s elapsed=%s left=%s reason=%s\n' \
+            "$1" "$(fmt "$2" +)" "$(fmt "$3")" "$(fmt "$4")" "$(fmt "$5")" "$6"
     fi
     exit 0
 }
-unknown() { emit L0 0 0 0 0 "${2:--1}" none "$1"; }
+unknown() { emit L0 0 0 0 0 "$1"; }
 
-[ -r "$CACHE" ] || unknown nocache
+command -v jq >/dev/null 2>&1 || unknown nojq
 
-schema='' updated_at='' used_x10='' resets_at='' remaining='' max_rem='' anchor_at='' anchor_rem='' win_measured='' five_x10='' five_reset=''
-read -r schema updated_at used_x10 resets_at remaining max_rem anchor_at anchor_rem win_measured five_x10 five_reset < "$CACHE" 2>/dev/null
-
-[ "$schema" = 1 ] || unknown schema
-for v in "$updated_at" "$used_x10" "$resets_at" "$remaining" "$max_rem" "$anchor_at" "$anchor_rem" "$win_measured"; do
-    is_num "$v" || unknown malformed
-done
-[ "$resets_at" -gt 0 ] || unknown no_rate_limits
-
-NOW=$(date +%s)
-AGE=$((NOW - updated_at))
-[ "$AGE" -lt 0 ] && AGE=0                      # clock skew between sessions
-[ "$AGE" -gt "$STALE_HARD" ] && unknown stale "$AGE"
-
-# --- Is the 7d limit really a fixed 7-day window? ---
-# The pace maths only means anything if `remaining` tracks wall-clock 1:1 and
-# the window resets whole. Three cheap checks fail closed if it doesn't.
-[ "$max_rem" -gt $((WINDOW * 102 / 100)) ] && unknown window_longer "$AGE"
-if [ "$win_measured" -gt 0 ]; then
-    d=$((win_measured - WINDOW)); [ "$d" -lt 0 ] && d=$(( -d ))
-    [ "$d" -gt $((WINDOW * 5 / 100)) ] && unknown window_mismatch "$AGE"
+# --- Fetch ---
+# RATE_PACE_USAGE_JSON short-circuits the network for tests.
+if [ -n "$RATE_PACE_USAGE_JSON" ]; then
+    BODY=$(cat "$RATE_PACE_USAGE_JSON" 2>/dev/null) || unknown nofixture
+else
+    command -v security >/dev/null 2>&1 || unknown nokeychain
+    TOKEN=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null \
+            | jq -r '.claudeAiOauth.accessToken // empty' 2>/dev/null)
+    [ -n "$TOKEN" ] || unknown notoken
+    # The header goes through a config file on stdin, never argv: anything on a
+    # command line is world-readable via ps.
+    BODY=$(printf 'header = "Authorization: Bearer %s"\nheader = "Accept: application/json"\nsilent\nfail\nmax-time = 5\n' "$TOKEN" \
+           | curl --config - "$ENDPOINT" 2>/dev/null)
+    # A 401 means Claude Code has not refreshed the token yet. Do not try to
+    # refresh it here — owning the auth state from outside the app is a far
+    # worse failure mode than skipping one upgrade.
+    [ -n "$BODY" ] || unknown fetch_failed
 fi
-if [ "$anchor_rem" -ge 0 ] && [ "$anchor_at" -gt 0 ]; then
-    el=$((updated_at - anchor_at))
-    if [ "$el" -ge 3600 ]; then
-        drift=$((remaining - (anchor_rem - el)))
-        [ "$drift" -lt 0 ] && drift=$(( -drift ))
-        # A rolling window keeps `remaining` flat, so drift grows with el.
-        [ "$drift" -gt $((el / 4)) ] && unknown window_rolling "$AGE"
-    fi
-fi
-CONF=medium
-[ "$max_rem" -ge $((WINDOW * 97 / 100)) ] && CONF=high
+
+# --- Parse ---
+# Only UTC timestamps are accepted; a non-zero offset would silently skew the
+# elapsed fraction, so treat it as unparseable instead of guessing.
+read -r USED_X10 RESETS_AT <<< "$(printf '%s' "$BODY" | jq -r '
+    .seven_day as $s
+    | ($s.resets_at // "") as $r
+    | if ($r | test("(\\+00:00|Z)$")) then
+        [ (($s.utilization // 0) * 10 | round),
+          ($r | sub("\\.[0-9]+"; "") | sub("\\+00:00$"; "Z") | fromdateiso8601) ]
+        | @tsv
+      else empty end' 2>/dev/null)"
+
+case "$USED_X10" in ''|*[!0-9-]*) unknown unparseable ;; esac
+case "$RESETS_AT" in ''|*[!0-9-]*) unknown unparseable ;; esac
 
 # --- Pace ---
-rem_now=$((resets_at - NOW))
-[ "$rem_now" -lt 0 ] && rem_now=0
-elapsed_x10=$(( (WINDOW - rem_now) * 1000 / WINDOW ))
+NOW=$(date +%s)
+rem=$((RESETS_AT - NOW))
+[ "$rem" -lt 0 ] && rem=0
+# If more than a full window remains, the 7d limit is not the fixed 7-day window
+# this maths assumes. (A rolling window needs no guard: `remaining` would stay
+# pinned near the maximum, elapsed would sit at ~0, and pace could never clear
+# the L1 bar — it fails closed on its own.)
+[ "$rem" -gt "$WINDOW" ] && unknown window_longer
+
+elapsed_x10=$(( (WINDOW - rem) * 1000 / WINDOW ))
 [ "$elapsed_x10" -lt 0 ] && elapsed_x10=0
 [ "$elapsed_x10" -gt 1000 ] && elapsed_x10=1000
-pace_x10=$((elapsed_x10 - used_x10))
-left_x10=$((1000 - used_x10))
+pace_x10=$((elapsed_x10 - USED_X10))
+left_x10=$((1000 - USED_X10))
 [ "$left_x10" -lt 0 ] && left_x10=0
 
-# A stale sample always understates `used`, which always overstates the
-# surplus. Upgrading on it is the one direction that can burn the week, so
-# soft-stale samples are answered but never promoted.
-[ "$AGE" -gt "$STALE_SOFT" ] && emit L0 "$pace_x10" "$used_x10" "$elapsed_x10" "$left_x10" "$AGE" "$CONF" soft_stale
-
 if [ "$pace_x10" -ge "$L2_X10" ]; then
-    emit L2 "$pace_x10" "$used_x10" "$elapsed_x10" "$left_x10" "$AGE" "$CONF" ok
+    emit L2 "$pace_x10" "$USED_X10" "$elapsed_x10" "$left_x10" ok
 elif [ "$pace_x10" -ge "$L1_X10" ]; then
-    emit L1 "$pace_x10" "$used_x10" "$elapsed_x10" "$left_x10" "$AGE" "$CONF" ok
+    emit L1 "$pace_x10" "$USED_X10" "$elapsed_x10" "$left_x10" ok
 fi
-emit L0 "$pace_x10" "$used_x10" "$elapsed_x10" "$left_x10" "$AGE" "$CONF" ok
+emit L0 "$pace_x10" "$USED_X10" "$elapsed_x10" "$left_x10" ok

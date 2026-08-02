@@ -53,6 +53,9 @@ Max サブスクリプションなので従量課金は発生しない。効く�
 bash ~/.claude/skills/rate-pace/scripts/pace.sh tier   # -> L0 | L1 | L2
 ```
 
+Claude Code 本体と同じ `GET /api/oauth/usage` を都度叩く（1回 0.4〜0.6 秒）。
+**スキル起動時に1回だけ**呼ぶこと。
+
 7d の1日ぶん = 100 / 7 = **14.29pt**。これが閾値の単位。
 
 | tier | 条件 | 方針 |

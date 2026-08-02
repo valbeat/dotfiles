@@ -5,17 +5,9 @@ input=$(cat)
 [ -z "$input" ] && echo "" && exit 0
 command -v jq >/dev/null 2>&1 || { echo "[no jq]"; exit 0; }
 
-# One-shot schema dump: `touch ~/.claude/cache/.statusline-dump` to arm.
-# Self-disarming, so it never accumulates. Costs one builtin test when idle.
-if [ -e "$HOME/.claude/cache/.statusline-dump" ]; then
-    printf '%s\n' "$input" > "$HOME/.claude/cache/statusline-input.json" 2>/dev/null
-    rm -f "$HOME/.claude/cache/.statusline-dump" 2>/dev/null
-fi
-
-# Single jq call to extract all values.
-# The trailing three are for the rate-pace cache only: usage is scaled by 10 so
-# bash never has to touch a float, and `now` saves a date(1) fork below.
-IFS=$'\t' read -r MODEL CONTEXT_SIZE CURRENT_TOKENS FIVE_HOUR FIVE_RESET SEVEN_DAY SEVEN_RESET SEVEN_USED_X10 FIVE_USED_X10 NOW <<< "$(
+# Single jq call to extract all values. `now` comes from jq so format_remaining
+# below does not have to fork date(1).
+IFS=$'\t' read -r MODEL CONTEXT_SIZE CURRENT_TOKENS FIVE_HOUR FIVE_RESET SEVEN_DAY SEVEN_RESET NOW <<< "$(
   echo "$input" | jq -r '[
     .model.display_name,
     (.context_window.context_window_size // 0),
@@ -24,8 +16,6 @@ IFS=$'\t' read -r MODEL CONTEXT_SIZE CURRENT_TOKENS FIVE_HOUR FIVE_RESET SEVEN_D
     (.rate_limits.five_hour.resets_at // "-"),
     (.rate_limits.seven_day.used_percentage // "-"),
     (.rate_limits.seven_day.resets_at // "-"),
-    ((.rate_limits.seven_day.used_percentage // 0) * 10 | round),
-    ((.rate_limits.five_hour.used_percentage // 0) * 10 | round),
     (now | floor)
   ] | @tsv'
 )"
@@ -37,48 +27,6 @@ IFS=$'\t' read -r MODEL CONTEXT_SIZE CURRENT_TOKENS FIVE_HOUR FIVE_RESET SEVEN_D
 [ "$FIVE_RESET" = "-" ] && FIVE_RESET=""
 [ "$SEVEN_DAY" = "-" ] && SEVEN_DAY=""
 [ "$SEVEN_RESET" = "-" ] && SEVEN_RESET=""
-
-# Publish the 7d pace to a cache file so non-interactive readers (skills,
-# subagents) can see it. statusLine stdin is the only place Claude Code exposes
-# rate limits, so this is the sole way to get them out of the render path.
-# Everything here is best-effort: it must never change or delay the display.
-rate_pace_write() {
-    local f="$HOME/.claude/cache/rate-pace.tsv"
-    # Previous sample. Field order matches the printf below.
-    local pv=0 pat=0 pu=0 pres=0 prem=-1 pmax=0 pana=0 panr=-1 pwm=0 pfu=0 pfr=0
-    [ -r "$f" ] && read -r pv pat pu pres prem pmax pana panr pwm pfu pfr < "$f"
-    # Unknown schema: keep the raw sample, drop the derived state.
-    [ "$pv" = 1 ] || { prem=-1; pmax=0; pana=0; panr=-1; pwm=0; }
-    # Throttle. statusLine can fire several times a second; this caps writes at
-    # 4/min. The skip path is builtins only — no extra fork.
-    [ "$((NOW - pat))" -ge 15 ] || return 0
-    # The cache dir is gitignored, so a fresh checkout does not have it. Create
-    # it on the write path, which the throttle has already made rare — and once
-    # it exists this is a builtin test, not a fork.
-    [ -d "${f%/*}" ] || mkdir -p "${f%/*}" || return 0
-
-    local rem=$((SEVEN_RESET - NOW))
-    [ "$rem" -lt 0 ] && rem=0
-    local mx=$pmax ana=$pana anr=$panr wm=$pwm
-    if [ "$prem" -ge 0 ] && [ "$rem" -gt "$((prem + 60))" ]; then
-        # remaining jumped up => the window just rolled over. This is the only
-        # moment the true window length is directly observable.
-        wm=$((SEVEN_RESET - pres))
-        ana=$NOW anr=$rem mx=$rem
-    fi
-    [ "$rem" -gt "$mx" ] && mx=$rem
-    [ "$anr" -lt 0 ] && { ana=$NOW; anr=$rem; }
-
-    # rename(2) within one directory is atomic, so a concurrent reader sees
-    # either the old complete line or the new one, never a torn write.
-    printf '1\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
-        "$NOW" "$SEVEN_USED_X10" "$SEVEN_RESET" "$rem" "$mx" \
-        "$ana" "$anr" "$wm" "$FIVE_USED_X10" "${FIVE_RESET:-0}" \
-        > "$f.$$" && mv -f "$f.$$" "$f"
-}
-if [ -n "$SEVEN_RESET" ] && [ -z "${SEVEN_RESET//[0-9]/}" ]; then
-    rate_pace_write 2>/dev/null || :
-fi
 
 RESET='\033[0m'
 DIM='\033[2m'

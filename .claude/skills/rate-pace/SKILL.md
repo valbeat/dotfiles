@@ -31,10 +31,13 @@ bash ~/.claude/skills/rate-pace/scripts/pace.sh tier
 # -> L0 | L1 | L2   （1語のみ）
 
 bash ~/.claude/skills/rate-pace/scripts/pace.sh
-# -> tier=L1 pace=+15.2 used=74.0 elapsed=89.2 left=26.0 age=4 conf=medium reason=ok
+# -> tier=L1 pace=+18.3 used=31.2 elapsed=49.5 left=68.8 reason=ok
 ```
 
 **常に exit 0 を返す。** `set -e` 配下から呼んでも落ちない。判定結果は `tier=` に載る。
+
+1回あたり **0.4〜0.6秒**（ネットワーク往復）。スキルは**起動時に1回だけ**呼び、
+ステップごとに呼び直さないこと。
 
 ## tier
 
@@ -61,6 +64,25 @@ bash ~/.claude/skills/rate-pace/scripts/pace.sh
 L1 を超えた時点で最低でも同じだけの枠が残っていることが保証されるので、
 残量の下限チェックは別途持たない。
 
+## データの出どころ
+
+Claude Code 本体が使うのと同じエンドポイントを直接叩く。
+
+```
+GET https://api.anthropic.com/api/oauth/usage
+Authorization: Bearer <Keychain の "Claude Code-credentials" の accessToken>
+```
+
+`.seven_day.utilization`（パーセント値）と `.seven_day.resets_at`（ISO 8601, UTC）だけを使う。
+
+- **statusLine には依存しない。** statusLine は Claude Code が同じ API を叩いた結果を
+  受け取って表示しているだけで、API そのものではない
+- トークンは `curl --config -` で**標準入力から**渡す。コマンドライン引数に置くと
+  `ps` で他プロセスから読めてしまうため
+- タイムスタンプの変換は jq の `fromdateiso8601` で行う。`date -d` / `date -j` の
+  GNU / BSD 差を踏まないため。**UTC 以外のオフセットは受け付けない**
+  （経過率が静かにずれるより、判定不能にするほうが安全）
+
 ## 判定不能時は必ず現状維持
 
 `reason` が `ok` 以外のときは `L0` を返す。**格上げしない**という意味であって、
@@ -68,90 +90,44 @@ L1 を超えた時点で最低でも同じだけの枠が残っていること�
 
 | reason | 状況 |
 |--------|------|
-| `nocache` | キャッシュ未生成（statusline がまだ描画されていない） |
-| `stale` | 30分以上更新されていない |
-| `soft_stale` | 5分以上経過。値は返すが**格上げは禁止** |
-| `schema` / `malformed` | キャッシュ形式が想定外 |
-| `no_rate_limits` | `rate_limits` が届いていない |
-| `window_longer` / `window_mismatch` / `window_rolling` | 7日固定窓の前提が崩れている（後述） |
+| `notoken` | Keychain からトークンを取得できない（SSH でロック中、ログアウト済み等） |
+| `fetch_failed` | ネットワーク不通、タイムアウト（5秒）、**401 を含む HTTP エラー** |
+| `unparseable` | レスポンスの形が想定外、または `resets_at` が UTC でない |
+| `window_longer` | 1週間より長い残り時間が返ってきた（7日固定窓の前提が崩れている） |
+| `nojq` / `nokeychain` | 依存コマンドが無い |
 
-### stale の扱いが非対称な理由
+### 401 は放置する
 
-`used` は単調増加するので、キャッシュが古いと `used` は必ず**過小評価**され、
-結果として余剰は必ず**過大評価**される。古いデータでの格上げは構造的に危険側、
-格下げは安全側。そのため 5分〜30分は「値は返すが格上げ禁止」、30分超は `unknown` にする。
-
-5分という閾値が実用上きつくない理由: このスクリプトを呼ぶのは生きた Claude セッションの
-中で、そのセッションの statusline が数百ms毎に回っている。**「読める＝新鮮」が構造的に成り立つ。**
-
-## データの出どころ
-
-```
-statusLine stdin JSON  ← Claude Code が rate_limits を渡す唯一の経路
-  └─ ~/.claude/statusline.sh          （書き手・15秒 throttle・atomic rename）
-       └─ ~/.claude/cache/rate-pace.tsv   （1行 TSV・git 管理外）
-            └─ scripts/pace.sh            （読み手・判定）
-```
-
-**statusline.sh に依存している。** `settings.json` の `statusLine` を無効化したり
-別実装に差し替えたりすると、このスキルは恒久的に `nocache` を返す（＝全て L0 になり、
-挙動は従来どおりに戻る）。
-
-`claude` CLI に使用量を取るサブコマンドは無く、一次ソースの `GET /api/oauth/usage` は
-OAuth トークンが Keychain 保管のため自前では叩けない。`ccusage` 等の外部ツールが出すのは
-transcript からのローカル推定であって公式の使用率ではないため、フォールバックには**使わない**。
-誤判定で枠を焼くより、現状維持のほうが安い。
+アクセストークンの寿命は約12時間で、Claude Code 本体が期限前に更新する。
+更新前に叩けば 401 になるが、**このスクリプトは自前でリフレッシュしない**。
+本体の認証状態を外から書き換えるほうが、格上げを1回見送るよりはるかに危険なため。
+本体が更新すれば次回から自然に復旧する。
 
 ## 環境要件
 
 | 要件 | 満たさない場合 |
 |------|----------------|
-| `settings.json` の `statusLine` が有効 | 恒久的に `nocache` → 全て `L0`（従来どおりの挙動に戻るだけ） |
-| `jq`（`now` を使うので 1.5 以上） | statusline 自体が動かない（元から必須） |
+| `security`（macOS Keychain）が読めること | `notoken` → `L0` |
+| ネットワーク到達性 | `fetch_failed` → `L0` |
+| `jq` 1.5 以上（`fromdateiso8601` を使う） | `nojq` → `L0` |
 | `bash` 3.2 以上 | — （macOS 既定の 3.2 で動作確認済み） |
-| `$HOME` が書き込み可能 | キャッシュを書けず `nocache` → `L0`。表示は壊れない |
 
-`~/.claude/cache/` は git 管理外なので新規マシンには存在しないが、**書き込み時に自動生成する**ため
-セットアップ作業は要らない。
+**SSH 越しやヘッドレスでは login keychain がロックされていて失敗する**ことがある。
+その場合は全て `L0` になり、挙動は従来どおりに戻るだけ。
 
-macOS 専用コマンドは使っていない（`stat -f` などはテスト側にのみ存在）。
+macOS 専用なのは Keychain 参照の1行のみ。Linux へ持っていく場合はここだけ差し替える。
 
-**1つの `$HOME` を複数の Claude アカウントで共有する構成には対応していない。**
-キャッシュはアカウント単位のレート制限を1ファイルに持つため、混ざると誤判定する。
+**1つの環境を複数の Claude アカウントで使い分ける構成では、
+`security` が返すトークン＝現在ログイン中のアカウントの値になる**点に注意。
 
-### headless / worktree からの利用
+## 7日固定窓という前提
 
-サブエージェントや `cmux-team` の Conductor など statusline を持たないプロセスからでも読める。
-git worktree も `$HOME` は共有なので同じキャッシュを見る（レート制限はアカウント単位なので
-これが正しい）。ただし**どこかで対話セッションが描画していること**が前提で、
-全セッションが死んで30分経てば `stale` → `L0` に落ちる。
+`elapsed` の計算は「7d 枠が固定7日窓で、リセット時に丸ごと戻る」ことを前提にしている。
+2026-08-02 に実際のロールオーバーを観測し、窓長が**ちょうど 604800 秒**であることを
+実測で確認済み（推定ではない）。
 
-## 7日固定窓の前提を実測で検証している
+前提が崩れた場合の壊れ方も安全側になっている。
 
-ペースの計算は「7d 枠が固定7日窓で、リセット時に丸ごと戻る」ことを前提にしている。
-もしローリング窓だった場合 `remaining` はほぼ一定になり、経過率は無意味になる。
-
-書き手が O(1) の状態を持ち回って検出する。
-
-- `max_remaining` — 観測した `remaining` の最大値。固定窓なら真の窓長に下から収束する
-- `window_measured` — ロールオーバー検出時の `resets_at` の差分（窓長の直接観測）
-- `anchor_at` / `anchor_remaining` — ドリフト測定の基準点
-
-読み手はこれらから、窓が想定より長い / 実測値が5%以上ずれている /
-`remaining` が実時間どおりに減っていない、のいずれかを検出したら `unknown` を返す。
-**前提が崩れた瞬間に格上げが止まる**のが正しい壊れ方。
-
-2026-08-02 に実際のロールオーバーを捕捉し、`window_measured=604800`（7日ちょうど）を
-観測している。前提は推定ではなく実測で裏付けられている。
-
-## キャッシュの形式
-
-1行 TSV。第1フィールドが schema version。
-
-```
-schema  updated_at  used_x10  resets_at  remaining  max_remaining  anchor_at  anchor_remaining  window_measured  five_used_x10  five_resets_at
-```
-
-全ての百分率は **0.1% 単位の整数**（`used_x10=740` は 74.0%）。bash 算術に浮動小数を
-持ち込まないため。将来フィールドを追加するときは schema を上げること。
-古い読み手は `schema` 不一致で `unknown`＝安全側に落ちる。
+- **窓が長くなった** … 残り時間が 604800 秒を超えるので `window_longer` で検出して `L0`
+- **ローリング窓になった** … `remaining` が最大値付近に貼り付くため `elapsed` が常に ≈0 になり、
+  `pace = 0 - used ≤ 0` で L1 に届かない。**ガードを書かなくても自動的に L0 に落ちる**
