@@ -35,6 +35,7 @@ bash ~/.claude/skills/rate-pace/scripts/pace.sh
 レビューは従来どおり続行する。
 
 **この tier は一度だけ確定し、レビュー中は再取得しない。**
+API 呼び出しを伴い1回あたり 0.4〜0.6 秒かかるため、ステップごとに呼び直さないこと。
 
 | | `L0` | `L1` | `L2` |
 |---|---|---|---|
@@ -54,7 +55,9 @@ Budget tier: L1 (+18.3pt) — Step 2/4 を sonnet、Fable 上限 3
 ```
 
 `L0` のときも1行報告する（例: `Budget tier: L0 (+4.1pt) — 格上げなし`）。
-理由が `ok` 以外のときは括弧内に理由を書く（例: `L0 (nocache) — 格上げなし`）。
+理由が `ok` 以外のときは pt の代わりにその理由を書く
+（例: `Budget tier: L0 (notoken) — 格上げなし`）。理由の一覧は
+`~/.claude/skills/rate-pace/SKILL.md` を参照。
 
 ### Step 1: Identify Review Scope
 
