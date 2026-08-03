@@ -12,8 +12,12 @@
 
 # All percentages are integers in tenths of a percent, so no float ever reaches
 # bash arithmetic. 1000 == 100.0%.
-L1_X10="${RATE_PACE_L1_X10:-150}"              # +15.0pt ~= one day of weekly budget
-L2_X10="${RATE_PACE_L2_X10:-300}"              # +30.0pt ~= two days
+# pace can never exceed (100 - final weekly usage), so a threshold above that
+# is unreachable rather than merely strict: at a 83% week, pace tops out at
+# +17 and a +30 tier would never once fire. Half a day and one day of banked
+# budget keep both tiers live for realistic usage.
+L1_X10="${RATE_PACE_L1_X10:-70}"               # +7.0pt  ~= half a day of weekly budget
+L2_X10="${RATE_PACE_L2_X10:-140}"              # +14.0pt ~= one day
 # Measured, not assumed: a real rollover was observed on 2026-08-02 and the
 # window came back to exactly 604800s. See the sanity check below.
 WINDOW=604800

@@ -101,7 +101,7 @@ Launch a context-gathering agent to collect:
 
 ```
 subagent_type: Explore
-model: {Step 0 の表より — L0: haiku / L1・L2: sonnet}
+model: L0 なら haiku / L1 以上なら sonnet
 prompt: |
   Collect review context for the following changes:
   {diff summary from Step 1}
@@ -119,7 +119,7 @@ Launch all review agents in parallel. Internal agents and external AI tools run 
 #### Internal Agents
 
 ```
-model: {Step 0 の表より — L0・L1: sonnet / L2: opus}
+model: L2 なら opus / それ以外は sonnet
 ```
 
 起動する体数も Step 0 の表に従う（`L0`・`L1` は #1–#5、`L2` は #1–#7）。
@@ -272,7 +272,7 @@ For CLAUDE.md-flagged issues, the agent must verify the CLAUDE.md actually calls
 
 ```
 subagent_type: general-purpose
-model: {Step 0 の表より — L0: haiku / L1・L2: sonnet}
+model: L0 なら haiku / L1 以上なら sonnet
 prompt: |
   You are a skeptical review-verification agent. Your default stance is that the
   issue below is a FALSE POSITIVE; only score it high if the evidence holds up.
