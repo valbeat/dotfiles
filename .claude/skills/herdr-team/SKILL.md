@@ -87,13 +87,11 @@ TASK
 
 #### Model Selection (per task)
 
-`model:` は省略可（省略時は `sonnet` — Conductor がデフォルトを適用する）。タスクの性質で選ぶ:
+`model:` は省略可。**省略時の既定は Conductor が budget tier から決める**
+（`L0` / `L1` → `sonnet`、`L2` → `opus`）。明示指定した場合は tier より優先される。
 
-| model | 用途 |
-|-------|------|
-| `sonnet` | 既定。仕様が明確な PR サイズの実装・テスト・調査タスク |
-| `opus` | 複雑な実装、影響範囲の広い変更、セキュリティ関連タスク（Fable は refusal リスクがあるため使わない） |
-| `fable` | 判断が品質を決める最難関タスクのみ（大規模リファクタの設計、曖昧さの残る問題）。コストは opus の2倍 |
+選び方の基準は `~/.claude/CLAUDE.md` の **Model Selection Policy** に従う
+（セキュリティ関連タスクに `fable` を使わない制約を含む）。ここには重複して書かない。
 
 ### 3. Launch Manager
 
@@ -119,7 +117,9 @@ You are the Manager in a herdr-team hierarchy.
 6. Write a summary to .herdr-team/results/summary.md
 
 ## Rules
-- Max 3 concurrent Conductors
+- Max concurrent Conductors: run
+  `bash ~/.claude/skills/rate-pace/scripts/pace.sh tier` once at startup —
+  L2 -> 6, L1 -> 4, anything else (including failure) -> 3. Never exceed 6.
 - On Conductor failure, mark task "failed" and continue
 - Log all actions to .herdr-team/logs/manager.log
 PROMPT
@@ -148,7 +148,15 @@ TASK_FILE="$1"
 TASK_ID=$(grep '^id:'     "$TASK_FILE" | tr -d '"' | awk '{print $2}')
 BRANCH=$( grep '^branch:'  "$TASK_FILE" | awk '{print $2}')
 MODEL=$(awk '/^model:/{print $2; exit}' "$TASK_FILE")  # first match only; awk so absence doesn't abort under set -e
-MODEL="${MODEL:-sonnet}"
+# Default model follows the budget tier (L2 -> opus, otherwise sonnet).
+# An explicit `model:` in the task file always wins. Never fails: pace.sh exits
+# 0 even when it cannot decide, and anything but L2 falls through to sonnet.
+if [ -z "$MODEL" ]; then
+  case "$(bash ~/.claude/skills/rate-pace/scripts/pace.sh tier 2>/dev/null)" in
+    L2) MODEL=opus ;;
+    *)  MODEL=sonnet ;;
+  esac
+fi
 MODEL_FLAG=" --model $MODEL"
 
 # 1. Create worktree + its workspace in one shot

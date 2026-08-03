@@ -5,18 +5,28 @@ input=$(cat)
 [ -z "$input" ] && echo "" && exit 0
 command -v jq >/dev/null 2>&1 || { echo "[no jq]"; exit 0; }
 
-# Single jq call to extract all values
-IFS=$'\t' read -r MODEL CONTEXT_SIZE CURRENT_TOKENS FIVE_HOUR FIVE_RESET SEVEN_DAY SEVEN_RESET <<< "$(
+# Single jq call to extract all values. `now` comes from jq so format_remaining
+# below does not have to fork date(1).
+IFS=$'\t' read -r MODEL CONTEXT_SIZE CURRENT_TOKENS FIVE_HOUR FIVE_RESET SEVEN_DAY SEVEN_RESET NOW <<< "$(
   echo "$input" | jq -r '[
     .model.display_name,
     (.context_window.context_window_size // 0),
     ((.context_window.current_usage // {}) | ((.input_tokens // 0) + (.cache_creation_input_tokens // 0) + (.cache_read_input_tokens // 0))),
-    (.rate_limits.five_hour.used_percentage // ""),
-    (.rate_limits.five_hour.resets_at // ""),
-    (.rate_limits.seven_day.used_percentage // ""),
-    (.rate_limits.seven_day.resets_at // "")
+    (.rate_limits.five_hour.used_percentage // "-"),
+    (.rate_limits.five_hour.resets_at // "-"),
+    (.rate_limits.seven_day.used_percentage // "-"),
+    (.rate_limits.seven_day.resets_at // "-"),
+    (now | floor)
   ] | @tsv'
 )"
+
+# jq emits "-" rather than "" for missing rate limits on purpose: tab is IFS
+# whitespace, so `read` collapses runs of empty fields and every value after a
+# gap would shift into the wrong variable. Normalise the placeholder back here.
+[ "$FIVE_HOUR" = "-" ] && FIVE_HOUR=""
+[ "$FIVE_RESET" = "-" ] && FIVE_RESET=""
+[ "$SEVEN_DAY" = "-" ] && SEVEN_DAY=""
+[ "$SEVEN_RESET" = "-" ] && SEVEN_RESET=""
 
 RESET='\033[0m'
 DIM='\033[2m'
@@ -78,7 +88,7 @@ format_remaining() {
     local resets_at=$1
     [ -z "$resets_at" ] && return
     local now remaining
-    now=$(date +%s)
+    now=${NOW:-$(date +%s)}
     remaining=$((resets_at - now))
     [ "$remaining" -le 0 ] && return
     local days=$((remaining / 86400))

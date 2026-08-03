@@ -1,6 +1,6 @@
 ---
 name: review
-allowed-tools: Read, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git blame:*), Bash(git rev-parse:*), Bash(git merge-base:*), Bash(git show:*), Bash(git symbolic-ref:*), Bash(which:*), Bash(cat /tmp/*), Bash(codex:*), Bash(copilot:*), Glob, Grep, Agent
+allowed-tools: Read, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git blame:*), Bash(git rev-parse:*), Bash(git merge-base:*), Bash(git show:*), Bash(git symbolic-ref:*), Bash(which:*), Bash(cat /tmp/*), Bash(codex:*), Bash(copilot:*), Bash(bash ~/.claude/skills/rate-pace/scripts/pace.sh:*), Glob, Grep, Agent
 description: >-
   Multi-agent local code review with confidence scoring.
   Trigger conditions: git diff に変更がある場合（staged/unstaged/committed）。
@@ -23,6 +23,41 @@ argument-hint: "[--uncommitted|--staged|--brief|--commit <sha>|<file>]"
 | `<file_path>` | Review specific file(s) |
 
 ## Review Process
+
+### Step 0: Resolve Budget Tier
+
+```bash
+bash ~/.claude/skills/rate-pace/scripts/pace.sh
+```
+
+出力の `tier=` を読む。`L1` / `L2` **以外**（`L0`・空・エラー・コマンド不在を含む）は
+すべて `L0` として扱う。判定できないことは「格上げしない」を意味するだけで、
+レビューは従来どおり続行する。
+
+**この tier は一度だけ確定し、レビュー中は再取得しない。**
+API 呼び出しを伴い1回あたり 0.4〜0.6 秒かかるため、ステップごとに呼び直さないこと。
+
+| | `L0` | `L1` | `L2` |
+|---|---|---|---|
+| Step 2 のモデル | haiku | sonnet | sonnet |
+| Step 3 のモデル | sonnet | sonnet | opus |
+| Step 3 のレビュアー体数 | 5（#1–#5） | 5（#1–#5） | 7（#1–#7） |
+| Step 4 のモデル | haiku | sonnet | sonnet |
+| Step 4.5 の Fable 上限 | 1 | 3 | 5 |
+
+`--brief` が指定されている場合は **`L2` を `L1` に丸める**。
+この経路は `/dev-workflow:impl` から反復呼び出しされるため、1回あたりの消費を抑える。
+
+確定後、次の1行だけを出力する（ユーザーへの確認は取らない）:
+
+```
+Budget tier: L1 (+18.3pt) — Step 2/4 を sonnet、Fable 上限 3
+```
+
+`L0` のときも1行報告する（例: `Budget tier: L0 (+4.1pt) — 格上げなし`）。
+理由が `ok` 以外のときは pt の代わりにその理由を書く
+（例: `Budget tier: L0 (notoken) — 格上げなし`）。理由の一覧は
+`~/.claude/skills/rate-pace/SKILL.md` を参照。
 
 ### Step 1: Identify Review Scope
 
@@ -57,16 +92,16 @@ git diff <BASE>..HEAD -- "<file_path>" > /tmp/review-diff.txt
 
 重要: パイプやサブシェルを使わず、個別コマンドとして実行すること（allowed-tools の制約）。
 
-### Step 2: Gather Context (Haiku Agent)
+### Step 2: Gather Context
 
-Launch a Haiku agent to collect:
+Launch a context-gathering agent to collect:
 - Relevant CLAUDE.md files (root + directories of changed files)
 - Project conventions and lint/format config files
 - Summary of the change scope
 
 ```
 subagent_type: Explore
-model: haiku
+model: L0 なら haiku / L1 以上なら sonnet
 prompt: |
   Collect review context for the following changes:
   {diff summary from Step 1}
@@ -77,18 +112,21 @@ prompt: |
   3. Brief summary of the change
 ```
 
-### Step 3: Parallel Review (5 Sonnet Agents + External AI)
+### Step 3: Parallel Review (Internal Agents + External AI)
 
 Launch all review agents in parallel. Internal agents and external AI tools run simultaneously.
 
-#### Internal Agents (5 Sonnet Agents)
+#### Internal Agents
 
 ```
-model: sonnet
+model: L2 なら opus / それ以外は sonnet
 ```
+
+起動する体数も Step 0 の表に従う（`L0`・`L1` は #1–#5、`L2` は #1–#7）。
 
 各エージェントには**必ず以下のテンプレートをそのまま使い**、`{...}` を埋めて渡す。
-プロンプトを要約・省略しないこと。各 issue の reason には `(Claude Sonnet)` を付記する。
+プロンプトを要約・省略しないこと。各 issue の reason には実際に使ったモデル名を
+付記する（`(Claude Sonnet)` / `(Claude Opus)`）。
 
 全エージェント共通の出力形式（テンプレート末尾に必ず含める）:
 
@@ -158,6 +196,29 @@ file(s) that establish the pattern.
 {common output format}
 ```
 
+**Agent #6 — Test Coverage** （`L2` のときのみ起動）
+```
+You are a code reviewer checking whether this change is adequately tested.
+Read the diff at /tmp/review-diff.txt. For each changed behaviour, look for a
+corresponding test (search sibling test files and the project's test directory).
+Report only: new branches or error paths with no test at all, tests that assert on
+the wrong thing, and tests that would still pass if the change were reverted. Name
+the test file you expected to find. Do not report missing tests for pure renames,
+formatting, or generated code.
+{common output format}
+```
+
+**Agent #7 — API Contract & Compatibility** （`L2` のときのみ起動）
+```
+You are a code reviewer checking for contract breakage.
+Read the diff at /tmp/review-diff.txt. Look for changes to anything callers depend on:
+exported function signatures, struct/interface fields, HTTP routes and payload shapes,
+DB schema, config keys, CLI flags, environment variables, serialized formats. For each,
+find the call sites (Grep the repo) and state which one breaks. Report a change only if
+you can name an actual caller or persisted artifact that would break. Cite it.
+{common output format}
+```
+
 #### External AI Review (Optional, in parallel)
 
 Codex CLI / Copilot CLI がインストールされている場合、並列で外部AIレビューを実行する。
@@ -188,9 +249,9 @@ cat /tmp/review-diff.txt | copilot -p "$REVIEW_PROMPT"
 
 外部AIの指摘は Step 4 の信頼度スコアリング対象に統合する。issue の reason には `(Codex)` / `(Copilot)` を付記。
 
-### Step 4: Confidence Scoring (Haiku Agents)
+### Step 4: Confidence Scoring
 
-For each issue found in Step 3, launch a parallel Haiku agent. Each scoring agent receives:
+For each issue found in Step 3, launch a parallel scoring agent. Each scoring agent receives:
 - The issue description and reason
 - The diff (from `/tmp/review-diff.txt`)
 - CLAUDE.md file paths and content (from Step 2)
@@ -211,7 +272,7 @@ For CLAUDE.md-flagged issues, the agent must verify the CLAUDE.md actually calls
 
 ```
 subagent_type: general-purpose
-model: haiku
+model: L0 なら haiku / L1 以上なら sonnet
 prompt: |
   You are a skeptical review-verification agent. Your default stance is that the
   issue below is a FALSE POSITIVE; only score it high if the evidence holds up.
@@ -235,8 +296,10 @@ prompt: |
 Step 4 のスコアが **50 または 75** の指摘（ボーダーライン）が1件以上ある場合のみ実行する。
 0 / 25 / 100 はスコア確定として扱い、このステップをスキップして Step 5 へ。
 
-全ボーダーライン指摘を**単一の Fable エージェント**にまとめて渡し、最終裁定させる。
-Fable はレビュー1回につき最大1エージェント（指摘ごとに起動しない）。
+起動できる Fable エージェント数の上限は Step 0 で確定した値（`L0`: 1 / `L1`: 3 / `L2`: 5）。
+ボーダーライン指摘は**まとめて渡す**のが基本で、上限を超える件数がある場合のみ
+**ファイル単位で束ねて**分割する（指摘ごとに1体は起動しない）。
+分割しても各エージェントには診断に必要な文脈を全て渡すこと。
 
 ```
 subagent_type: general-purpose
