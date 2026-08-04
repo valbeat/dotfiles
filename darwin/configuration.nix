@@ -2,6 +2,7 @@
 {
   imports = [
     ./system-defaults.nix
+    ./homebrew.nix
   ];
 
   # Platform / user
