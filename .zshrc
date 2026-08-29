@@ -967,3 +967,35 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # sentry
 fpath=("$HOME/.local/share/zsh/site-functions" $fpath)
+
+#-------------------------------------
+# orca
+#-------------------------------------#
+export PATH="/Applications/Orca.app/Contents/Resources/bin:$PATH"
+
+# 現在のディレクトリ（git リポジトリならそのルート）を Orca のプロジェクトにして開く
+#   未登録  → repo add で project + main workspace を作成
+#   登録済み → 既存のターミナルタブがあればそこへ切り替え、なければ1本作る
+# 使い方: oh [path]
+orca-here() {
+  command -v orca >/dev/null || { echo "orca CLI が見つかりません" >&2; return 1; }
+  local dir="${1:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+  dir="${dir:A}"
+  orca open --json >/dev/null 2>&1
+
+  if ! orca repo show --repo "path:$dir" --json >/dev/null 2>&1; then
+    orca repo add --path "$dir" --json >/dev/null \
+      || { echo "repo 登録に失敗: $dir" >&2; return 1; }
+    echo "Orca にプロジェクトを追加: $dir"
+  fi
+
+  local handle
+  handle="$(orca terminal list --json 2>/dev/null \
+    | jq -r --arg p "$dir" '.result.terminals[] | select(.worktreePath == $p) | .handle' | head -1)"
+  if [[ -n "$handle" ]]; then
+    orca terminal switch --terminal "$handle" --json >/dev/null
+  else
+    orca terminal create --worktree "path:$dir" --focus --json >/dev/null
+  fi && echo "Orca で開きました: $dir"
+}
+alias oh=orca-here
