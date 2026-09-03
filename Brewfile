@@ -376,7 +376,6 @@ cask "blackhole-16ch"
 # Free and open-source web browser
 cask "chromium"
 # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
-cask "cmux"
 cask "font-symbols-only-nerd-font"
 # Set of tools to manage resources and applications hosted on Google Cloud
 cask "gcloud-cli"

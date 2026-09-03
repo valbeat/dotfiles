@@ -131,16 +131,6 @@
             "async": true
           }
         ]
-      },
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash '/Users/takuma/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10
-          }
-        ]
       }
     ],
     "Stop": [
