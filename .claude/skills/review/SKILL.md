@@ -1,6 +1,6 @@
 ---
 name: review
-allowed-tools: Read, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git blame:*), Bash(git rev-parse:*), Bash(git merge-base:*), Bash(git show:*), Bash(git symbolic-ref:*), Bash(which:*), Bash(cat /tmp/*), Bash(codex:*), Bash(copilot:*), Bash(bash ~/.claude/skills/rate-pace/scripts/pace.sh:*), Glob, Grep, Agent
+allowed-tools: Read, Bash(git diff:*), Bash(git log:*), Bash(git status:*), Bash(git blame:*), Bash(git rev-parse:*), Bash(git merge-base:*), Bash(git show:*), Bash(git symbolic-ref:*), Bash(which:*), Bash(cat /tmp/*), Bash(codex:*), Bash(copilot:*), Bash(bash ~/.claude/skills/rate-pace/scripts/pace.sh:*), Glob, Grep, Agent, WebSearch, WebFetch
 description: >-
   Multi-agent local code review with confidence scoring.
   Trigger conditions: git diff に変更がある場合（staged/unstaged/committed）。
@@ -116,13 +116,14 @@ prompt: |
 
 Launch all review agents in parallel. Internal agents and external AI tools run simultaneously.
 
-#### Internal Agents
+#### Internal Agents（体数は Step 0 の tier で決まる。依存更新を含む diff では Agent #8 を追加）
 
 ```
 model: L2 なら opus / それ以外は sonnet
 ```
 
 起動する体数も Step 0 の表に従う（`L0`・`L1` は #1–#5、`L2` は #1–#7）。
+依存マニフェスト / ロックファイルが diff に含まれる場合は、tier に関係なく Agent #8 を追加で起動する。
 
 各エージェントには**必ず以下のテンプレートをそのまま使い**、`{...}` を埋めて渡す。
 プロンプトを要約・省略しないこと。各 issue の reason には実際に使ったモデル名を
@@ -218,6 +219,37 @@ find the call sites (Grep the repo) and state which one breaks. Report a change 
 you can name an actual caller or persisted artifact that would break. Cite it.
 {common output format}
 ```
+
+**Agent #8 — Dependency Update Research (conditional — tier に関係なく起動)**
+
+依存マニフェスト / ロックファイル（`package.json`, `pnpm-lock.yaml`, `go.mod`, `Cargo.toml`, `pyproject.toml`, `Gemfile`, `requirements.txt` 等）が diff に含まれる場合**のみ**起動する。
+公式リリースノートは意図した変更しか書かない。実際に踏むのは未修正の regression、peer dependency の非互換、特定バンドラ/ランタイム組み合わせでのみ再現する不具合で、これらは GitHub issue や個人ブログにしか出てこない。
+
+```
+model: sonnet
+prompt: |
+  You are reviewing a dependency version bump. Read the diff at /tmp/review-diff.txt
+  and list every package whose version changed (old -> new).
+
+  For each package, in this order:
+  1. Read the official CHANGELOG / release notes / migration guide for the versions
+     between old and new (WebFetch). Note breaking changes.
+  2. THEN search the web for problems the release notes do NOT mention (WebSearch —
+     do not skip this step):
+     - "<package> <new version> bug" / "regression" / "breaking" / "issue"
+     - open issues on the package's repo, filtered to the new version's label/milestone
+     - add stack-specific keywords taken from the repo (framework, bundler, test runner,
+       package manager, major peer deps) so you find combination-specific breakage
+     - search in Japanese too (Zenn / Qiita) — migration pain is often reported there
+  3. Classify each finding: AFFECTED / NOT AFFECTED / WATCH. For NOT AFFECTED, prove it
+     by grepping this repo for the affected API and cite what you found (or didn't).
+
+  Do this for minor and patch bumps too, not just majors — patch regressions are real.
+  Report only findings that plausibly affect THIS repo, with the source URL.
+  {common output format}
+```
+
+reason には `(Dependency Research)` と参照URLを付記する。この指摘は Step 4 のスコアリングでは、**再現条件が外部ソースで裏付けられているか**を根拠に評価する（自リポジトリのコードだけでは検証できないため、URL がない指摘は 25 以下に落とす）。
 
 #### External AI Review (Optional, in parallel)
 
