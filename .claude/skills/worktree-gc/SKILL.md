@@ -2,7 +2,7 @@
 name: worktree-gc
 description: >-
   使い終わった git worktree を状態ベース（PR の state / 未コミット変更 / 未 push
-  コミット）で判定して掃除する。cmux-team / herdr-team / cmux-agent が作った
+  コミット）で判定して掃除する。Orca orchestration（orca worktree create） が作った
   worktree の溜まりを解消する。Use when user says "worktree掃除", "worktree整理",
   "worktree GC", "worktreeが溜まってる", "ディスクを空けたい", or when a session
   notices many stale worktrees.
@@ -12,7 +12,7 @@ argument-hint: "[--apply] [--size] [--json] [--merged-grace <日>] [--stale-open
 
 # worktree GC
 
-並列エージェント（cmux-team / herdr-team / cmux-agent）を回すと worktree が溜まる。
+並列エージェント（Orca orchestration（orca worktree create））を回すと worktree が溜まる。
 1 worktree あたり node_modules だけで 1.3GB 程度あり、放置すると数十 GB になる。
 このスキルは**状態を見て**掃除する。所有者や作成時刻ではなく、消して安全かどうかで決める。
 
