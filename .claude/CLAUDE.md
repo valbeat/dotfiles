@@ -38,9 +38,9 @@
   - `/review` Step 4.5 のボーダーライン裁定（レビュー1回につき最大1エージェント）
   - `/dev-workflow:spec` の DESIGN.md 設計レビュー（同上）
   - `code-reviewer` / `debugger` エージェント（`~/.claude/agents/`）
-  - team 系スキル（cmux-team / herdr-team）でタスクファイルに `model: fable` を指定した場合
+  - Orca orchestration のタスクで worker に `model: fable` を明示指定した場合
   - deep-research や Workflow の verify / judge ステージ
-- **Sonnet / Haiku**: 探索・検索・整形・分類などのサブエージェント。team 系の実装 Agent は既定 `sonnet`
+- **Sonnet / Haiku**: 探索・検索・整形・分類などのサブエージェント。orchestration の実装 worker は既定 `sonnet`
 - **セキュリティ監査・脆弱性調査には Fable を使わない**: サイバー系の安全分類器による refusal 誤検知リスクがあるため、Opus 4.8 を使う（`/security-review`, `autoresearch:security` 等）
 - Fable のコストは Opus の2倍（$10/$50 per 1M tokens）。指摘ごと・ファイルごとに Fable を起動する構成にしない
 
@@ -117,7 +117,7 @@ Claude Code Max サブスクリプションは `claude -p` / `claude --print` �
 - **Skill 内部で `claude -p` を呼ぶ場合** → Claude Code の **agent (Task ツールの `subagent_type` 指定)** で代替する。同一セッション内で実行されサブスク内で完結
 - **Skill 外の script (Python/TS/sh) で `claude -p` を spawn する場合** → **codex CLI** (`codex exec`) に置換する。テキスト生成用途なら意味的に等価
 - **claude の挙動自体を測る script** (skill-creator/run_eval.py, vercel/benchmark-runner.ts 等) は codex 置換できないため、`CLAUDE_ALLOW_PRINT=1` の環境変数で **明示 opt-in** したときのみ動作させる
-- **対話モード** (`claude --dangerously-skip-permissions`、cmux-agent 経由) は対象外 → サブスク内のまま
+- **対話モード** (`claude --dangerously-skip-permissions`、Orca worktree のエージェントターミナル経由) は対象外 → サブスク内のまま
 
 ### 予防策
 
@@ -139,63 +139,54 @@ make patches    # または bash tools/patches/apply.sh
   - codex CLI 認証: `codex login` を済ませる、または `OPENAI_API_KEY` を設定
   - 明示 opt-in で API 課金を許容する場合は `CLAUDE_ALLOW_PRINT=1`
 
-## cmux Integration
+## Orca Integration
 
-cmux 内で実行中の場合、cmux系スキルを活用してマルチペイン・マルチエージェント操作を行う。
+ワークスペースマネージャーは Orca（https://github.com/stablyai/orca）に一本化（2026-09、cmux / herdr から移行）。ワークスペース＝Orca 管理の git worktree（`~/orca/workspaces/<repo>/<name>`）。
 
-### cmux 環境の判定
+### スキル
+
+Orca バンドルスキルを Agent skills home（`~/.agents/skills/`）にインストール済み：
+
+- `orca-cli` — worktree 作成・ターミナル送受信・エージェント spawn・埋め込みブラウザ・artifacts。Orca 管理状態に触るタスクでは raw `git worktree` やアドホック PTY より優先
+- `orchestration` — タスク DAG・dispatch・inter-agent メッセージ・decision gate によるマルチエージェント協調（旧 cmux-team / herdr-team 相当）
+
+追加は `orca skills install --skill <name> --agent universal`（computer-use / orca-emulator / orca-linear / orca-per-workspace-env 等）、更新は `orca skills update`。
+
+### 環境の判定
 
 ```bash
-# 環境変数で判定（軽量）
-[ -n "$CMUX_WORKSPACE_ID" ]
-
-# ソケット接続で判定（確実）
-cmux identify --json &>/dev/null
+# Orca 管理下の worktree なら ok:true
+orca worktree current --json
 ```
 
-`CMUX_WORKSPACE_ID` が未設定、または `cmux identify` が失敗する場合は cmux 外で実行中。cmux系スキルは使用しない。
+CLI は `/Applications/Orca.app/Contents/Resources/bin/orca`（PATH は .zshrc で追加済み）。ランタイム未起動なら `orca open` を先に実行。
 
-### 運用ルール
+### 旧スキルからの対応
 
-- cmux 内で実行中の場合、`cmux-*` スキル群を積極的に活用する
-- 各スキルの description にトリガーフレーズが定義されているため、自然言語で自動選択される
+cmux-* / herdr-* スキルは 2026-09 に廃止（git 履歴から参照可）：
 
-## herdr Integration
+| 旧 (cmux / herdr) | Orca での代替 |
+|---|---|
+| `cmux` / `herdr-core`（トポロジ制御） | `orca-cli`（worktree / terminal / tab） |
+| `cmux-agent` / `herdr-agent`（headless サブエージェント） | `orca worktree create --agent <id> --prompt "..."` |
+| `cmux-team` / `herdr-team`（4層オーケストレーション） | `orchestration` スキル |
+| `cmux-markdown`（Markdown ビューア） | `orca file open <path>`（markdown タブ） |
+| `cmux-browser`（webview 自動化） | `orca tab/snapshot/click`（埋め込みブラウザ）、外部 Chrome は claude-in-chrome |
+| `cmux-fork`（セッションフォーク） | `orca terminal create --command "claude --continue --fork-session"` |
 
-ターミナルネイティブ（TUI + headless サーバ、SSH リモート対応）のワークスペースマネージャー。cmux の GUI が使えない／リモート・ヘッドレス環境では herdr 系スキルを使う。cmux 系スキルと1:1対応する `herdr-*` スキルを用意している。
+### 注意
 
-### herdr / cmux の使い分け
-
-- `CMUX_WORKSPACE_ID` が設定されている（= cmux 内）→ **cmux 系スキルを優先**
-- cmux 外で、`herdr status server` が `status: running` を返す → **herdr 系スキルを使う**
-- SSH リモート・ヘッドレス・軽量に済ませたい → herdr（`herdr --remote` でリモートアタッチ）
-
-### スキル対応表
-
-| herdr | cmux | 役割 |
-|-------|------|------|
-| `herdr-core` | `cmux` | トポロジ制御（workspace/tab/pane/worktree） |
-| `herdr-agent` | `cmux-agent` | headless サブエージェント起動 |
-| `herdr-fork` | `cmux-fork` | 現セッションを split pane にフォーク |
-| `herdr-team` | `cmux-team` | 4層マルチエージェントオーケストレーション |
-| （なし） | `cmux-browser` | herdr は webview 非対応 → `claude-in-chrome` MCP で代替 |
-| （なし） | `cmux-markdown` | herdr は GUI ビューア非対応 |
-
-### herdr の CLI 要点
-
-- socket API 系サブコマンドは `{"id":..,"result":{..}}` 形状の JSON を返す。`jq` で `.result` 配下を参照
-- エージェント完了検知は画面 grep ではなく **`herdr wait agent-status <pane> --status idle`**（per-pane の agent_status をネイティブ追跡）が信頼できる
-- worktree は `herdr worktree create --branch … --base …` でブランチと workspace を一括生成
+- Orca.app は手動配布。Homebrew の cask `orca` は plotly の別ツールなので **使わない**
+- ユーザー設定は `~/Library/Application Support/orca/profiles/local-default/orca-data.json`（settings キー）、キーバインドは `~/.orca/keybindings.json`、リポジトリ単位の設定は各リポジトリの `orca.yaml`（scripts/issueCommand/defaultTabs/environmentRecipes/worktree）
 
 ## iTerm2 (plain) Integration
 
-cmux も herdr も使わない**素の iTerm2** セッションでは、`iterm2` スキルで cmux 互換のペイン操作を行う。バックエンドは `it2` CLI（iTerm2 Python API ラッパー）。
+Orca を使わない**素の iTerm2** セッションでは、`iterm2` スキルでペイン操作を行う。バックエンドは `it2` CLI（iTerm2 Python API ラッパー）。
 
 ### 判定と使い分け
 
-- `$CMUX_WORKSPACE_ID` あり → **cmux 系スキル**を優先
-- cmux 外で `herdr status server` が running → **herdr 系スキル**
-- どちらでもない素の iTerm2（`$TERM_PROGRAM=iTerm.app`）→ **`iterm2` スキル**
+- Orca 管理下（`orca worktree current --json` が ok）→ **orca-cli / orchestration スキル**を優先
+- Orca 外の素の iTerm2（`$TERM_PROGRAM=iTerm.app`）→ **`iterm2` スキル**
 
 ### 前提（初回のみ）
 
@@ -206,6 +197,6 @@ cmux も herdr も使わない**素の iTerm2** セッションでは、`iterm2`
 
 ### 要点
 
-- cmux 概念との対応: Window=ウィンドウ / Workspace=タブ / Pane・Surface=session（分割ペイン）
+- 概念対応: Window=ウィンドウ / Workspace=タブ / Pane・Surface=session（分割ペイン）
 - 現 session ID は `${ITERM_SESSION_ID##*:}` で取得（列挙不要）
 - ブラウザ自動化は iTerm2 組み込みブラウザではなく **claude-in-chrome** を使う（WKWebView は外部制御口がなく、ネットワーク傍受も不可のため）

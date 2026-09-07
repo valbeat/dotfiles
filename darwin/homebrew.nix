@@ -394,7 +394,6 @@
       # Free and open-source web browser
       "chromium"
       # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
-      "cmux"
       "font-symbols-only-nerd-font"
       # Set of tools to manage resources and applications hosted on Google Cloud
       "gcloud-cli"
