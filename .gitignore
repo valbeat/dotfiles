@@ -91,3 +91,8 @@ result-*
 !.codex/AGENTS.md
 # local-only agent (project-specific content, not for the public repo)
 .claude/agents/github-issue-manager.md
+
+# Codex desktop's external-agent import mirrors .claude/ into .agents/.
+# Because ~/.claude is a symlink into this repo, that mirror lands here too.
+# It is generated output, not source — the originals live in .claude/skills/.
+.agents/
