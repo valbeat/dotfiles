@@ -2,32 +2,38 @@
 
 ## Installing
 
+macOS defaults, dotfile symlinks, and Homebrew packages are all applied by
+nix-darwin. Install Nix first (flakes enabled), e.g. the Determinate Systems
+installer:
+
 ```shell
-git clone git@github.com:valbeat/dotfiles.git $HOME/dotfiles
-cd $HOME/dotfiles
-make install
+/bin/sh -c "$(curl --proto '=https' --tlsv1.2 -sSfL https://install.determinate.systems/nix)" -- install
 ```
-This will create symlinks from this repo to your home folder.
+
+Then clone the repo to the path `darwin/home.nix` expects and switch:
+
+```shell
+git clone git@github.com:valbeat/dotfiles.git ~/src/github.com/valbeat/dotfiles
+cd ~/src/github.com/valbeat/dotfiles
+MY_HOST=$(scutil --get LocalHostName)
+sudo nix run nix-darwin -- switch --flake ".#$MY_HOST"   # first run (bootstrap)
+nix run .#switch                                         # subsequent changes
+```
+
+This creates `$HOME` symlinks that resolve into this repo — editing a dotfile
+here takes effect immediately, no rebuild needed.
 
 ## Homebrew packages
 
-Install the packages declared in the `Brewfile`:
+Taps, formulae, and casks are declared in `darwin/homebrew.nix` and synced by
+`nix run .#switch` (via `brew bundle`; Homebrew itself must be installed).
+Add or remove packages by editing that file. Activation does not uninstall
+undeclared packages (`onActivation.cleanup = "none"`), so when removing one,
+also run `brew uninstall`.
 
-```shell
-make brew
-```
-
-After installing or removing packages, refresh the `Brewfile`:
-
-```shell
-make brew-dump
-```
-
-`brew-dump` regenerates the whole `Brewfile` from the current environment.
-Redundant built-in taps are stripped automatically, but EOL/deprecated
-packages reappear if they are still installed. Review `git diff Brewfile`
-after running it, and use `brew uninstall` to remove unwanted packages from
-the system rather than only deleting their lines here.
+The remaining `Brewfile` holds only entries the module cannot express:
+VS Code extensions (`brew bundle --file=Brewfile`) and a commented-out
+go/npm install memo.
 
 ## Claude Code plugins
 
@@ -83,38 +89,38 @@ private marketplace, set `GITHUB_TOKEN` in the environment; manual
 
 ## nix-darwin
 
-macOS system settings are managed declaratively with
-[nix-darwin](https://github.com/nix-darwin/nix-darwin). The former `.osx`
-script is migrated to `system.defaults` (Homebrew is the planned next phase).
-This host uses Determinate Nix, so nix-darwin's own Nix management is disabled
+macOS system settings (`darwin/system-defaults.nix`), dotfile symlinks
+(`darwin/home.nix`, via home-manager), and Homebrew packages
+(`darwin/homebrew.nix`) are managed declaratively with
+[nix-darwin](https://github.com/nix-darwin/nix-darwin). This host uses
+Determinate Nix, so nix-darwin's own Nix management is disabled
 (`nix.enable = false`).
 
-Prerequisites: install Nix (flakes enabled), e.g. the Determinate Systems installer:
-
-```shell
-/bin/sh -c "$(curl --proto '=https' --tlsv1.2 -sSfL https://install.determinate.systems/nix)" -- install
-```
-
 The flake exposes one configuration per host under `darwinConfigurations` in
-`flake.nix`. Use your host name (`scutil --get LocalHostName`) in place of
-`$MY_HOST` below; a fork should add a matching entry in `flake.nix` first.
-(`HOST` is read-only in zsh, so a different variable name is used.)
+`flake.nix`; the attribute name must match `scutil --get LocalHostName`.
+Forks should add their own entry, and adjust `dotfilesDir` in
+`darwin/home.nix` if the repo is cloned somewhere else.
 
-Activation must run as root. Bootstrap once with `nix run`, then use
-`darwin-rebuild` for subsequent changes (run from the repository directory so
-the `.` flake reference resolves):
+Flake apps (run from the repo root):
+
+| command | what it does |
+| --- | --- |
+| `nix run .#switch` | build and activate the system for this host (runs as root) |
+| `nix run .#build` | dry-run build without activating; CI runs this on every PR |
+| `nix run .#update` | pull the latest `main` and sync submodules |
+
+Activation must run as root; `.#switch` wraps `sudo darwin-rebuild switch`.
+On a machine that does not have `darwin-rebuild` yet, bootstrap once with:
 
 ```shell
 MY_HOST=$(scutil --get LocalHostName)
 sudo nix run nix-darwin -- switch --flake ".#$MY_HOST"
-sudo darwin-rebuild switch --flake ".#$MY_HOST"
 ```
 
-Roll back with `sudo darwin-rebuild --rollback`.
+(`HOST` is read-only in zsh, so a different variable name is used.)
 
-Recent nix-darwin no longer auto-escalates, so activation must run as root
-(`darwin-rebuild` prints `system activation must now be run as root` otherwise).
-The `$HOME ... is not owned by you` warning printed under `sudo` is benign —
+Roll back with `sudo darwin-rebuild --rollback`. The
+`$HOME ... is not owned by you` warning printed under `sudo` is benign —
 the flake still evaluates and every setting is applied correctly.
 
 ## Contribution
