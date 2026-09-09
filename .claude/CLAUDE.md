@@ -260,6 +260,24 @@ orca status --json
 
 復元前でも CLI の実体は直接実行できる: `ELECTRON_RUN_AS_NODE=1 /Applications/Orca.app/Contents/MacOS/Orca /Applications/Orca.app/Contents/Resources/app.asar.unpacked/out/cli/index.js <subcommand> --json`
 
+上の書き戻しがユーザーのシェルでも `Operation not permitted` になる場合（macOS の App Management がバンドル内への書き込みを拒否する。2026-09-10 に発生。`rm` は通るが作成が通らない）は、バンドルを触らずに `~/.local/bin/orca`（PATH 上）へアプリパスを固定したランチャーを置く:
+
+```bash
+cat > ~/.local/bin/orca <<'SH'
+#!/usr/bin/env bash
+set -euo pipefail
+APP_PATH="${ORCA_APP_PATH:-/Applications/Orca.app}"
+ELECTRON="$APP_PATH/Contents/MacOS/Orca"
+CLI="$APP_PATH/Contents/Resources/app.asar.unpacked/out/cli/index.js"
+export ORCA_NODE_OPTIONS="${NODE_OPTIONS-}" ORCA_NODE_REPL_EXTERNAL_MODULE="${NODE_REPL_EXTERNAL_MODULE-}"
+unset NODE_OPTIONS NODE_REPL_EXTERNAL_MODULE
+ELECTRON_RUN_AS_NODE=1 exec "$ELECTRON" "$CLI" "$@"
+SH
+chmod 755 ~/.local/bin/orca && orca status --json
+```
+
+バンドル同梱のランチャー（`.zshrc` で PATH の先頭）が次の更新で直れば、そちらが自動的に優先される。そのとき `~/.local/bin/orca` は消してよい。また `unzip -p <zip> <member>` を貼り付けるときは zip パスの直後で改行が入ると全ファイルが標準出力へ流れるので、1 行で実行するか上のようにファイルにしてから走らせる。
+
 ## iTerm2 (plain) Integration
 
 Orca を使わない**素の iTerm2** セッションでは、`iterm2` スキルでペイン操作を行う。バックエンドは `it2` CLI（iTerm2 Python API ラッパー）。
