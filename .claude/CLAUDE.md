@@ -79,9 +79,13 @@ Claude Code 本体と同じ `GET /api/oauth/usage` を都度叩く（1回 0.4〜
 | `/review` Step 3 レビュアーのモデル | sonnet | sonnet | opus |
 | `/review` Step 3 レビュアー体数 | 5 | 5 | 7 |
 | `/review` Step 4.5 Fable 上限 | 1 | 3 | 5 |
-| `/dev-workflow:spec` 設計レビュー | fable ×1 | fable ×1 | fable ×2（2体目は反証役） |
-| Orca orchestration worker の既定モデル（`model:` 省略時のみ） | sonnet | sonnet | opus |
-| Orca orchestration 最大同時 worker | 3 | 4 | 6 |
+| `/dev-workflow:spec` 設計レビュー（**予定・未実装**） | fable ×1 | fable ×1 | fable ×2（2体目は反証役） |
+| Orca orchestration worker の既定モデル（`model:` 省略時のみ。**予定・未実装**） | sonnet | sonnet | opus |
+| Orca orchestration 最大同時 worker（**予定・未実装**） | 3 | 4 | 6 |
+
+「予定・未実装」の行は方針だけ先に決めたもので、tier を実際に読むのは現時点で `/review` だけ
+（`/dev-workflow:spec` は `model: fable` 固定、orchestration スキルは tier を参照しない）。
+実装するまで、これらの経路では tier に関係なく従来どおりの固定値で動く。
 
 #### ルール
 
@@ -238,7 +242,23 @@ cmux-* / herdr-* スキルは 2026-09 に廃止（git 履歴から参照可）�
 ### 注意
 
 - Orca.app は手動配布。Homebrew の cask `orca` は plotly の別ツールなので **使わない**
-- ユーザー設定は `~/Library/Application Support/orca/profiles/local-default/orca-data.json`（settings キー）、キーバインドは `~/.orca/keybindings.json`、リポジトリ単位の設定は各リポジトリの `orca.yaml`（scripts/issueCommand/defaultTabs/environmentRecipes/worktree）
+- ユーザー設定は `~/Library/Application Support/orca/profiles/local-default/orca-data.json`（settings キー）、キーバインドは `~/.orca/keybindings.json`、リポジトリ単位の設定は各リポジトリの `orca.yaml`（scripts/issueCommand/defaultTabs/environmentRecipes/worktree。このリポジトリのルートに最小構成の例がある）
+- orchestration は Settings → Orchestration（`nestedWorkerMaxDepth` 既定 1）。CLI が `run_required` を返せば有効。コーディネーターに使わせるには依頼に「監督して」「DAG で」「worker_done を待って」を**明示**する（「別のエージェントに渡して」は full handoff 扱いで Task は作られない）
+- worker の `--model` / `--effort` は `--agent claude` 専用。Codex worker のモデルや reasoning effort を変えるときは worktree を作ってから `orca terminal create --command 'codex -c model_reasoning_effort="high"'` で起動する
+
+### CLI が "too many levels of symbolic links" で失敗するとき
+
+自動更新（2026-09-09 の 1.4.192 → 1.4.198 で発生）の直後に `Resources/bin/orca` が自己参照 symlink に置き換わることがある。原本は updater の zip に無傷で残っているので、そこから復元する（`/Applications` 配下の書き換えは auto mode の分類器が止めるため、ユーザーが `!` で実行）:
+
+```bash
+rm /Applications/Orca.app/Contents/Resources/bin/orca
+unzip -p ~/Library/Caches/orca-updater/pending/Orca-<version>-arm64-mac.zip \
+  Orca.app/Contents/Resources/bin/orca > /Applications/Orca.app/Contents/Resources/bin/orca
+chmod 755 /Applications/Orca.app/Contents/Resources/bin/orca
+orca status --json
+```
+
+復元前でも CLI の実体は直接実行できる: `ELECTRON_RUN_AS_NODE=1 /Applications/Orca.app/Contents/MacOS/Orca /Applications/Orca.app/Contents/Resources/app.asar.unpacked/out/cli/index.js <subcommand> --json`
 
 ## iTerm2 (plain) Integration
 
