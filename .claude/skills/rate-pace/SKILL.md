@@ -49,8 +49,40 @@ bash ~/.claude/skills/rate-pace/scripts/pace.sh
 | `L1` | 余剰 ≥ +7pt | 約半日ぶんの貯金。安いティアの底上げ |
 | `L2` | 余剰 ≥ +14pt | 約1日ぶんの貯金。主戦力の格上げ・並列数増 |
 
-各 tier で具体的に何を格上げするかは `~/.claude/CLAUDE.md` の
-**Model Selection Policy → Budget Tier** の表が唯一の定義。ここには書かない。
+余剰の判定は **7d のペース差のみ**で行う。5h は表示専用で判定に使わない。
+
+### 各 tier で格上げする項目
+
+この表が唯一の定義。モデル方針そのもの（Opus / Fable / Sonnet の使い分け、
+セキュリティ監査に Fable を使わない）は `~/.claude/CLAUDE.md` にある。
+
+| 対象 | `L0` | `L1` | `L2` |
+|------|------|------|------|
+| `/review` Step 2 Gather Context | haiku | sonnet | sonnet |
+| `/review` Step 4 Confidence Scoring | haiku | sonnet | sonnet |
+| `/review` Step 3 レビュアーのモデル | sonnet | sonnet | opus |
+| `/review` Step 3 レビュアー体数 | 5 | 5 | 7 |
+| `/review` Step 4.5 Fable 上限 | 1 | 3 | 5 |
+| `/dev-workflow:spec` 設計レビュー（**予定・未実装**） | fable ×1 | fable ×1 | fable ×2（2体目は反証役） |
+| Orca orchestration worker の既定モデル（`model:` 省略時のみ。**予定・未実装**） | sonnet | sonnet | opus |
+| Orca orchestration 最大同時 worker（**予定・未実装**） | 3 | 4 | 6 |
+
+「予定・未実装」の行は方針だけ先に決めたもので、tier を実際に読むのは現時点で `/review` だけ
+（`/dev-workflow:spec` は `model: fable` 固定、orchestration スキルは tier を参照しない）。
+実装するまで、これらの経路では tier に関係なく従来どおりの固定値で動く。
+
+### ルール
+
+- **fail closed**: 判定できないときは `L0`。エラーは握りつぶして従来どおり続行する
+- **明示指定が最優先**: `--model` やタスクファイルの `model:` があれば tier は無視する
+- **1実行につき1回だけ読む**: スキル起動時に tier を確定し、ステップごとに再取得しない（実行中に揺れて設定が混ざるのを防ぐ）
+- **格上げは上の表に載っている項目だけ**。「余ってそうだから他も上げる」はしない
+- **ユーザー確認は取らない。報告は1行のみ**:
+  `Budget tier: L1 (+18.3pt) — Step 2/4 を sonnet、Fable 上限 3`
+- **絶対上限**: どの tier でも Fable は1回の実行で最大5エージェント、orchestration の同時 worker は最大6、`/review` のレビュアーは最大7
+- **ループ内実行は L1 が上限**: `/review --brief`（`/dev-workflow:impl` から反復呼び出しされる）のような経路では L2 に上げない
+- **格上げ対象外**: セキュリティ系（Fable 禁止。`~/.claude/CLAUDE.md` 参照）、`suite-eval`（モデル指定が測定の独立変数のため自動格上げすると計測が壊れる）
+- 格上げは自己制動する。消費すれば余剰が減り、次回の起動で自動的に降格する
 
 閾値は `RATE_PACE_L1_X10` / `RATE_PACE_L2_X10`（0.1pt 単位の整数、既定 70 / 140）で上書きできる。
 
