@@ -96,6 +96,15 @@ Claude Code 本体と同じ `GET /api/oauth/usage` を都度叩く（1回 0.4〜
 - **格上げ対象外**: セキュリティ系（上記）、`suite-eval`（モデル指定が測定の独立変数のため自動格上げすると計測が壊れる）
 - 格上げは自己制動する。消費すれば余剰が減り、次回の起動で自動的に降格する
 
+## Claude Code settings.json の管理
+
+`~/.claude/settings.json` と `~/.gemini/settings.json` は **untracked**。Claude Code（`/model`、`/config`、auto mode の `autoMode`、plugin install）と Orca（agent-status hook の注入）が実行時に書き込むため、稼働中ファイルをコミットすると勤務先プロジェクトの情報やマシン固有の状態が公開リポジトリに混入する。
+
+- 意図した設定（permissions、自前 hook、plugins、UI の好み）は `darwin/claude.nix` に書く
+- 反映は `nix run .#switch`。`darwin/claude/merge.jq` で稼働中ファイルにマージする（管理キーは上書き、名指ししないキーは温存、hooks は和集合）
+- マージ規則を変えるときは `tools/tests/test-merge-settings.sh` を先に更新し、`make test` で確認する
+- `model` は settings.json に固定しない方針のため `darwin/claude.nix` にも書かない
+
 ## Git Workflow
 
 - **フィーチャーブランチの作成**: ベースブランチに直接コミットしない
