@@ -70,16 +70,18 @@ result-*
 # nix develop + direnv cache (.envrc is ignored in .gitignore_global)
 .direnv/
 
+# settings.json is intentionally untracked: Claude Code, auto mode and Orca
+# write runtime state into it. The managed keys live in darwin/claude.nix and
+# are merged into the live file by `nix run .#switch`.
 .claude/*
-!.claude/settings.json
 !.claude/CLAUDE.md
 !.claude/agents/
 !.claude/skills/
 !.claude/hooks/
 !.claude/statusline.sh
 
+# settings.json: same treatment as .claude/settings.json (see darwin/claude.nix)
 .gemini/*
-!.gemini/settings.json
 !.gemini/GEMINI.md
 !.gemini/commands/
 

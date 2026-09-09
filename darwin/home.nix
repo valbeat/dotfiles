@@ -34,6 +34,8 @@ let
   ];
 in
 {
+  imports = [ ./claude.nix ];
+
   home.file = builtins.listToAttrs (
     map (name: {
       inherit name;

@@ -35,6 +35,25 @@ The remaining `Brewfile` holds only entries the module cannot express:
 VS Code extensions (`brew bundle --file=Brewfile`) and a commented-out
 go/npm install memo.
 
+## Claude Code / Gemini settings
+
+`~/.claude/settings.json` and `~/.gemini/settings.json` are **not tracked**.
+Claude Code writes runtime state into its file (`/model`, `/config`, auto
+mode's per-project `autoMode` block, plugin installs) and Orca injects its
+agent-status hooks into both on every launch, so committing the live file
+leaks machine- and project-local state into this public repo.
+
+The settings this repo owns (permissions, own hooks, plugins, UI
+preferences) live in `darwin/claude.nix`. `nix run .#switch` merges them
+into the live files with `darwin/claude/merge.jq`: managed keys win, keys the
+module does not name pass through, and hooks are unioned so runtime-injected
+entries survive. The merge is idempotent and covered by
+`make test` (`tools/tests/test-merge-settings.sh`).
+
+To change a setting, edit `darwin/claude.nix` and run `nix run .#switch`.
+Editing `~/.claude/settings.json` directly still works for anything the
+module does not manage; managed keys are reset on the next switch.
+
 ## Claude Code plugins
 
 Generic and personal skills live in two plugin marketplaces instead of
@@ -56,12 +75,13 @@ The private marketplace requires SSH access to GitHub (or `gh auth login`)
 to work first. Then:
 
 ```shell
-cd $HOME/dotfiles && git pull   # syncs .claude/settings.json via symlink
+cd $HOME/dotfiles && git pull && nix run .#switch
 ```
 
-`extraKnownMarketplaces` and `enabledPlugins` in `.claude/settings.json`
-declare everything; Claude Code picks them up on next launch. If plugins do
-not install automatically:
+`extraKnownMarketplaces` and `enabledPlugins` in `darwin/claude.nix`
+declare everything; the switch merges them into `~/.claude/settings.json`
+and Claude Code picks them up on next launch. If plugins do not install
+automatically:
 
 ```shell
 claude plugin marketplace add valbeat/claude-plugins

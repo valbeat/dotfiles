@@ -14,6 +14,10 @@ hunk-skill: ## Re-sync bundled hunk-review skill from the installed hunk
 	@cp "$$(hunk skill path)" $(DOTPATH)/.claude/skills/hunk-review/SKILL.md
 	@echo "Synced .claude/skills/hunk-review/SKILL.md from $$(hunk --version)"
 
+.PHONY: test
+test: ## Run repo tests (settings merge filter)
+	@bash $(DOTPATH)/tools/tests/test-merge-settings.sh
+
 .PHONY: help
 help: ## Self-documented Makefile
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
