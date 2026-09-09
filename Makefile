@@ -15,8 +15,13 @@ hunk-skill: ## Re-sync bundled hunk-review skill from the installed hunk
 	@echo "Synced .claude/skills/hunk-review/SKILL.md from $$(hunk --version)"
 
 .PHONY: test
-test: ## Run repo tests (settings merge filter)
-	@bash $(DOTPATH)/tools/tests/test-merge-settings.sh
+test: ## Run repo tests (tools/tests/*.sh)
+	@status=0; for t in $(DOTPATH)/tools/tests/test-*.sh; do \
+		echo "== $$(basename $$t)"; bash $$t || status=1; done; exit $$status
+
+.PHONY: settings-diff
+settings-diff: ## Show what the next nix switch would change in ~/.claude and ~/.gemini settings.json
+	@bash $(DOTPATH)/tools/settings-diff.sh
 
 .PHONY: help
 help: ## Self-documented Makefile

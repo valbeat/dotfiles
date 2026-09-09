@@ -52,7 +52,11 @@ entries survive. The merge is idempotent and covered by
 
 To change a setting, edit `darwin/claude.nix` and run `nix run .#switch`.
 Editing `~/.claude/settings.json` directly still works for anything the
-module does not manage; managed keys are reset on the next switch.
+module does not manage; managed keys are reset on the next switch. Before
+switching, `make settings-diff` shows exactly what would be reset (managed
+keys changed locally via `/config`, `claude plugin install`, hand edits) so
+you can port them to `darwin/claude.nix` first. It compares against the
+`settings.nix.json` copy the last switch left beside each live file.
 
 ## Claude Code plugins
 

@@ -106,6 +106,7 @@ Claude Code 本体と同じ `GET /api/oauth/usage` を都度叩く（1回 0.4〜
 
 - 意図した設定（permissions、自前 hook、plugins、UI の好み）は `darwin/claude.nix` に書く
 - 反映は `nix run .#switch`。`darwin/claude/merge.jq` で稼働中ファイルにマージする（管理キーは上書き、名指ししないキーは温存、hooks は和集合）
+- 手元で `/config` や `claude plugin install` で変えた管理キーは次の switch で戻る。switch 前に `make settings-diff` で戻る差分を確認し、残したいものは `darwin/claude.nix` に移す
 - マージ規則を変えるときは `tools/tests/test-merge-settings.sh` を先に更新し、`make test` で確認する
 - `model` は settings.json に固定しない方針のため `darwin/claude.nix` にも書かない
 
