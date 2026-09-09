@@ -1,0 +1,14 @@
+# Orca per-repository defaults. Keys Orca reads (out/shared/orca-yaml.js):
+#   scripts.setup / scripts.archive, setupAgentStartupPolicy,
+#   issueCommand, defaultTabs[], environmentRecipes[], worktree.sharedDirectories[].
+#
+# dotfiles worktrees need no dependency install; the setup step only proves the
+# checkout is sane (jq present, settings merge filter green) before an agent
+# starts working in it.
+scripts:
+  setup: make test
+setupAgentStartupPolicy: wait-for-setup
+defaultTabs:
+  - title: shell
+  - title: tests
+    command: make test

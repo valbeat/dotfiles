@@ -104,6 +104,9 @@ let
         "WebFetch"
         "TodoWrite"
         "NotebookEdit"
+        # Task (subagents) stays allowed: hooks/guard.sh blocks `claude -p`
+        # and points skills at Task as the in-subscription replacement.
+        "Task"
       ];
       deny = [
         "Bash(sudo rm -rf *)"
