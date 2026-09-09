@@ -23,6 +23,5 @@
 ## 環境
 
 - ワークスペースマネージャーは Orca（worktree は `~/orca/workspaces/<repo>/<name>`）。Orca 管理下かは `orca worktree current --json` で判定し、管理下なら `orca-cli` / `orchestration` スキル、素の iTerm2 なら `iterm2` スキルを使う。ブラウザ自動化は claude-in-chrome
-- Orca CLI は `~/.local/bin/orca`（ランチャー）。Homebrew cask の `orca` は plotly の別ツールなので使わない。設定ファイルの場所と CLI の復旧手順は memory の `reference_orca.md`
 - Orca の orchestration を使わせるには依頼に「監督して」「DAG で」「worker_done を待って」を明示する（「別のエージェントに渡して」は full handoff 扱い）。worker の `--model` / `--effort` は `--agent claude` 専用
 - Gemini との協業モードは `gemini` スキル、Codex への委譲は `codex` スキルに従う
