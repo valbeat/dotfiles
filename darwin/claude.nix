@@ -205,7 +205,9 @@ let
 
   # Shell snippet: merge the generated <managed> JSON into <target> in place.
   # Seeds an empty target, refuses to touch a target that is not valid JSON,
-  # and only rewrites the file when the merge actually changes it.
+  # and only rewrites the file when the merge actually changes it. A copy of
+  # the managed JSON is left beside the target as <name>.nix.json so
+  # `make settings-diff` can show local drift without evaluating Nix.
   mergeInto =
     target: managed:
     let
@@ -218,6 +220,7 @@ let
         echo "would merge $managed into $target"
       else
         mkdir -p "$(dirname "$target")"
+        install -m 644 "$managed" "''${target%.json}.nix.json"
         [[ -s "$target" ]] || echo '{}' > "$target"
         if ! ${jq} -e . "$target" >/dev/null 2>&1; then
           echo "claude.nix: $target is not valid JSON; leaving it untouched" >&2
