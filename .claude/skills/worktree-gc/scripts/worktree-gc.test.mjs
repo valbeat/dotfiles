@@ -29,6 +29,7 @@ const wt = (overrides = {}) => ({
   dirtyCount: 0,
   untrackedCount: 0,
   aheadOfMain: 0,
+  unpushedCount: 0,
   hasRemoteBranch: false,
   lastActivityDays: 30,
   sizeKb: 1024 * 1024,
@@ -167,7 +168,7 @@ describe('classifyWorktree - PR なし', () => {
 
   it('未 push の独自コミットは hold にして警告を出す', () => {
     const r = classifyWorktree(
-      wt({ aheadOfMain: 2, hasRemoteBranch: false }),
+      wt({ aheadOfMain: 2, unpushedCount: 2, hasRemoteBranch: false }),
       DEFAULTS,
     )
     assert.equal(r.verdict, 'hold')
@@ -476,7 +477,7 @@ describe('classifyWorktree - Orca の status', () => {
 
   it('completed でも、PR なしの未 push コミットがあれば hold', () => {
     const r = classifyWorktree(
-      wt({ aheadOfMain: 2, orca: orca({ status: 'completed' }) }),
+      wt({ aheadOfMain: 2, unpushedCount: 2, orca: orca({ status: 'completed' }) }),
       DEFAULTS,
     )
     assert.equal(r.verdict, 'hold')
@@ -597,5 +598,65 @@ describe('prLookupBranch', () => {
   it('それ以外のブランチはそのまま、detached は null', () => {
     assert.equal(prLookupBranch('feat/x', 'origin/main'), 'feat/x')
     assert.equal(prLookupBranch(null, 'origin/main'), null)
+  })
+})
+
+describe('classifyWorktree - どのリモートにも無いコミット', () => {
+  it('PR が MERGED でも、マージ後に積んだ未 push コミットがあれば hold', () => {
+    // PR の state だけ見るとブランチごと消して、このコミットを失う
+    const r = classifyWorktree(
+      wt({
+        aheadOfMain: 1,
+        unpushedCount: 1,
+        pr: { number: 8775, state: 'MERGED', ageDays: 10 },
+      }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'hold')
+    assert.match(r.reason, /リモートに無いコミット 1 件/)
+  })
+
+  it('completed でも、PR があって未 push コミットがあれば hold', () => {
+    const r = classifyWorktree(
+      wt({
+        aheadOfMain: 3,
+        unpushedCount: 1,
+        hasRemoteBranch: true,
+        pr: { number: 2, state: 'OPEN', ageDays: 0 },
+        orca: orca({ status: 'completed' }),
+      }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'hold')
+  })
+
+  it('detached HEAD の未 push コミットも hold（ブランチにすら残らない）', () => {
+    const r = classifyWorktree(
+      wt({ branch: null, aheadOfMain: 2, unpushedCount: 2 }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'hold')
+  })
+
+  it('同名のリモートブランチが無くても、コミットが別のリモートにあれば未 push 扱いしない', () => {
+    const r = classifyWorktree(
+      wt({ aheadOfMain: 6, unpushedCount: 0, hasRemoteBranch: false }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'hold')
+    assert.doesNotMatch(r.reason, /未 push/)
+  })
+
+  it('completed で、コミットがすべてリモートにあるなら PR なしでも削除する', () => {
+    const r = classifyWorktree(
+      wt({
+        aheadOfMain: 6,
+        unpushedCount: 0,
+        orca: orca({ status: 'completed' }),
+      }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'delete')
+    assert.equal(r.deleteBranch, false)
   })
 })
