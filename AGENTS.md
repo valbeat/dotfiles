@@ -9,7 +9,7 @@
 
 ## Build, Test, and Development Commands
 - `nix run .#build`: dry-run build of the darwin system; CI runs this on every PR. Run it after touching `darwin/` or `flake.nix`.
-- `nix run .#switch`: build and activate (system defaults + symlinks + Homebrew + settings.json merge; runs as root). An agent can run it only after the user runs `sudo -v` in a real terminal: the sudo timestamp is shared per user for 15 minutes (`darwin/configuration.nix`). Ask for that instead of handing the command back.
+- `nix run .#switch`: build and activate (system defaults + symlinks + Homebrew + settings.json merge; runs as root). An agent can run it only after the user runs `sudo -v` in a real terminal: the sudo timestamp is shared per user for 15 minutes (`darwin/configuration.nix`). Ask for that instead of handing the command back, and run it by the expanded absolute path (`nix run /Users/<user>/src/github.com/valbeat/dotfiles#switch`; the allowlist in `darwin/claude.nix` matches that exact text, not `~` or `.#switch`) so the flake in the current directory is never the one activated.
 - `nix run .#update`: pulls latest `main` and updates git submodules.
 - `make test`: runs `tools/tests/test-*.sh` (settings merge, settings-diff). When changing `merge.jq`, update the test first.
 - `make settings-diff`: shows which managed keys the next switch would reset in `~/.claude/settings.json` and `~/.gemini/settings.json`.
