@@ -951,7 +951,13 @@ fi
 
 export PATH
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# fzf の key-bindings.zsh は退避したシェルオプションを eval で一括復元する際に
+# zle を含めてしまうため、zle のないシェル（tty なしの zsh -i など）で
+# "can't change option: zle" を出す。補完もキーバインドも対話シェル専用なので、
+# その場合は読み込まない。fzf / fzf-tmux 本体は Homebrew の bin から使える。
+if [[ -o interactive ]] && [[ -t 0 ]] && [[ -t 1 ]]; then
+  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+fi
 
 export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
 
