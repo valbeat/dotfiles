@@ -7,7 +7,7 @@ description: >-
   "ターミナルが溜まってる", "close other sessions", or when terminal creation fails with
   "cannot allocate any more pty devices".
 allowed-tools: Bash
-argument-hint: "[--apply] [--keep-shells] [--shell-idle-secs <秒>] [--json]"
+argument-hint: "[--apply] [--shells-only] [--keep-shells] [--repo <id>] [--shell-idle-secs <秒>] [--json]"
 ---
 
 # Orca セッション掃除
@@ -26,10 +26,20 @@ worktree そのものの掃除は [worktree-gc](../worktree-gc/SKILL.md) の担�
 プロジェクト内のどこかで実行する。既定は dry-run で、何も閉じない。
 
 ```bash
-node ~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.mjs            # 判定を表示
-node ~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.mjs --apply    # 実際に閉じる
-node ~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.mjs --keep-shells --apply
+S=~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.mjs
+node $S                          # 判定を表示
+node $S --apply                  # 実際に閉じる
+node $S --shells-only --apply    # 素のシェルだけ閉じ、エージェントは全部残す
+node $S --keep-shells --apply    # 逆にシェルを残し、エージェントだけ閉じる
+node $S --repo <repoId> --apply  # 別プロジェクトを対象にする
 ```
+
+**pty を空けたいだけなら `--shells-only` を使う。** 文脈を抱えたセッションに
+一切触れずに済む。実績として 248 個の放置シェルを閉じて live terminal 260 → 11、
+`/dev/ttys*` 527 → 39 まで戻し、枯渇していた `terminal create` が復活した。
+
+`--repo` は `ORCA_WORKTREE_ID` より優先される。指定しないと、どのディレクトリで
+実行しても**この端末が属するプロジェクト**が対象になる（環境変数が勝つため）。
 
 **必ず dry-run を見せてからユーザーの承認を得て `--apply` すること。**
 稼働中の判定は後述のとおり保守的だが、閉じたエージェントの文脈は戻らない。
@@ -44,11 +54,12 @@ node ~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.mjs --keep
 | 2 | エージェントが `interrupted` | **閉じない** |
 | 3 | エージェントの `state` が `done` | 閉じる |
 | 4 | エージェントが居て `state` がそれ以外（`working`、未知の値、欠落） | **閉じない** |
-| 5 | エージェント無し、画面が読めない | **閉じない** |
-| 6 | エージェント無し、画面にエージェント TUI が見える（休眠セッション） | **閉じない** |
-| 7 | エージェント無しの素のシェル、`--keep-shells` 指定あり | **閉じない** |
-| 8 | エージェント無しの素のシェル、最終出力から 60 秒未満 | **閉じない** |
-| 9 | エージェント無しの素のシェル、それ以上放置 | 閉じる |
+| 5 | `--shells-only` 指定あり、かつエージェントが居る | **閉じない** |
+| 6 | エージェント無し、画面が読めない | **閉じない** |
+| 7 | エージェント無し、画面にエージェント TUI が見える（休眠セッション） | **閉じない** |
+| 8 | エージェント無しの素のシェル、`--keep-shells` 指定あり | **閉じない** |
+| 9 | エージェント無しの素のシェル、最終出力から 60 秒未満 | **閉じない** |
+| 10 | エージェント無しの素のシェル、それ以上放置 | 閉じる |
 
 閾値は `--shell-idle-secs` で変えられる。
 
@@ -96,7 +107,7 @@ node ~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.mjs --keep
 
 ## テスト
 
-判定基準は 24 個のテストで固定してある。基準を変えるときはテストから直す。
+判定基準は 27 個のテストで固定してある。基準を変えるときはテストから直す。
 
 ```bash
 node --test ~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.test.mjs
@@ -104,9 +115,9 @@ node --test ~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.tes
 
 ## 限界
 
-- **close 経路は実機で未検証。** 検証用の使い捨てターミナルを作ろうとした時点で
-  pty が枯渇しており（live terminal 260 個）、`orca terminal create` 自体が失敗した。
-  分類ロジックと dry-run は実データで確認済み。初回の `--apply` は出力を見ながら行う。
+- **`--shells-only` 抜きの `--apply` は実機で未検証。** 検証できたのは
+  `--shells-only` の経路（249 件を実際に閉じた）まで。`state: "done"` の
+  エージェントを閉じる経路は、文脈を失うため実機で試していない。
 - **素のシェルの「稼働中」は出力時刻と画面でしか判断できない。** `npm run dev` のように
   出力が止まる常駐プロセスは、アイドルに見えて閉じられる。守りたいなら `--keep-shells`。
 - **休眠 TUI の判定は画面の文字列マッチでしかない。** `AGENT_TUI_MARKERS` に載っていない

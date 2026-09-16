@@ -143,6 +143,25 @@ test("CLOSABLE_AGENT_STATES は許可リストであって拒否リストでは�
   assert.ok(!CLOSABLE_AGENT_STATES.has("working"));
 });
 
+test("--shells-only は done のエージェントも残す", () => {
+  const t = terminal({ tabId: "a", leafId: "b" });
+  const [d] = run([t], [{ paneKey: "a:b", state: "done" }], {}, { shellsOnly: true });
+  assert.equal(d.action, "keep");
+  assert.equal(d.reason, "agent-done (--shells-only)");
+});
+
+test("--shells-only でも素のシェルは閉じる", () => {
+  const [d] = run([terminal({ lastOutputAt: null })], [], {}, { shellsOnly: true });
+  assert.equal(d.action, "close");
+  assert.equal(d.reason, "shell-idle");
+});
+
+test("--shells-only でも interrupted の扱いは変わらない", () => {
+  const t = terminal({ tabId: "a", leafId: "b" });
+  const [d] = run([t], [{ paneKey: "a:b", state: "done", interrupted: true }], {}, { shellsOnly: true });
+  assert.equal(d.reason, "agent-interrupted (done)");
+});
+
 test("looksLikeAgentTui: Claude の TUI 画面を検出する", () => {
   assert.equal(looksLikeAgentTui(CLAUDE_TUI_SCREEN), true);
 });

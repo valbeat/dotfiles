@@ -61,6 +61,7 @@ export function paneKeyOf(terminal) {
 export function classify({ terminals, agentByPaneKey, self, screenByHandle, opts = {} }) {
   const shellIdleSecs = opts.shellIdleSecs ?? DEFAULTS.shellIdleSecs;
   const keepShells = opts.keepShells ?? false;
+  const shellsOnly = opts.shellsOnly ?? false;
   const now = opts.now ?? Date.now();
 
   return terminals.map((terminal) => {
@@ -80,6 +81,11 @@ export function classify({ terminals, agentByPaneKey, self, screenByHandle, opts
     if (agent) {
       if (agent.interrupted) {
         return { terminal, action: "keep", reason: `agent-interrupted (${agent.state})` };
+      }
+      // done は「終了」ではなく「プロンプトで待機中」。文脈を抱えたまま止まっている
+      // ので、シェルだけ掃除したいときは --shells-only で丸ごと除外する。
+      if (shellsOnly) {
+        return { terminal, action: "keep", reason: `agent-${agent.state} (--shells-only)` };
       }
       if (CLOSABLE_AGENT_STATES.has(agent.state)) {
         return { terminal, action: "close", reason: `agent-${agent.state}` };
@@ -149,7 +155,8 @@ function selfContext() {
   };
 }
 
-async function resolveRepoId(self) {
+async function resolveRepoId(self, override) {
+  if (override) return override.includes("::") ? override.split("::")[0] : override;
   if (self.repoId) return self.repoId;
   // Orca の外から実行された場合はカレントディレクトリから引く
   const result = await orca(["worktree", "current"]);
@@ -195,14 +202,18 @@ function parseArgs(argv) {
     shellIdleSecs: DEFAULTS.shellIdleSecs,
     json: false,
     forceNoSelf: false,
+    shellsOnly: false,
+    repo: undefined,
   };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === "--apply") opts.apply = true;
     else if (arg === "--keep-shells") opts.keepShells = true;
+    else if (arg === "--shells-only") opts.shellsOnly = true;
     else if (arg === "--json") opts.json = true;
     else if (arg === "--force-no-self") opts.forceNoSelf = true;
     else if (arg === "--shell-idle-secs") opts.shellIdleSecs = Number(argv[++i]);
+    else if (arg === "--repo") opts.repo = argv[++i];
     else throw new Error(`unknown option: ${arg}`);
   }
   return opts;
@@ -219,7 +230,7 @@ async function main() {
     );
   }
 
-  const repoId = await resolveRepoId(self);
+  const repoId = await resolveRepoId(self, opts.repo);
   const { worktrees } = await orca(["worktree", "list", "--repo", `id:${repoId}`]);
 
   // worktree ps から paneKey -> agent を作る
@@ -262,7 +273,11 @@ async function main() {
     agentByPaneKey,
     self,
     screenByHandle,
-    opts: { shellIdleSecs: opts.shellIdleSecs, keepShells: opts.keepShells },
+    opts: {
+      shellIdleSecs: opts.shellIdleSecs,
+      keepShells: opts.keepShells,
+      shellsOnly: opts.shellsOnly,
+    },
   });
 
   const toClose = decisions.filter((d) => d.action === "close");
