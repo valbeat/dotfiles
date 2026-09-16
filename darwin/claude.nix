@@ -107,6 +107,10 @@ let
         # Task (subagents) stays allowed: hooks/guard.sh blocks `claude -p`
         # and points skills at Task as the in-subscription replacement.
         "Task"
+        # Activation needs a sudo timestamp the user created with `sudo -v`
+        # (timestamp_type=global in darwin/configuration.nix), so this only
+        # lets an agent finish a switch the user already authenticated.
+        "Bash(nix run .#switch)"
       ];
       deny = [
         "Bash(sudo rm -rf *)"

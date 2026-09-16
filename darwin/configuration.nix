@@ -33,8 +33,14 @@
   # `nix run .#switch` のたびに TTY のある端末へ行く必要がある。
   # global にすると、実端末で `sudo -v` を一度通せば timestamp_timeout の
   # 間だけ他のセッションからも sudo が通る。期限切れで元に戻る。
+  #
+  # timestamp_timeout は既定の 5 分だと、認証してからエージェントに伝えて
+  # 実行されるまでに切れることがあるので 15 分にする。その間はこのユーザーで
+  # 動く他のプロセスからも sudo が通る。常時通す NOPASSWD（darwin-rebuild は
+  # 任意の flake の activation を root で実行できるので実質 root）にはしない。
   security.sudo.extraConfig = ''
     Defaults timestamp_type=global
+    Defaults timestamp_timeout=15
   '';
 
   # Used for backwards compatibility of stateful data. Bump only with care.
