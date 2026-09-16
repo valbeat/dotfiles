@@ -379,6 +379,8 @@
     ];
 
     casks = [
+      # Terminal interface for Antigravity agents (agy; successor of Gemini CLI for AI Pro/Ultra)
+      "antigravity-cli"
       # Speech-to-text system
       "aqua-voice"
       # The Art of Reading Markdown.
