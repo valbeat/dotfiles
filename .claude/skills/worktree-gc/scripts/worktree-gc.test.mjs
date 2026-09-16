@@ -5,14 +5,18 @@ import { join } from 'node:path'
 import { describe, it } from 'node:test'
 
 import {
+  buildOrcaIndex,
   classifyWorktree,
   DEFAULTS,
+  isBusyTitle,
   parseArgs,
   parseDefaultBranch,
   parseWorktreeList,
+  prLookupBranch,
   readWorktreeTouchedAt,
   resolveLastActivityDays,
   summarize,
+  summarizeTerminals,
 } from './worktree-gc.mjs'
 
 /** テスト用の worktree 情報を組み立てるヘルパ（既定は「空の使い捨て worktree」） */
@@ -20,6 +24,7 @@ const wt = (overrides = {}) => ({
   path: '/repo/.claude/worktrees/agent-x',
   branch: 'claude/agent-x',
   isMain: false,
+  isBaseBranch: false,
   isLocked: false,
   dirtyCount: 0,
   untrackedCount: 0,
@@ -28,6 +33,18 @@ const wt = (overrides = {}) => ({
   lastActivityDays: 30,
   sizeKb: 1024 * 1024,
   pr: null,
+  orca: null,
+  ...overrides,
+})
+
+/** Orca のワークスペース情報（既定は「既定 status で、誰も使っていない」） */
+const orca = (overrides = {}) => ({
+  status: 'in-progress',
+  isPinned: false,
+  isArchived: false,
+  isUnread: false,
+  automation: null,
+  terminals: { live: 0, busy: 0, agents: [] },
   ...overrides,
 })
 
@@ -155,6 +172,27 @@ describe('classifyWorktree - PR なし', () => {
     )
     assert.equal(r.verdict, 'hold')
     assert.match(r.reason, /未 push/)
+  })
+
+  it('基準ブランチ（main）を checkout した空の worktree は、木だけ消してブランチは残す', () => {
+    const r = classifyWorktree(
+      wt({ branch: 'main', isBaseBranch: true, aheadOfMain: 0 }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'delete')
+    assert.equal(r.deleteBranch, false)
+  })
+
+  it('completed でも基準ブランチは消さない', () => {
+    const r = classifyWorktree(
+      wt({
+        branch: 'main',
+        isBaseBranch: true,
+        orca: orca({ status: 'completed' }),
+      }),
+      DEFAULTS,
+    )
+    assert.equal(r.deleteBranch, false)
   })
 
   it('detached HEAD ではブランチ削除を要求しない', () => {
@@ -348,5 +386,216 @@ describe('summarize', () => {
     assert.equal(s.counts.hold, 1)
     // delete は全量、slim は node_modules 相当のみ解放される
     assert.ok(s.freedGb > 2 && s.freedGb < 3)
+  })
+})
+
+describe('classifyWorktree - Orca の保護', () => {
+  it('自動化の固定ワークスペースは、空で古くても keep', () => {
+    const r = classifyWorktree(
+      wt({ branch: null, orca: orca({ automation: 'PR 保守' }) }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'keep')
+    assert.match(r.reason, /自動化/)
+  })
+
+  it('ピン留めされたワークスペースは keep', () => {
+    const r = classifyWorktree(wt({ orca: orca({ isPinned: true }) }), DEFAULTS)
+    assert.equal(r.verdict, 'keep')
+  })
+
+  it('エージェントが作業中なら、PR がマージ済みでも keep', () => {
+    const r = classifyWorktree(
+      wt({
+        pr: { number: 1, state: 'MERGED', ageDays: 90 },
+        orca: orca({ terminals: { live: 1, busy: 1, agents: ['codex'] } }),
+      }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'keep')
+    assert.match(r.reason, /作業中/)
+  })
+
+  it('待機中のターミナルが開いているだけなら削除を妨げない', () => {
+    const r = classifyWorktree(
+      wt({ orca: orca({ terminals: { live: 2, busy: 0, agents: ['codex'] } }) }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'delete')
+  })
+
+  it('未読の出力があれば hold（最終レポートを読む前に消さない）', () => {
+    const r = classifyWorktree(
+      wt({
+        pr: { number: 1, state: 'MERGED', ageDays: 90 },
+        orca: orca({ isUnread: true }),
+      }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'hold')
+    assert.match(r.reason, /未読/)
+  })
+
+  it('未コミット変更は status が completed でも hold', () => {
+    const r = classifyWorktree(
+      wt({ dirtyCount: 1, orca: orca({ status: 'completed' }) }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'hold')
+  })
+})
+
+describe('classifyWorktree - Orca の status', () => {
+  it('completed は OPEN な PR があっても削除する（ブランチは残す）', () => {
+    const r = classifyWorktree(
+      wt({
+        aheadOfMain: 3,
+        hasRemoteBranch: true,
+        pr: { number: 2, state: 'OPEN', ageDays: 0 },
+        orca: orca({ status: 'completed' }),
+      }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'delete')
+    assert.equal(r.deleteBranch, false)
+    assert.match(r.reason, /completed/)
+  })
+
+  it('completed は MERGED の猶予を待たずに削除し、ブランチも消す', () => {
+    const r = classifyWorktree(
+      wt({
+        aheadOfMain: 3,
+        pr: { number: 2, state: 'MERGED', ageDays: 0 },
+        orca: orca({ status: 'completed' }),
+      }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'delete')
+    assert.equal(r.deleteBranch, true)
+  })
+
+  it('completed でも、PR なしの未 push コミットがあれば hold', () => {
+    const r = classifyWorktree(
+      wt({ aheadOfMain: 2, orca: orca({ status: 'completed' }) }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'hold')
+    assert.match(r.reason, /未 push/)
+  })
+
+  it('completed で空なら作りたてでも削除する', () => {
+    const r = classifyWorktree(
+      wt({ lastActivityDays: 0, orca: orca({ status: 'completed' }) }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'delete')
+    assert.equal(r.deleteBranch, true)
+  })
+
+  it('archived は completed と同じ扱い', () => {
+    const r = classifyWorktree(
+      wt({ lastActivityDays: 0, orca: orca({ isArchived: true }) }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'delete')
+  })
+
+  it('todo の空ワークスペースは、古くても keep（着手待ち）', () => {
+    const r = classifyWorktree(wt({ orca: orca({ status: 'todo' }) }), DEFAULTS)
+    assert.equal(r.verdict, 'keep')
+    assert.match(r.reason, /todo/)
+  })
+
+  it('in-review は PR が閉じるまで delete にしない', () => {
+    const r = classifyWorktree(
+      wt({ orca: orca({ status: 'in-review' }) }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'keep')
+  })
+
+  it('in-review でも PR が MERGED なら従来どおり削除する', () => {
+    const r = classifyWorktree(
+      wt({
+        pr: { number: 3, state: 'MERGED', ageDays: 10 },
+        orca: orca({ status: 'in-review' }),
+      }),
+      DEFAULTS,
+    )
+    assert.equal(r.verdict, 'delete')
+  })
+
+  it('既定の in-progress は判定に影響しない（全ワークスペースの既定値のため）', () => {
+    const r = classifyWorktree(wt({ orca: orca() }), DEFAULTS)
+    assert.equal(r.verdict, 'delete')
+  })
+})
+
+describe('isBusyTitle', () => {
+  it('codex / Claude Code の作業中スピナーを検出する', () => {
+    assert.equal(isBusyTitle('⠹ auto-pr-ci-run-157-20...'), true)
+    assert.equal(isBusyTitle('◑ Orcaのワークスペース'), true)
+  })
+
+  it('待機中の表示や普通のタイトルは busy にしない', () => {
+    assert.equal(isBusyTitle('✳ 他のセッションを閉じて'), false)
+    assert.equal(isBusyTitle('auto-pr-ci-run-156-20...'), false)
+    assert.equal(isBusyTitle('~/orca/workspaces/techtrain-'), false)
+    assert.equal(isBusyTitle(''), false)
+    assert.equal(isBusyTitle(undefined), false)
+  })
+})
+
+describe('summarizeTerminals', () => {
+  it('orphaned を除いて件数・作業中・エージェントを数える', () => {
+    const s = summarizeTerminals([
+      { title: '⠹ run', agentIdentity: 'codex', orphaned: false },
+      { title: 'run', agentIdentity: 'codex', orphaned: false },
+      { title: '~/x', agentIdentity: null, orphaned: false },
+      { title: '⠹ ghost', agentIdentity: 'claude', orphaned: true },
+    ])
+    assert.deepEqual(s, { live: 3, busy: 1, agents: ['codex'] })
+  })
+})
+
+describe('buildOrcaIndex', () => {
+  it('パスでワークスペースを引け、existing モードの自動化を紐づける', () => {
+    const index = buildOrcaIndex({
+      worktrees: [
+        {
+          path: '/ws/a',
+          workspaceStatus: 'completed',
+          isPinned: false,
+          isArchived: false,
+          isUnread: true,
+        },
+        { path: '/ws/fixed', workspaceStatus: 'in-progress' },
+      ],
+      automations: [
+        { name: '固定', workspaceMode: 'existing', workspaceId: 'repo-1::/ws/fixed' },
+        { name: '毎回新規', workspaceMode: 'new_per_run', workspaceId: null },
+      ],
+    })
+    assert.deepEqual(index.get('/ws/a'), {
+      status: 'completed',
+      isPinned: false,
+      isArchived: false,
+      isUnread: true,
+      automation: null,
+    })
+    assert.equal(index.get('/ws/fixed').automation, '固定')
+    assert.equal(index.get('/ws/none'), undefined)
+  })
+})
+
+describe('prLookupBranch', () => {
+  it('基準ブランチでは PR を探さない（無関係な古い PR を拾うため）', () => {
+    assert.equal(prLookupBranch('main', 'origin/main'), null)
+    assert.equal(prLookupBranch('release/v2', 'origin/release/v2'), null)
+  })
+
+  it('それ以外のブランチはそのまま、detached は null', () => {
+    assert.equal(prLookupBranch('feat/x', 'origin/main'), 'feat/x')
+    assert.equal(prLookupBranch(null, 'origin/main'), null)
   })
 })

@@ -14,6 +14,10 @@
 //     PR の更新日時 / worktree 管理ファイルの mtime のうち最も新しいものを
 //     「最終アクティビティ」とする。管理ファイルを見るのは、古い main から生やした
 //     ばかりの worktree を「放置」と誤判定しないため。
+//   - Orca が起動していれば、ワークスペースの状態も判定に加える。
+//     作業中のエージェント・未読の出力・ピン留め・自動化の固定ワークスペースは守り、
+//     status が completed（または archived）なら猶予を待たずに片付ける。
+//     削除は `orca worktree rm` で行い、ターミナルと Orca 側の記録も一緒に消す。
 //
 // 対象リポジトリの中で実行する。基準ブランチは origin/HEAD から検出する。
 //
@@ -23,6 +27,7 @@
 //   オプション:
 //     --size          ディスク使用量も測る（du が node_modules を走査するので数十秒かかる）
 //     --json          機械可読な出力
+//     --no-orca       Orca のワークスペース情報を使わず、git と PR の状態だけで判定する
 //     --merged-grace <日> / --stale-open <日> / --empty-grace <日>
 
 import { execFileSync } from 'node:child_process'
@@ -54,6 +59,8 @@ const NODE_MODULES_RATIO = 0.93
 export const classifyWorktree = (wt, options = DEFAULTS) => {
   const keep = reason => ({ verdict: 'keep', reason, deleteBranch: false })
   const hold = reason => ({ verdict: 'hold', reason, deleteBranch: false })
+  // 基準ブランチ（main など）は、それを checkout した worktree を消すときも残す
+  const canDeleteBranch = Boolean(wt.branch) && !wt.isBaseBranch
 
   if (wt.isMain) {
     return keep('メインのチェックアウト')
@@ -62,11 +69,47 @@ export const classifyWorktree = (wt, options = DEFAULTS) => {
     return keep('locked')
   }
 
+  const orca = wt.orca
+  if (orca?.automation) {
+    return keep(`自動化「${orca.automation}」の固定ワークスペース`)
+  }
+  if (orca?.isPinned) {
+    return keep('Orca でピン留め')
+  }
+  if (orca?.terminals.busy > 0) {
+    const agents = orca.terminals.agents.join(', ') || 'terminal'
+    return keep(`エージェント作業中（${agents}）`)
+  }
+
   // 未コミットの変更だけは worktree を消すと本当に失われるので、最優先で守る
   if (wt.dirtyCount > 0 || wt.untrackedCount > 0) {
     return hold(
       `未コミット変更 ${wt.dirtyCount} 件 / 未追跡 ${wt.untrackedCount} 件`,
     )
+  }
+  // ターミナルを閉じるとエージェントの最終レポートも消えるので、読まれるまで待つ
+  if (orca?.isUnread) {
+    return hold('Orca に未読の出力あり（最終レポートを確認してから）')
+  }
+
+  // 人間が「終わった」と印を付けたものは猶予を待たない。
+  // 失われうるのは PR にもリモートにも無いコミットだけなので、それだけは守る。
+  if (orca && (orca.status === 'completed' || orca.isArchived)) {
+    const label = orca.status === 'completed' ? 'completed' : 'archived'
+    if (!wt.pr && wt.aheadOfMain > 0 && !wt.hasRemoteBranch) {
+      return hold(
+        `${label} だが未 push の独自コミット ${wt.aheadOfMain} 件 — 消すと失われる`,
+      )
+    }
+    const merged = wt.pr?.state === 'MERGED'
+    return {
+      verdict: 'delete',
+      reason: wt.pr
+        ? `Orca で ${label}（PR #${wt.pr.number} は ${wt.pr.state}）`
+        : `Orca で ${label}`,
+      deleteBranch:
+        canDeleteBranch && (merged || (!wt.pr && wt.aheadOfMain === 0)),
+    }
   }
 
   if (wt.pr && wt.pr.state === 'OPEN') {
@@ -92,11 +135,17 @@ export const classifyWorktree = (wt, options = DEFAULTS) => {
     return {
       verdict: 'delete',
       reason: `PR #${wt.pr.number} が ${wt.pr.state} になってから ${wt.pr.ageDays} 日`,
-      deleteBranch: merged && Boolean(wt.branch),
+      deleteBranch: merged && canDeleteBranch,
     }
   }
 
   // ここから先は PR が無い worktree
+  if (orca?.status === 'todo') {
+    return keep('Orca で todo（着手待ち）')
+  }
+  if (orca?.status === 'in-review') {
+    return keep('Orca で in-review')
+  }
   if (wt.aheadOfMain === 0) {
     if (wt.lastActivityDays < options.emptyGraceDays) {
       return keep('作りたて')
@@ -104,7 +153,7 @@ export const classifyWorktree = (wt, options = DEFAULTS) => {
     return {
       verdict: 'delete',
       reason: 'PR なし・main からの独自コミットなし（空）',
-      deleteBranch: Boolean(wt.branch),
+      deleteBranch: canDeleteBranch,
     }
   }
 
@@ -172,6 +221,106 @@ export const resolveLastActivityDays = (
     daysSince(prUpdatedAtIso, now),
     daysSince(worktreeTouchedIso, now),
   )
+
+// ---------------------------------------------------------------------------
+// Orca のワークスペース情報
+// ---------------------------------------------------------------------------
+
+/**
+ * ターミナルのタイトルから「エージェントが作業中か」を推定する。
+ *
+ * lastOutputAt は使えない。待機中の codex も画面を再描画し続けるため、
+ * 終わって放置されたワークスペースが永遠に現役に見える。
+ * codex は作業中に点字スピナー（⠹ など）、Claude Code は ◐◓◑◒ を
+ * タイトルの先頭に付け、待機中は外す（Claude Code は ✳ になる）。
+ */
+export const isBusyTitle = title => {
+  const head = [...(title || '')][0]
+  if (!head) {
+    return false
+  }
+  const code = head.codePointAt(0)
+  return (code >= 0x2801 && code <= 0x28ff) || '◐◓◑◒'.includes(head)
+}
+
+/** 1 ワークスペース分のターミナル一覧を集計する（orphaned はプロセスが無いので数えない） */
+export const summarizeTerminals = terminals => {
+  const live = terminals.filter(t => !t.orphaned)
+  const busy = live.filter(t => isBusyTitle(t.title))
+  return {
+    live: live.length,
+    busy: busy.length,
+    agents: [...new Set(busy.map(t => t.agentIdentity).filter(Boolean))],
+  }
+}
+
+/**
+ * `orca worktree list` と `orca automations list` の結果を、パスで引ける表にする。
+ * existing モードの自動化が使う固定ワークスペースは、空で古くても消してはいけない。
+ */
+export const buildOrcaIndex = ({ worktrees, automations }) => {
+  const automationByPath = new Map()
+  for (const a of automations) {
+    if (a.workspaceMode === 'existing' && a.workspaceId) {
+      automationByPath.set(a.workspaceId.split('::').slice(1).join('::'), a.name)
+    }
+  }
+  return new Map(
+    worktrees.map(w => [
+      w.path,
+      {
+        status: w.workspaceStatus ?? null,
+        isPinned: Boolean(w.isPinned),
+        isArchived: Boolean(w.isArchived),
+        isUnread: Boolean(w.isUnread),
+        automation: automationByPath.get(w.path) ?? null,
+      },
+    ]),
+  )
+}
+
+const orcaJson = args => {
+  try {
+    const raw = execFileSync('orca', [...args, '--json'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      timeout: 30_000,
+    })
+    const parsed = JSON.parse(raw)
+    return parsed.ok ? parsed.result : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Orca が使えればワークスペース情報を読む。使えなければ null（git だけで判定する）。
+ * 途中で一部が読めなかった場合も null にする。半端な情報で「守るべきもの」を
+ * 見落とすより、Orca を使わない従来の判定に戻す方が安全なため。
+ */
+const loadOrca = mainPath => {
+  const list = orcaJson(['worktree', 'list', '--repo', `path:${mainPath}`])
+  const automations = orcaJson(['automations', 'list'])
+  if (!list || list.truncated || !automations) {
+    return null
+  }
+  return buildOrcaIndex({
+    worktrees: list.worktrees,
+    automations: automations.automations ?? [],
+  })
+}
+
+const loadTerminals = path => {
+  const result = orcaJson(['terminal', 'list', '--worktree', `path:${path}`])
+  return result ? summarizeTerminals(result.terminals ?? []) : null
+}
+
+/**
+ * PR を探すブランチ名を決める。基準ブランチ（main など）を checkout している
+ * worktree で `gh pr list --head main` を引くと、無関係な古い PR が返ってくる。
+ */
+export const prLookupBranch = (branch, baseRef) =>
+  branch && `origin/${branch}` !== baseRef ? branch : null
 
 /** `git worktree list --porcelain` を構造化する */
 export const parseWorktreeList = output => {
@@ -303,15 +452,19 @@ const worktreeTouchedAt = worktreePath =>
   readWorktreeTouchedAt(git(['rev-parse', '--absolute-git-dir'], worktreePath))
 
 /** 全 worktree の状態を集める。measureSize は既定 false（du が遅いため） */
-export const collectWorktrees = (repoRoot, { measureSize = false } = {}) => {
+export const collectWorktrees = (
+  repoRoot,
+  { measureSize = false, useOrca = true } = {},
+) => {
   const commonDir = git(
     ['rev-parse', '--path-format=absolute', '--git-common-dir'],
     repoRoot,
   )
   const mainPath = commonDir.replace(/\/\.git$/, '')
   const baseRef = resolveBaseRef(repoRoot)
+  const orcaIndex = useOrca ? loadOrca(mainPath) : null
 
-  return parseWorktreeList(
+  const rows = parseWorktreeList(
     git(['worktree', 'list', '--porcelain'], repoRoot),
   ).map(entry => {
     // git status は index を書き戻すことがあり mtime が今になってしまうため、
@@ -320,7 +473,10 @@ export const collectWorktrees = (repoRoot, { measureSize = false } = {}) => {
     const status = git(['status', '--porcelain'], entry.path)
     const lines = status ? status.split(/\r?\n/) : []
     const ref = entry.branch || 'HEAD'
-    const pr = fetchPr(entry.branch)
+    const pr = fetchPr(prLookupBranch(entry.branch, baseRef))
+    const orcaEntry = orcaIndex?.get(entry.path)
+    // ターミナルが読めなければ Orca 情報ごと使わない（作業中を見落とさないため）
+    const terminals = orcaEntry ? loadTerminals(entry.path) : null
     const lastActivityDays = resolveLastActivityDays({
       lastCommitIso: git(['log', '-1', '--format=%cI'], entry.path) || null,
       prUpdatedAtIso: pr ? pr.updatedAt : null,
@@ -331,6 +487,8 @@ export const collectWorktrees = (repoRoot, { measureSize = false } = {}) => {
       path: entry.path,
       branch: entry.branch,
       isMain: entry.path === mainPath,
+      isBaseBranch:
+        entry.branch !== null && `origin/${entry.branch}` === baseRef,
       isLocked: entry.isLocked,
       dirtyCount: lines.filter(l => l && !l.startsWith('?? ')).length,
       untrackedCount: lines.filter(l => l.startsWith('?? ')).length,
@@ -348,8 +506,10 @@ export const collectWorktrees = (repoRoot, { measureSize = false } = {}) => {
       lastActivityDays,
       sizeKb: measureSize ? directorySizeKb(entry.path) : null,
       pr,
+      orca: orcaEntry && terminals ? { ...orcaEntry, terminals } : null,
     }
   })
+  return { rows, orcaAvailable: orcaIndex !== null }
 }
 
 /** worktree 配下の node_modules を消す（木そのものは残す） */
@@ -387,16 +547,42 @@ const applyVerdict = (row, repoRoot) => {
   if (row.verdict !== 'delete') {
     return 'なし'
   }
-  // --force は使わない。git 自身が「汚れていたら消さない」を守ってくれる
+  // --force は使わない。git 自身が「汚れていたら消さない」を守ってくれる。
+  // Orca 管理下なら orca worktree rm で消す。ターミナルと Orca 側の記録も片付き、
+  // 未マージのブランチは Orca が残す。
   try {
-    execFileSync('git', ['worktree', 'remove', row.path], {
-      cwd: repoRoot,
-      stdio: ['ignore', 'ignore', 'pipe'],
-    })
+    if (row.orca) {
+      // orca worktree rm は checkout 中のブランチを独自の基準で消そうとする。
+      // ブランチを残す判定のときは先に detach して、ブランチに触らせない。
+      if (row.branch && !row.deleteBranch) {
+        execFileSync('git', ['switch', '--detach'], {
+          cwd: row.path,
+          stdio: ['ignore', 'ignore', 'pipe'],
+        })
+      }
+      const raw = execFileSync(
+        'orca',
+        ['worktree', 'rm', '--worktree', `path:${row.path}`, '--json'],
+        { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 120_000 },
+      )
+      // 失敗しても終了コード 0 で { ok: false } を返すことがあるので本文で判定する
+      const parsed = JSON.parse(raw)
+      if (!parsed.ok) {
+        throw new Error(parsed.error?.message ?? 'orca worktree rm が失敗')
+      }
+    } else {
+      execFileSync('git', ['worktree', 'remove', row.path], {
+        cwd: repoRoot,
+        stdio: ['ignore', 'ignore', 'pipe'],
+      })
+    }
   } catch (error) {
     return `worktree 削除に失敗: ${String(error.stderr || error.message).trim()}`
   }
-  if (row.deleteBranch && row.branch) {
+  const branchExists =
+    row.branch &&
+    git(['show-ref', '--verify', `refs/heads/${row.branch}`], repoRoot) !== ''
+  if (row.deleteBranch && branchExists) {
     try {
       execFileSync('git', ['branch', '-D', row.branch], {
         cwd: repoRoot,
@@ -406,6 +592,9 @@ const applyVerdict = (row, repoRoot) => {
     } catch {
       return 'worktree を削除（ブランチ削除は失敗）'
     }
+  }
+  if (row.deleteBranch && row.branch) {
+    return `worktree とブランチ ${row.branch} を削除（ブランチは Orca が削除）`
   }
   return 'worktree を削除'
 }
@@ -417,7 +606,13 @@ const NUMERIC_FLAGS = {
 }
 
 export const parseArgs = argv => {
-  const options = { ...DEFAULTS, apply: false, json: false, size: false }
+  const options = {
+    ...DEFAULTS,
+    apply: false,
+    json: false,
+    size: false,
+    orca: true,
+  }
   let skipNext = false
   argv.forEach((arg, index) => {
     if (skipNext) {
@@ -430,6 +625,8 @@ export const parseArgs = argv => {
       options.json = true
     } else if (arg === '--size') {
       options.size = true
+    } else if (arg === '--no-orca') {
+      options.orca = false
     } else if (NUMERIC_FLAGS[arg]) {
       const value = Number.parseInt(argv[index + 1], 10)
       if (Number.isNaN(value)) {
@@ -459,7 +656,11 @@ const main = () => {
     return
   }
 
-  const rows = collectWorktrees(repoRoot, { measureSize: options.size })
+  const { rows: collected, orcaAvailable } = collectWorktrees(repoRoot, {
+    measureSize: options.size,
+    useOrca: options.orca,
+  })
+  const rows = collected
     .map(wt => ({ ...wt, ...classifyWorktree(wt, options) }))
     .sort(
       (a, b) =>
@@ -476,7 +677,9 @@ const main = () => {
   }
 
   if (options.json) {
-    console.log(JSON.stringify({ rows, summary: summarize(rows) }, null, 2))
+    console.log(
+      JSON.stringify({ rows, orcaAvailable, summary: summarize(rows) }, null, 2),
+    )
     return
   }
 
@@ -485,13 +688,21 @@ const main = () => {
       ? '=== worktree GC（実行） ==='
       : '=== worktree GC（dry-run / 何も消しません） ===',
   )
+  if (!orcaAvailable) {
+    console.log(
+      options.orca
+        ? '（Orca の情報を読めなかったため、git と PR の状態だけで判定しています）'
+        : '（--no-orca: git と PR の状態だけで判定しています）',
+    )
+  }
   for (const row of rows) {
     const name = row.path.split('/').pop().slice(0, 34).padEnd(34)
+    const status = row.orca ? `[${row.orca.status ?? '-'}]`.padEnd(14) : ''
     const size =
       row.sizeKb === null
         ? ''
         : ` ${(row.sizeKb / 1024 / 1024).toFixed(1).padStart(5)}GB`
-    console.log(`${MARKS[row.verdict]} ${name}${size}  ${row.reason}`)
+    console.log(`${MARKS[row.verdict]} ${name}${size}  ${status}${row.reason}`)
     if (row.result) {
       console.log(`${' '.repeat(9)}└─ ${row.result}`)
     }
