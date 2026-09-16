@@ -5,6 +5,8 @@
 // 判定ロジック（classify）は I/O から切り離してある。テストは classify だけを叩く。
 
 import { execFile } from "node:child_process";
+import { realpathSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
@@ -394,7 +396,11 @@ function printReport(report, opts) {
   void opts;
 }
 
-const isDirectRun = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+// argv[1] はシンボリックリンクのままのパスで来るが、import.meta.url は Node が
+// 解決した実パスになる。~/.claude が dotfiles への symlink なので、素朴に文字列比較すると
+// 直接実行しても一致せず、main() が呼ばれないまま exit 0 で終わる。
+const isDirectRun =
+  process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
 if (isDirectRun) {
   main().catch((error) => {
     console.error(String(error.message ?? error));
