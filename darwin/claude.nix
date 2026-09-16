@@ -107,6 +107,13 @@ let
         # Task (subagents) stays allowed: hooks/guard.sh blocks `claude -p`
         # and points skills at Task as the in-subscription replacement.
         "Task"
+        # Activation needs a sudo timestamp the user created with `sudo -v`
+        # (timestamp_type=global in darwin/configuration.nix), so this only
+        # lets an agent finish a switch the user already authenticated.
+        # Pinned to this checkout (same path as dotfilesDir in home.nix):
+        # `nix run .#switch` would run the `switch` app of whatever flake is in
+        # the current directory, e.g. an untrusted clone, as root.
+        "Bash(nix run ${home}/src/github.com/valbeat/dotfiles#switch)"
       ];
       deny = [
         "Bash(sudo rm -rf *)"
