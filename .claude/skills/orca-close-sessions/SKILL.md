@@ -44,11 +44,17 @@ node ~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.mjs --keep
 | 2 | エージェントが `interrupted` | **閉じない** |
 | 3 | エージェントの `state` が `done` | 閉じる |
 | 4 | エージェントが居て `state` がそれ以外（`working`、未知の値、欠落） | **閉じない** |
-| 5 | エージェント無しの素のシェル、`--keep-shells` 指定あり | **閉じない** |
-| 6 | エージェント無しの素のシェル、最終出力から 60 秒未満 | **閉じない** |
-| 7 | エージェント無しの素のシェル、それ以上放置 | 閉じる |
+| 5 | エージェント無し、画面が読めない | **閉じない** |
+| 6 | エージェント無し、画面にエージェント TUI が見える（休眠セッション） | **閉じない** |
+| 7 | エージェント無しの素のシェル、`--keep-shells` 指定あり | **閉じない** |
+| 8 | エージェント無しの素のシェル、最終出力から 60 秒未満 | **閉じない** |
+| 9 | エージェント無しの素のシェル、それ以上放置 | 閉じる |
 
 閾値は `--shell-idle-secs` で変えられる。
+
+**`state: "done"` は「終了」ではなく「プロンプトで待機中」。** 実機では 421k / 596.8k
+トークンを抱えたまま `done` になっているセッションがあった。ルール 3 は仕様どおり
+これを閉じるので、**dry-run では文脈量を必ず見ること**。惰性で `--apply` しない。
 
 閉じた結果ターミナルが 0 になる worktree は、`dirty` / 未 push コミットを添えて
 **一覧表示するだけ**で削除はしない。
@@ -59,6 +65,14 @@ node ~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.mjs --keep
   コマンドで、すでに落ち着いている Claude Code の TUI に投げても 20 秒待って
   `timeout` を返す。`state: "done"` のエージェントで実測済み。アイドルの根拠は
   `orca worktree ps --json` の `agents[].state` から取る。
+- **`agents[]` に載らないエージェントセッションがある。** worktree が inactive になると
+  `worktree ps` の `agents[]` からも `agentIdentity` からも消え、素のシェルと見分けが
+  つかなくなる。実機では 336.1k トークンを抱えた Claude の TUI がこの状態だった。
+  最後の砦として `orca terminal read --screen` で画面を読み、TUI の痕跡
+  （`auto mode on`、`/clear to save`、`N tokens`、`⏵⏵` など）があれば残す。
+  **`--screen` を必ず付ける。** 付けないと再描画の積み重なった履歴が返り、判定に使えない。
+- **画面が読めなかったら閉じない。** `looksLikeAgentTui` は不明を `null` で返し、
+  呼び出し側はそれを keep に倒す。読めないことを「空＝シェル」と解釈しない。
 - **`CLOSABLE_AGENT_STATES` は許可リストであって拒否リストではない。** 実測できた値は
   `done` と `working` の 2 つだけで、Orca 側が新しい state を足す可能性がある。
   知らない値は全部「稼働中」に倒す。拒否リストにすると新しい state が来た日に
@@ -82,7 +96,7 @@ node ~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.mjs --keep
 
 ## テスト
 
-判定基準は 18 個のテストで固定してある。基準を変えるときはテストから直す。
+判定基準は 24 個のテストで固定してある。基準を変えるときはテストから直す。
 
 ```bash
 node --test ~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.test.mjs
@@ -93,8 +107,11 @@ node --test ~/.claude/skills/orca-close-sessions/scripts/orca-close-sessions.tes
 - **close 経路は実機で未検証。** 検証用の使い捨てターミナルを作ろうとした時点で
   pty が枯渇しており（live terminal 260 個）、`orca terminal create` 自体が失敗した。
   分類ロジックと dry-run は実データで確認済み。初回の `--apply` は出力を見ながら行う。
-- **素のシェルの「稼働中」は出力時刻でしか判断できない。** `npm run dev` のように
+- **素のシェルの「稼働中」は出力時刻と画面でしか判断できない。** `npm run dev` のように
   出力が止まる常駐プロセスは、アイドルに見えて閉じられる。守りたいなら `--keep-shells`。
+- **休眠 TUI の判定は画面の文字列マッチでしかない。** `AGENT_TUI_MARKERS` に載っていない
+  TUI（将来の Claude Code の UI 変更、他のエージェント CLI）は素のシェルに見える。
+  実機で取った断片をテストに固定してあるので、取りこぼしを見つけたらまずテストを足す。
 - **他プロジェクトのセッションには触らない。** 現在の repoId 配下だけが対象。
   マシン全体を掃除したいならプロジェクトごとに実行する。
 - **Sleep は扱わない。** あとで再開したいワークスペースは、閉じるのではなく

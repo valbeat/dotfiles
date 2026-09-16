@@ -4,9 +4,22 @@ import assert from "node:assert/strict";
 import {
   classify,
   emptiedWorktrees,
+  looksLikeAgentTui,
   paneKeyOf,
   CLOSABLE_AGENT_STATES,
 } from "./orca-close-sessions.mjs";
+
+// 実機の `orca terminal read --screen` から取った断片
+const CLAUDE_TUI_SCREEN = [
+  "  -- INSERT -- ⏵⏵ auto mode on (shift+tab to cycle) · ← 2 agents",
+  "                                            426410 tokens",
+  "          new task? /clear to save 427.2k tokens",
+];
+const PLAIN_SHELL_SCREEN = [
+  ' Load "~/.zplug/repos/sindresorhus/pure/pure.plugin.zsh" (sindresorhus/pure)',
+  "~/src/github.com/TechBowl-japan/techtrain-backend develop*",
+  "❯",
+];
 
 const NOW = 1_700_000_000_000;
 
@@ -23,9 +36,18 @@ function terminal(overrides = {}) {
   };
 }
 
-function run(terminals, agents = [], self = {}, opts = {}) {
+function run(terminals, agents = [], self = {}, opts = {}, screens = null) {
   const agentByPaneKey = new Map(agents.map((a) => [a.paneKey, a]));
-  return classify({ terminals, agentByPaneKey, self, opts: { now: NOW, ...opts } });
+  // 既定では「素のシェルの画面」を渡す。TUI 判定そのものを試すテストだけ差し替える。
+  const screenByHandle =
+    screens ?? new Map(terminals.map((t) => [t.handle, PLAIN_SHELL_SCREEN]));
+  return classify({
+    terminals,
+    agentByPaneKey,
+    self,
+    screenByHandle,
+    opts: { now: NOW, ...opts },
+  });
 }
 
 test("paneKey は tabId:leafId", () => {
@@ -119,6 +141,41 @@ test("self 判定はエージェント判定より優先される", () => {
 test("CLOSABLE_AGENT_STATES は許可リストであって拒否リストではない", () => {
   assert.ok(CLOSABLE_AGENT_STATES.has("done"));
   assert.ok(!CLOSABLE_AGENT_STATES.has("working"));
+});
+
+test("looksLikeAgentTui: Claude の TUI 画面を検出する", () => {
+  assert.equal(looksLikeAgentTui(CLAUDE_TUI_SCREEN), true);
+});
+
+test("looksLikeAgentTui: 素のシェルは false", () => {
+  assert.equal(looksLikeAgentTui(PLAIN_SHELL_SCREEN), false);
+});
+
+test("looksLikeAgentTui: 画面が取れなければ null（不明）", () => {
+  assert.equal(looksLikeAgentTui(undefined), null);
+  assert.equal(looksLikeAgentTui([]), null);
+});
+
+test("agents[] に載らない休眠 TUI は閉じない", () => {
+  const t = terminal({ handle: "term_dormant", lastOutputAt: null });
+  const screens = new Map([["term_dormant", CLAUDE_TUI_SCREEN]]);
+  const [d] = run([t], [], {}, {}, screens);
+  assert.equal(d.action, "keep");
+  assert.equal(d.reason, "dormant-agent-tui");
+});
+
+test("画面が読めないターミナルは閉じない", () => {
+  const t = terminal({ handle: "term_unreadable", lastOutputAt: null });
+  const [d] = run([t], [], {}, {}, new Map());
+  assert.equal(d.action, "keep");
+  assert.equal(d.reason, "screen-unreadable");
+});
+
+test("休眠 TUI 判定は --keep-shells や出力時刻より優先される", () => {
+  const t = terminal({ handle: "term_dormant", lastOutputAt: NOW });
+  const screens = new Map([["term_dormant", CLAUDE_TUI_SCREEN]]);
+  const [d] = run([t], [], {}, { keepShells: false }, screens);
+  assert.equal(d.reason, "dormant-agent-tui");
 });
 
 test("emptiedWorktrees はターミナルが残る worktree を除く", () => {

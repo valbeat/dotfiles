@@ -20,6 +20,27 @@ export const DEFAULTS = {
 // ここに無い値（working、未知の新しい値）はすべて稼働中とみなす。
 export const CLOSABLE_AGENT_STATES = new Set(["done"]);
 
+// 画面にこれらが見えたら、エージェントの TUI が居座っているとみなす。
+// worktree ps の agents[] に載らず agentIdentity も null の休眠セッションを
+// 素のシェルと取り違えないための最後の防波堤。
+export const AGENT_TUI_MARKERS = [
+  /auto mode on/i,
+  /shift\+tab to cycle/i,
+  /\/clear to save/i,
+  /esc to interrupt/i,
+  /to interrupt\b/i,
+  /\d[\d.,]*k? tokens\b/i,
+  /⏵⏵/,
+  /\bhuman\b.*\bassistant\b/i,
+];
+
+/** 画面の行配列がエージェント TUI に見えるか。判断材料が無ければ null（＝不明） */
+export function looksLikeAgentTui(lines) {
+  if (!Array.isArray(lines) || lines.length === 0) return null;
+  const text = lines.join("\n");
+  return AGENT_TUI_MARKERS.some((re) => re.test(text));
+}
+
 // ---------------------------------------------------------------------------
 // 判定
 // ---------------------------------------------------------------------------
@@ -33,10 +54,11 @@ export function paneKeyOf(terminal) {
  * @param {Array} input.terminals   orca terminal list の terminals を worktree 横断で連結したもの
  * @param {Map<string, object>} input.agentByPaneKey  paneKey -> agents[] の要素
  * @param {object} input.self       { handle, paneKey } いずれも undefined 可
+ * @param {Map<string, string[]>} [input.screenByHandle] handle -> 画面の行配列
  * @param {object} [input.opts]     { shellIdleSecs, keepShells, now }
  * @returns {Array<{terminal: object, action: "close"|"keep", reason: string}>}
  */
-export function classify({ terminals, agentByPaneKey, self, opts = {} }) {
+export function classify({ terminals, agentByPaneKey, self, screenByHandle, opts = {} }) {
   const shellIdleSecs = opts.shellIdleSecs ?? DEFAULTS.shellIdleSecs;
   const keepShells = opts.keepShells ?? false;
   const now = opts.now ?? Date.now();
@@ -65,7 +87,18 @@ export function classify({ terminals, agentByPaneKey, self, opts = {} }) {
       return { terminal, action: "keep", reason: `agent-${agent.state ?? "unknown"}` };
     }
 
-    // 3. エージェントの居ない素のシェル
+    // 3. agents[] に載っていないが、画面にエージェント TUI が居座っている休眠セッション。
+    //    worktree が inactive だと agents[] からも agentIdentity からも消えるので、
+    //    ここを見ないと数十万トークンの文脈ごと素のシェル扱いで閉じてしまう。
+    const tui = looksLikeAgentTui(screenByHandle?.get(terminal.handle));
+    if (tui === null) {
+      return { terminal, action: "keep", reason: "screen-unreadable" };
+    }
+    if (tui) {
+      return { terminal, action: "keep", reason: "dormant-agent-tui" };
+    }
+
+    // 4. エージェントの居ない素のシェル
     if (keepShells) {
       return { terminal, action: "keep", reason: "shell (--keep-shells)" };
     }
@@ -205,10 +238,30 @@ async function main() {
     terminals.push(...(result.terminals ?? []));
   }
 
+  // agents[] に載っていないターミナルだけ、画面を読んで休眠 TUI かどうかを見る。
+  // --screen を付けないと再描画が積み重なった履歴が返り、判定に使えない。
+  const screenByHandle = new Map();
+  for (const terminal of terminals) {
+    if (agentByPaneKey.has(paneKeyOf(terminal))) continue;
+    if (self.handle && terminal.handle === self.handle) continue;
+    try {
+      const result = await orca([
+        "terminal", "read",
+        "--terminal", terminal.handle,
+        "--screen", "--limit", "40",
+      ]);
+      const tail = result?.terminal?.tail;
+      if (Array.isArray(tail)) screenByHandle.set(terminal.handle, tail);
+    } catch {
+      // 読めなければ screenByHandle に入れない = classify 側で keep に倒れる
+    }
+  }
+
   const decisions = classify({
     terminals,
     agentByPaneKey,
     self,
+    screenByHandle,
     opts: { shellIdleSecs: opts.shellIdleSecs, keepShells: opts.keepShells },
   });
 
