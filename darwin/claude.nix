@@ -8,7 +8,8 @@
 # plain copy discards them on every switch. So the live file stays a regular,
 # untracked file and `nix run .#switch` folds the managed keys into it with
 # darwin/claude/merge.jq (managed wins; unnamed keys pass through; hooks are
-# unioned). The same applies to ~/.gemini/settings.json.
+# unioned). The same applies to ~/.gemini/settings.json and the Antigravity
+# CLI's ~/.gemini/antigravity-cli/settings.json.
 #
 # To change a setting: edit the attrset below, then `nix run .#switch`.
 # Tests for the merge rules: tools/tests/test-merge-settings.sh
@@ -211,6 +212,27 @@ let
     contextFileName = "AGENTS.md";
   };
 
+  # Antigravity CLI (agy). Print mode (`agy -p`) cannot prompt, so any command
+  # outside this list is soft-denied and the answer comes back empty. Only
+  # read-only commands: the personal-tools:gemini skill runs agy for research.
+  antigravitySettings = {
+    permissions.allow = [
+      "command(cat)"
+      "command(head)"
+      "command(tail)"
+      "command(wc)"
+      "command(ls)"
+      "command(grep)"
+      "command(rg)"
+      "command(jq)"
+      "command(git status)"
+      "command(git log)"
+      "command(git diff)"
+      "command(git show)"
+      "command(git grep)"
+    ];
+  };
+
   # Shell snippet: merge the generated <managed> JSON into <target> in place.
   # Seeds an empty target, refuses to touch a target that is not valid JSON,
   # and only rewrites the file when the merge actually changes it. A copy of
@@ -261,6 +283,12 @@ in
   home.activation.geminiSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] (
     mergeInto "${home}/.gemini/settings.json" (
       jsonFormat.generate "gemini-settings.json" geminiSettings
+    )
+  );
+
+  home.activation.antigravitySettings = lib.hm.dag.entryAfter [ "writeBoundary" ] (
+    mergeInto "${home}/.gemini/antigravity-cli/settings.json" (
+      jsonFormat.generate "antigravity-settings.json" antigravitySettings
     )
   );
 }

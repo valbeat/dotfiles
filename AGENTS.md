@@ -3,7 +3,7 @@
 ## Project Structure & Module Organization
 - Core dotfiles live at repo root (`.zshrc`, `.vimrc`, `.gitconfig`, `.tmux.conf`, etc.). Each is symlinked into `$HOME` by home-manager (`darwin/home.nix`); new root dotfiles must be added to its `dotfiles` list.
 - `.claude/` is `~/.claude`: the user-level `CLAUDE.md`, `agents/`, `hooks/`, and `statusline.sh`. Skills do not live here (see below). `.codex/` is `~/.codex` (`AGENTS.md`, `prompts/`). Everything else under both directories is runtime state and untracked.
-- `darwin/` holds the nix-darwin configuration: `configuration.nix` (entry), `system-defaults.nix` (macOS defaults), `home.nix` (dotfile symlinks), `homebrew.nix` (taps/brews/casks), and `claude.nix` + `claude/merge.jq` (managed keys of the Claude/Gemini `settings.json`).
+- `darwin/` holds the nix-darwin configuration: `configuration.nix` (entry), `system-defaults.nix` (macOS defaults), `home.nix` (dotfile symlinks), `homebrew.nix` (taps/brews/casks), and `claude.nix` + `claude/merge.jq` (managed keys of the Claude/Gemini/Antigravity CLI `settings.json`).
 - `flake.nix` wires it together and exposes the `build` / `switch` / `update` apps. Vim-related assets sit under `.vim/` (plugins, colors, rc snippets).
 - `tools/` keeps the non-nix helpers: `patches/` (plugin-cache patches), `settings-diff.sh`, and `tests/` (`test-*.sh`). `Makefile` keeps only tasks with no nix equivalent.
 
@@ -12,7 +12,7 @@
 - `nix run .#switch`: build and activate (system defaults + symlinks + Homebrew + settings.json merge; runs as root). An agent can run it only after the user runs `sudo -v` in a real terminal: the sudo timestamp is shared per user for 15 minutes (`darwin/configuration.nix`). Ask for that instead of handing the command back, and run it by the expanded absolute path (`nix run /Users/<user>/src/github.com/valbeat/dotfiles#switch`; the allowlist in `darwin/claude.nix` matches that exact text, not `~` or `.#switch`) so the flake in the current directory is never the one activated.
 - `nix run .#update`: pulls latest `main` and updates git submodules.
 - `make test`: runs `tools/tests/test-*.sh` (settings merge, settings-diff). When changing `merge.jq`, update the test first.
-- `make settings-diff`: shows which managed keys the next switch would reset in `~/.claude/settings.json` and `~/.gemini/settings.json`.
+- `make settings-diff`: shows which managed keys the next switch would reset in `~/.claude/settings.json`, `~/.gemini/settings.json`, and `~/.gemini/antigravity-cli/settings.json`.
 - `make patches`: applies the `claude -p` replacement patches to plugin caches (idempotent; rerun after a plugin update overwrites them).
 - `make hunk-skill`: re-syncs the vendored `hunk-review` skill into `claude-plugins-private` after `brew upgrade hunk` (then bump `personal-tools` and ship it).
 
