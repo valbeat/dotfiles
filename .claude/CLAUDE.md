@@ -22,6 +22,7 @@
 
 ## 環境
 
-- ワークスペースマネージャーは Orca（worktree は `~/orca/workspaces/<repo>/<name>`）。Orca 管理下かは `orca worktree current --json` で判定し、管理下なら `orca-cli` / `orchestration` スキル、素の iTerm2 なら `iterm2` スキルを使う。ブラウザ自動化は claude-in-chrome
+- ワークスペースマネージャーは Orca（worktree は `~/orca/workspaces/<repo>/<name>`）。Orca 管理下かは `orca worktree current --json` で判定し、管理下なら `orca-cli` / `orchestration` スキル、素の iTerm2 なら `personal-tools:iterm2` スキルを使う。ブラウザ自動化は claude-in-chrome
 - Orca の orchestration を使わせるには依頼に「監督して」「DAG で」「worker_done を待って」を明示する（「別のエージェントに渡して」は full handoff 扱い）。worker の `--model` / `--effort` は `--agent claude` 専用
 - Gemini との協業モードは `personal-tools:gemini`、Codex への委譲は `personal-tools:codex` スキルに従う
+- 定期実行は Orca の automations を既定にする（`/schedule`・`/loop`・cron はユーザーが明示したときだけ）。組む・直すときは `personal-tools:orca-automation` スキルに従う
