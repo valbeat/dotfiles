@@ -2,14 +2,19 @@
 
 ## Model Selection Policy
 
-制約はコストではなくレート制限（Max サブスク、従量課金なし）。5h 枠は繰り越されないので
-使い残しは損。7d に余剰がある限り、判断の質が効く場面から順に上のモデルへ回す。
+制約はコストではなくレート制限（サブスクのみ、従量課金なし）。枠は **Codex > Claude > Gemini** の順に大きい。
+7d 枠は繰り越されないので、使い残しは損。
 
-- **メインセッション**: Opus 4.8（起動時の既定。settings.json には固定しない）
-- **Fable 5**（`model: fable`）: 判断が品質を決める場面。`/personal-tools:review` のボーダーライン裁定、設計レビュー、`code-reviewer` / `debugger` エージェント、Workflow の verify / judge ステージ
-- **Sonnet / Haiku**: 探索・検索・整形・分類のサブエージェント
-- **セキュリティ監査・脆弱性調査には Fable を使わない**。サイバー系分類器の refusal 誤検知があるため Opus を使う（`/security-review`, `autoresearch:security`）。この例外は budget tier に関わらず常に最優先
-- 7d の余剰による自動格上げ（budget tier）の閾値・格上げ表・ルールは `personal-tools:rate-pace` スキルが唯一の定義
+役割が決まっている作業:
+
+- **指揮・対話（メインセッション）**: Claude Opus 5（settings.json には固定しない）
+- **判断が品質を決める場面**: Fable 5.1（`model: fable`）。`/personal-tools:review` のボーダーライン裁定、設計レビュー、`code-reviewer` / `debugger` エージェント、Workflow の verify / judge ステージ
+- **実装・修正・大量の読み取りの要約**: Codex（`/personal-tools:codex`、既定 gpt-5.6-terra。難所は sol / astra、機械的な作業は luna）
+- **Web 検索・ドキュメント調査**: Gemini（`/personal-tools:gemini`、Antigravity CLI の `agy`。`gemini` CLI はサブスクで使えない）
+- **探索・整形・分類のサブエージェント**: Sonnet 5 / Haiku 4.5
+- **セキュリティ監査・脆弱性調査には Fable を使わない**。サイバー系分類器の refusal 誤検知があるため Opus を使う（`/security-review`, `autoresearch:security`）。この例外は枠の状況に関わらず常に最優先
+
+どちらの枠でもできる作業（2 人目のレビュー、実装 worker、反証役）の振り分け（route）と、7d の余剰による自動格上げ（budget tier）は、`personal-tools:rate-pace` スキルが唯一の定義
 
 ## Git Workflow
 

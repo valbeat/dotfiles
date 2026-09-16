@@ -1,196 +1,55 @@
 ---
-allowed-tools: Bash(gemini:*)
-description: Execute Gemini CLI for AI-powered conversations and code assistance
+allowed-tools: Bash(agy:*)
+description: Ask Gemini via Antigravity CLI (agy) for web search, documentation lookup, and codebase research
 ---
 
-# Gemini Chat
+# Gemini Chat (Antigravity CLI)
 
 ## Context
 
-- Gemini CLI integration: CLAUDE.md specifies collaboration workflows
 - Current project: !`pwd`
-- Available for code assistance, analysis, and collaborative problem-solving
 
 ## Your task
 
-Execute Gemini CLI and interact with it from Claude for AI-powered conversations and code assistance. Follow the collaboration patterns defined in CLAUDE.md.
+Antigravity CLI（`agy`）で Gemini に調査・検索させ、結果を統合して報告する。
+Gemini の役割は Web 検索、ドキュメント調査、コードベースの読み取り調査に限る。実装・修正・レビューは Codex 自身が行う。
 
-## Arguments
+Gemini CLI（`gemini`）は使わない。2026-06-18 以降、Google AI Pro/Ultra のサブスク枠では応答しない。
 
-- `mode`: Interaction mode
-  - `chat`: Interactive conversation mode (default)
-  - `single`: Single prompt execution
-  - `context`: Include file context in conversation
-- `--model`: Gemini model to use (default: gemini-2.5-pro)
-- `--prompt`: Initial prompt or question
-- `--all-files`: Include all files in current directory as context
-- `--yolo`: Auto-accept all suggested actions (use with caution)
-- `--debug`: Enable debug mode for troubleshooting
+## Execution
 
-## Basic Usage
+- `--mode plan` を付ける（ファイルを書き換えさせない）
+- コードベースを読ませるときは `--add-dir "$(pwd)"` を付け、プロンプトにも作業ディレクトリの絶対パスを書く（欠けると読み取りが拒否され、応答が空になる）
+- プロンプトは `-p` の引数で渡し、`-p` は最後に置く。標準入力は読まない
 
-### Start interactive chat
 ```bash
-# Basic chat session
-gemini
-
-# With specific model
-gemini -m gemini-2.5-pro
-
-# With initial prompt
-gemini -p "Help me understand this codebase"
+agy --mode plan --add-dir "$(pwd)" --output-format json -p "$(cat <<PROMPT
+作業ディレクトリ: $(pwd)（ファイルは必ずこの絶対パス配下で指定する）
+タスク: [調べること]
+制約条件: 調査のみ。確認や質問は不要
+出力形式: [期待する形式]。根拠のファイルパスや URL を付ける
+PROMPT
+)" 2>/dev/null | jq -r '.status, (.denied_actions // "no denied actions"), .response'
 ```
 
-### Single prompt execution
-```bash
-# Quick question without entering interactive mode
-echo "What is the purpose of this function?" | gemini -p "$(cat utils.js)"
+Web 検索だけなら `--add-dir` は不要:
 
-# Or using file input
-cat README.md | gemini -p "Summarize this documentation"
+```bash
+agy --mode plan -p "Find the official documentation about X and summarize key points with source URLs"
 ```
 
-### With file context
-```bash
-# Include all files in context
-gemini --all_files -p "Review this codebase and suggest improvements"
-
-# Include specific files via stdin
-cat src/*.js | gemini -p "Find potential bugs in these files"
-```
-
-## Advanced Examples
-
-### Code review session
-```bash
-# Review recent changes
-git diff | gemini -p "Review these changes and suggest improvements"
-
-# Review specific commit
-git show HEAD | gemini -p "Explain what this commit does"
-```
-
-### Debug assistance
-```bash
-# Debug with error context
-cat error.log | gemini -p "Help me understand and fix this error"
-
-# Interactive debugging session
-gemini --debug -p "I'm getting an undefined error in my React component"
-```
-
-### Project analysis
-```bash
-# Analyze project structure
-find . -name "*.js" -o -name "*.ts" | head -20 | gemini -p "Analyze this project structure"
-
-# Generate documentation
-gemini --all_files -p "Generate API documentation for this codebase"
-```
-
-### YOLO mode (auto-accept actions)
-```bash
-# Automatically accept all suggested file changes
-gemini --yolo -p "Refactor this code to use modern JavaScript"
-
-# BE CAREFUL: This will make changes without confirmation
-gemini --yolo --all_files -p "Update all imports to use ES6 modules"
-```
-
-## Integration with Claude
-
-### Passing context between Claude and Gemini
-```bash
-# 1. First, use Claude to analyze the issue
-# 2. Then use Gemini for a second opinion:
-echo "Claude identified XYZ issue in the code. Can you verify and suggest alternatives?" | gemini
-
-# Compare approaches
-gemini -p "Claude suggested using approach A. What are the pros/cons compared to approach B?"
-```
-
-### Collaborative workflow
-```bash
-# Use Claude for planning, Gemini for implementation
-gemini -p "Implement the feature that Claude designed in the previous conversation"
-
-# Use Gemini for exploration, Claude for refinement
-gemini --all_files -p "Explore possible optimizations" > optimizations.md
-# Then review optimizations.md with Claude
-```
-
-## Session Management
-
-### Save conversation
-```bash
-# Redirect output to file
-gemini -p "Explain the architecture" > architecture-discussion.md
-
-# Append to existing session
-gemini -p "Continue from where we left off" >> architecture-discussion.md
-```
-
-### Resume conversation
-```bash
-# Include previous context
-cat previous-session.md | gemini -p "Based on our previous discussion, let's continue with implementation"
-```
+| 目的 | オプション |
+|------|-----------|
+| 重い調査 | `--model gemini-3.8-flash-high` |
+| 速さ優先 | `--model gemini-3.8-flash-low` |
+| 長時間 | `--print-timeout 15m` |
 
 ## Troubleshooting
 
-### Installation check
-```bash
-# Verify Gemini is installed
-which gemini || echo "Gemini not found"
+| 出力 | 対処 |
+|------|------|
+| `Please sign in` | ユーザーに `agy` を対話起動してサインインしてもらう |
+| `denied_actions` あり / `permission that headless mode cannot prompt for` | `--add-dir` と絶対パスの指示を確認。読み取り専用コマンドの許可リストは dotfiles の `darwin/claude.nix`（`antigravitySettings`） |
+| quota / rate limit のエラー | Gemini の枠切れ。自分で調べる方法に切り替えてユーザーに伝える |
 
-# Check version
-gemini --version
-
-# Test basic functionality
-echo "Hello" | gemini -p "Respond with 'Hi' if you're working"
-```
-
-### Common issues
-
-1. **Command not found**
-   ```bash
-   # Install via npm/volta
-   volta install @google/gemini-cli
-   # or
-   npm install -g @google/gemini-cli
-   ```
-
-2. **Authentication errors**
-   - Ensure you have valid credentials configured
-   - Check environment variables for API keys
-
-3. **Context too large**
-   - Use specific file patterns instead of --all_files
-   - Filter files before passing to Gemini
-
-4. **Debug mode**
-   ```bash
-   # Enable debug output
-   gemini --debug -p "Your prompt"
-   
-   # Check configuration
-   gemini --help
-   ```
-
-## Best Practices
-
-- Use `--all_files` sparingly - it can overwhelm the context
-- Save important conversations for future reference
-- Be specific with prompts for better results
-- Use YOLO mode only when you're confident about the changes
-- Combine with git to track changes made by Gemini
-- Review Gemini's suggestions before accepting (unless in YOLO mode)
-
-## Notes
-
-- Gemini CLI requires authentication - ensure you're logged in
-- Different models have different capabilities and token limits
-- The CLI maintains conversation context within a session
-- Use Ctrl+C to exit interactive mode
-- Output can be piped to other commands for processing
-- Consider using checkpointing (-c) for long sessions with file edits
+`--dangerously-skip-permissions` は使わない。
