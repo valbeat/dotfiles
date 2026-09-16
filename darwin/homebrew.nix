@@ -260,6 +260,8 @@
       "marp-cli"
       # Run a Kubernetes cluster locally
       "minikube"
+      # Polyglot runtime and tool version manager (.tool-versions / mise.toml)
+      "mise"
       # Simple tool to make locally trusted development certificates
       "mkcert"
       # Protocol buffers (Google's data interchange format)
@@ -296,10 +298,6 @@
       "poppler"
       # Show ps output as a tree
       "pstree"
-      # Python version management
-      "pyenv"
-      # Pyenv plugin to manage virtualenv
-      "pyenv-virtualenv"
       # Tiny command-line DNS client with support for UDP, TCP, DoT, DoH, DoQ and ODoH
       "q"
       # QR Code generation
