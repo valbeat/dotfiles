@@ -243,8 +243,10 @@ if [ $commands[anyenv] ]; then
   eval "$(anyenv init -)"
 fi
 
-# npm
-export PATH="$HOME/.anyenv/envs/nodenv/bin:$PATH"
+# mise (.tool-versions / mise.toml; takes precedence over volta and anyenv)
+if [ $commands[mise] ]; then
+  eval "$(mise activate zsh)"
+fi
 
 # -------------------------------------
 # プロンプト
@@ -933,8 +935,9 @@ if [ $commands[stern] ]; then
   source <(stern --completion=zsh)
 fi
 
-if [ $commands[aws] ]; then
-  PATH=$HOME/.anyenv/envs/pyenv/shims/aws_completer:$PATH
+if (( $+commands[aws_completer] )) && (( $+functions[compdef] )); then
+  autoload -Uz bashcompinit && bashcompinit
+  complete -C aws_completer aws
 fi
 
 export PATH
