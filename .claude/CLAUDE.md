@@ -6,10 +6,10 @@
 使い残しは損。7d に余剰がある限り、判断の質が効く場面から順に上のモデルへ回す。
 
 - **メインセッション**: Opus 4.8（起動時の既定。settings.json には固定しない）
-- **Fable 5**（`model: fable`）: 判断が品質を決める場面。`/review` のボーダーライン裁定、設計レビュー、`code-reviewer` / `debugger` エージェント、Workflow の verify / judge ステージ
+- **Fable 5**（`model: fable`）: 判断が品質を決める場面。`/personal-tools:review` のボーダーライン裁定、設計レビュー、`code-reviewer` / `debugger` エージェント、Workflow の verify / judge ステージ
 - **Sonnet / Haiku**: 探索・検索・整形・分類のサブエージェント
 - **セキュリティ監査・脆弱性調査には Fable を使わない**。サイバー系分類器の refusal 誤検知があるため Opus を使う（`/security-review`, `autoresearch:security`）。この例外は budget tier に関わらず常に最優先
-- 7d の余剰による自動格上げ（budget tier）の閾値・格上げ表・ルールは `rate-pace` スキルが唯一の定義
+- 7d の余剰による自動格上げ（budget tier）の閾値・格上げ表・ルールは `personal-tools:rate-pace` スキルが唯一の定義
 
 ## Git Workflow
 
@@ -24,4 +24,4 @@
 
 - ワークスペースマネージャーは Orca（worktree は `~/orca/workspaces/<repo>/<name>`）。Orca 管理下かは `orca worktree current --json` で判定し、管理下なら `orca-cli` / `orchestration` スキル、素の iTerm2 なら `iterm2` スキルを使う。ブラウザ自動化は claude-in-chrome
 - Orca の orchestration を使わせるには依頼に「監督して」「DAG で」「worker_done を待って」を明示する（「別のエージェントに渡して」は full handoff 扱い）。worker の `--model` / `--effort` は `--agent claude` 専用
-- Gemini との協業モードは `gemini` スキル、Codex への委譲は `codex` スキルに従う
+- Gemini との協業モードは `personal-tools:gemini`、Codex への委譲は `personal-tools:codex` スキルに従う

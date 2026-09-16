@@ -60,18 +60,20 @@ you can port them to `darwin/claude.nix` first. It compares against the
 
 ## Claude Code plugins
 
-Generic and personal skills live in two plugin marketplaces instead of
+All skills live in two plugin marketplaces. This repo has no
 `.claude/skills/`:
 
-- [valbeat/claude-plugins](https://github.com/valbeat/claude-plugins)
-  (public) — `writing`, `design`, `git-workflow`, `dev-workflow`,
-  `skill-tools`
 - [valbeat/claude-plugins-private](https://github.com/valbeat/claude-plugins-private)
-  (private) — `personal-tools`
+  (private, the default home) — `personal-tools` (including the
+  environment-coupled skills such as `review`, `rate-pace`, `worktree-gc`,
+  `iterm2`, `hunk-review`), `skill-management`
+- [valbeat/claude-plugins](https://github.com/valbeat/claude-plugins)
+  (public, for generalized skills) — `writing`, `design`, `git-workflow`,
+  `dev-workflow`, `skill-tools`
 
-Skills are invoked with plugin namespaces (e.g. `/git-workflow:commit`,
-`/dev-workflow:spec`). Environment-coupled skills (cmux, herdr, iterm2,
-hunk-review, etc.) remain in `.claude/skills/` here.
+Skills are invoked with plugin namespaces (e.g. `/personal-tools:review`,
+`/git-workflow:commit`). Where a new skill goes and how to inventory existing
+ones is defined in `/skill-management:skill-inventory`.
 
 ### Setup on a new machine
 
@@ -91,7 +93,7 @@ automatically:
 claude plugin marketplace add valbeat/claude-plugins
 claude plugin marketplace add valbeat/claude-plugins-private
 claude plugin install writing@valbeat-plugins        # repeat for the rest
-claude plugin list                                   # verify all 6 enabled
+claude plugin list                                   # verify all 7 enabled
 ```
 
 ### Updating skills
