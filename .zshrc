@@ -12,43 +12,52 @@ fi
 if [ -d ~/.zplug ]; then
   export ZPLUG_HOME=~/.zplug
 
-  source $ZPLUG_HOME/init.zsh
+  # tty を持たないシェル（エージェント経由の実行など）では zpty が使えず、
+  # zsh-async / pure / zsh-autosuggestions が
+  # "can't open pseudo terminal: device not configured" を大量に吐き、
+  # zplug 自体も is-at-least の FUNCNEST 警告を出す。
+  # いずれも対話シェル専用のプラグインなので、その場合は読み込みごと飛ばす。
+  if [[ ! -o interactive ]] || [[ ! -t 0 ]] || [[ ! -t 1 ]]; then
+    # emojify など zplug 配下のコマンドは外から参照されうるので PATH だけは通す
+    export PATH="$ZPLUG_HOME/bin:$PATH"
+  else
+    source $ZPLUG_HOME/init.zsh
 
-  # 補完
-  zplug "zsh-users/zsh-completions"
-  zplug "zsh-users/zsh-autosuggestions", \
-    hook-load:"{
+    # 補完
+    zplug "zsh-users/zsh-completions"
+    zplug "zsh-users/zsh-autosuggestions", \
+      hook-load:"{
     bindkey '^ ' autosuggest-accept
   }
   "
-  
-  # テーマ
-  ## pure
-  zplug "mafredri/zsh-async"
-  zplug "sindresorhus/pure", defer:2, \
-    hook-load:"{
+
+    # テーマ
+    ## pure
+    zplug "mafredri/zsh-async"
+    zplug "sindresorhus/pure", defer:2, \
+      hook-load:"{
     PURE_GIT_DELAY_DIRTY_CHECK=1000
   }
   "
-  ## シンタックスハイライト(compinit後に読み込み)
-  zplug "zsh-users/zsh-syntax-highlighting", defer:2
-  
-  # 関数
-  zplug "mollifier/cd-gitroot"
-  
-  # 絵文字対応
-  zplug "mrowa44/emojify", as:command
-  
-  zplug "changyuheng/zsh-interactive-cd"
-  
-  # Install plugins if there are plugins that have not been installed
-  if ! zplug check --verbose; then
-    zplug install
-  fi
-  
-  # Then, source plugins and add commands to $PATH
-  zplug load --verbose
+    ## シンタックスハイライト(compinit後に読み込み)
+    zplug "zsh-users/zsh-syntax-highlighting", defer:2
 
+    # 関数
+    zplug "mollifier/cd-gitroot"
+
+    # 絵文字対応
+    zplug "mrowa44/emojify", as:command
+
+    zplug "changyuheng/zsh-interactive-cd"
+
+    # Install plugins if there are plugins that have not been installed
+    if ! zplug check --verbose; then
+      zplug install
+    fi
+
+    # Then, source plugins and add commands to $PATH
+    zplug load --verbose
+  fi
 fi
 
 # -------------------------------------
