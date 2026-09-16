@@ -44,13 +44,14 @@ Orca が起動していれば自動でワークスペース情報を読み、各
 | 4 | Orca: ターミナルのエージェントが作業中 | 触らない |
 | 5 | 未コミット変更・未追跡ファイルあり | **削除しない**（人間に見せる） |
 | 6 | Orca: 未読の出力あり | **削除しない**（最終レポートを読んでから） |
-| 7 | Orca: status が `completed`、または archived | 猶予なしで worktree 削除（PR なしの未 push コミットがあれば削除しない） |
-| 8 | PR が OPEN、最終更新から 14 日未満 | 保持 |
-| 9 | PR が OPEN、最終更新から 14 日以上 | `node_modules` だけ削除 |
-| 10 | PR が MERGED / CLOSED から 3 日以上 | worktree 削除（MERGED ならブランチも） |
-| 11 | PR なし、Orca: status が `todo` / `in-review` | 保持 |
-| 12 | PR なし、基準ブランチからの独自コミット 0 | 1 日で worktree 削除 |
-| 13 | PR なし、独自コミットあり | **削除しない** |
+| 7 | どのリモートにも無いコミットあり（PR が MERGED でも） | **削除しない** |
+| 8 | Orca: status が `completed`、または archived | 猶予なしで worktree 削除 |
+| 9 | PR が OPEN、最終更新から 14 日未満 | 保持 |
+| 10 | PR が OPEN、最終更新から 14 日以上 | `node_modules` だけ削除 |
+| 11 | PR が MERGED / CLOSED から 3 日以上 | worktree 削除（MERGED ならブランチも） |
+| 12 | PR なし、Orca: status が `todo` / `in-review` | 保持 |
+| 13 | PR なし、基準ブランチからの独自コミット 0 | 1 日で worktree 削除 |
+| 14 | PR なし、独自コミットあり（リモートにはある） | **削除しない** |
 
 基準ブランチ（`main` など）を checkout した worktree は、消すときもブランチは残す。
 
@@ -83,6 +84,11 @@ orca worktree set --worktree active --workspace-status completed --json
 - **「マージ済みか」を git の祖先判定で決めない。** squash / rebase merge ではブランチの
   コミットが基準ブランチの祖先にならないため、マージ済みでも「未マージ」に見える。
   PR の state（`gh pr list --head <branch> --state all`）を正とする。
+- **ただし未 push のコミットは PR の state より優先して守る。** PR がマージされた後に
+  積んで push していないコミットは、「MERGED だからブランチも削除」で失われる。
+  同名のリモートブランチの有無ではなく `git rev-list --count <ref> --not --remotes` で
+  「どのリモートにも無いコミット」を数える（マージ後にリモートブランチが消えても、
+  別ブランチに同じコミットがあっても正しく判定できる）。
 - **worktree の削除とブランチの削除を分ける。** worktree を消してもコミット済みの作業は
   ブランチの ref に残り、失われるのは未コミットの変更だけ。ブランチを消すのは PR が
   MERGED のときだけ。CLOSED（未マージ）は成果がどこにも無いのでブランチを残す。
@@ -97,7 +103,7 @@ orca worktree set --worktree active --workspace-status completed --json
 
 ## テスト
 
-判定基準は 54 個のテストで固定してある。基準を変えるときはテストから直す。
+判定基準は 59 個のテストで固定してある。基準を変えるときはテストから直す。
 
 ```bash
 node --test ~/.claude/skills/worktree-gc/scripts/worktree-gc.test.mjs

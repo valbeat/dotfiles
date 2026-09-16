@@ -10,6 +10,8 @@
 //   - worktree の削除とブランチの削除を分ける。worktree を消してもコミット済みの
 //     作業はブランチの ref に残り、失われるのは未コミットの変更だけ。
 //   - stash は common dir で共有されるため worktree を消しても失われない。
+//   - どのリモートにも無いコミットがあれば、PR の state に関係なく消さない。
+//     PR が MERGED でも、マージ後に積んで push していないコミットがありうる。
 //   - ディレクトリの mtime はビルド生成物で動くので使わない。最終コミット日時 /
 //     PR の更新日時 / worktree 管理ファイルの mtime のうち最も新しいものを
 //     「最終アクティビティ」とする。管理ファイルを見るのは、古い main から生やした
@@ -91,16 +93,17 @@ export const classifyWorktree = (wt, options = DEFAULTS) => {
   if (orca?.isUnread) {
     return hold('Orca に未読の出力あり（最終レポートを確認してから）')
   }
+  if (wt.unpushedCount > 0) {
+    const pr = wt.pr ? `PR #${wt.pr.number} は ${wt.pr.state} だが` : ''
+    return hold(
+      `${pr}リモートに無いコミット ${wt.unpushedCount} 件（未 push）— 消すと失われる`,
+    )
+  }
 
   // 人間が「終わった」と印を付けたものは猶予を待たない。
   // 失われうるのは PR にもリモートにも無いコミットだけなので、それだけは守る。
   if (orca && (orca.status === 'completed' || orca.isArchived)) {
     const label = orca.status === 'completed' ? 'completed' : 'archived'
-    if (!wt.pr && wt.aheadOfMain > 0 && !wt.hasRemoteBranch) {
-      return hold(
-        `${label} だが未 push の独自コミット ${wt.aheadOfMain} 件 — 消すと失われる`,
-      )
-    }
     const merged = wt.pr?.state === 'MERGED'
     return {
       verdict: 'delete',
@@ -157,10 +160,13 @@ export const classifyWorktree = (wt, options = DEFAULTS) => {
     }
   }
 
+  // 未 push のコミットは上で hold 済み。ここに来るのはリモートにコミットがあるもの
   if (wt.hasRemoteBranch) {
     return hold(`PR なしだが push 済み（独自コミット ${wt.aheadOfMain} 件）`)
   }
-  return hold(`未 push の独自コミット ${wt.aheadOfMain} 件 — 消すと失われる`)
+  return hold(
+    `PR なしの独自コミット ${wt.aheadOfMain} 件（別のリモートブランチにはある）`,
+  )
 }
 
 /**
@@ -495,6 +501,12 @@ export const collectWorktrees = (
       aheadOfMain:
         Number.parseInt(
           git(['rev-list', '--count', `${baseRef}..${ref}`], entry.path),
+          10,
+        ) || 0,
+      // 同名のリモートブランチの有無ではなく、どのリモートにも無いコミットを数える
+      unpushedCount:
+        Number.parseInt(
+          git(['rev-list', '--count', ref, '--not', '--remotes'], entry.path),
           10,
         ) || 0,
       hasRemoteBranch:
