@@ -88,7 +88,6 @@ result-*
 # config.toml is intentionally untracked: codex CLI writes machine-local
 # state (project trust entries, notice flags) into it on every run.
 .codex/*
-!.codex/prompts/
 !.codex/AGENTS.md
 # local-only agent (project-specific content, not for the public repo)
 .claude/agents/github-issue-manager.md
