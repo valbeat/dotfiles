@@ -7,10 +7,18 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Orca automation definitions (private). Fetched over SSH with the user's
+    # key; CI rewrites the URL to HTTPS with a read-only token
+    # (.github/workflows/nix-build.yml). See darwin/orca.nix.
+    orca-automations = {
+      url = "git+ssh://git@github.com/valbeat/orca-automations.git";
+      flake = false;
+    };
   };
 
   outputs =
-    { self, nixpkgs, nix-darwin, home-manager }:
+    { self, nixpkgs, nix-darwin, home-manager, orca-automations }:
     {
       # One entry per host; the attribute name must match `scutil --get LocalHostName`.
       # Forks: add your own host here. For Intel, set `system = "x86_64-darwin"`
@@ -27,6 +35,7 @@
             # are renamed with this suffix instead of aborting activation.
             home-manager.backupFileExtension = "hm-backup";
             home-manager.users.takuma = import ./darwin/home.nix;
+            home-manager.extraSpecialArgs = { inherit orca-automations; };
           }
         ];
       };
@@ -50,7 +59,14 @@
           # `nix run .#switch` — build and activate the darwin system for this host.
           # Activation must run as root; the host name comes from LocalHostName so
           # forks with their own darwinConfigurations entry can use it as-is.
+          #
+          # Inputs are fetched first as the invoking user: the private
+          # orca-automations input needs the user's SSH key, which root (under
+          # sudo) does not have. Root then finds the locked inputs already in
+          # the store.
           switch = app "darwin-switch" ''
+            set -e
+            nix flake archive "${self}" >/dev/null
             exec sudo darwin-rebuild switch \
               --flake "${self}#$(scutil --get LocalHostName)" "$@"
           '';

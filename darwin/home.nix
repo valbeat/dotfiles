@@ -34,7 +34,10 @@ let
   ];
 in
 {
-  imports = [ ./claude.nix ];
+  imports = [
+    ./claude.nix
+    ./orca.nix
+  ];
 
   home.file = builtins.listToAttrs (
     map (name: {
