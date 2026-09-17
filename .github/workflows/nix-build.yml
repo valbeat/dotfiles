@@ -27,6 +27,8 @@ jobs:
 
       # flake.lock health: warns when nixpkgs is old or not a supported branch.
       - uses: DeterminateSystems/flake-checker-action@v14
+        with:
+          send-statistics: false
 
       # orca-automations is a private repository. The public check does not
       # fetch it: it is replaced with a stub, so no credentials are needed.
