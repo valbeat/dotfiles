@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Show what the next `nix run .#switch` would change in the live Claude Code /
-# Gemini / Antigravity CLI settings files — i.e. managed keys you changed locally (via /config,
+# Antigravity CLI settings files — i.e. managed keys you changed locally (via /config,
 # `claude plugin install`, hand edits) that Nix will reset unless you port them
 # to darwin/claude.nix.
 #
@@ -22,7 +22,6 @@ filter="$here/../darwin/claude/merge.jq"
 if [ $# -eq 0 ]; then
   set -- \
     "$HOME/.claude/settings.json" "$HOME/.claude/settings.nix.json" \
-    "$HOME/.gemini/settings.json" "$HOME/.gemini/settings.nix.json" \
     "$HOME/.gemini/antigravity-cli/settings.json" "$HOME/.gemini/antigravity-cli/settings.nix.json"
 fi
 if [ $(( $# % 2 )) -ne 0 ]; then

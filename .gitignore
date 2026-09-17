@@ -82,7 +82,6 @@ result-*
 # settings.json: same treatment as .claude/settings.json (see darwin/claude.nix)
 .gemini/*
 !.gemini/GEMINI.md
-!.gemini/commands/
 
 # Codex local artifacts
 # config.toml is intentionally untracked: codex CLI writes machine-local

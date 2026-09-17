@@ -1,4 +1,4 @@
-# home-manager module: the Claude Code and Gemini CLI settings this repository
+# home-manager module: the Claude Code and Antigravity CLI settings this repository
 # owns, merged into the live settings files at activation.
 #
 # Why merge instead of symlink or copy: Claude Code writes to
@@ -8,8 +8,9 @@
 # plain copy discards them on every switch. So the live file stays a regular,
 # untracked file and `nix run .#switch` folds the managed keys into it with
 # darwin/claude/merge.jq (managed wins; unnamed keys pass through; hooks are
-# unioned). The same applies to ~/.gemini/settings.json and the Antigravity
-# CLI's ~/.gemini/antigravity-cli/settings.json.
+# unioned). The same applies to the Antigravity CLI's
+# ~/.gemini/antigravity-cli/settings.json. (Gemini CLI's ~/.gemini/settings.json is
+# no longer managed: Gemini CLI stopped serving subscription users on 2026-06-18.)
 #
 # To change a setting: edit the attrset below, then `nix run .#switch`.
 # Tests for the merge rules: tools/tests/test-merge-settings.sh
@@ -207,12 +208,6 @@ let
     voiceEnabled = true;
   };
 
-  geminiSettings = {
-    theme = "Default";
-    selectedAuthType = "oauth-personal";
-    contextFileName = "AGENTS.md";
-  };
-
   # Antigravity CLI (agy). Print mode (`agy -p`) cannot prompt, so any command
   # outside this list is soft-denied and the answer comes back empty. Only
   # read-only commands: the personal-tools:gemini skill runs agy for research.
@@ -278,12 +273,6 @@ in
   home.activation.claudeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] (
     mergeInto "${home}/.claude/settings.json" (
       jsonFormat.generate "claude-settings.json" claudeSettings
-    )
-  );
-
-  home.activation.geminiSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] (
-    mergeInto "${home}/.gemini/settings.json" (
-      jsonFormat.generate "gemini-settings.json" geminiSettings
     )
   );
 

@@ -23,7 +23,7 @@ test: ## Run repo tests (tools/tests/*.sh)
 		echo "== $$(basename $$t)"; bash $$t || status=1; done; exit $$status
 
 .PHONY: settings-diff
-settings-diff: ## Show what the next nix switch would change in ~/.claude, ~/.gemini and agy settings.json
+settings-diff: ## Show what the next nix switch would change in ~/.claude and agy settings.json
 	@bash $(DOTPATH)/tools/settings-diff.sh
 
 .PHONY: help
