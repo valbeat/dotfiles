@@ -1,0 +1,41 @@
+name: Update flake inputs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 1" # Monday 09:00 JST
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write # dispatch nix-build.yml on the update branch
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: DeterminateSystems/determinate-nix-action@v3
+
+      # Public inputs only. orca-automations is private and is updated locally
+      # (`nix flake update orca-automations`) after its pull requests merge.
+      - name: Update flake.lock
+        id: update
+        uses: DeterminateSystems/update-flake-lock@v29
+        with:
+          inputs: nixpkgs nix-darwin home-manager
+          branch: flake-update
+          pr-title: "chore(flake): nixpkgs / nix-darwin / home-manager を更新する"
+          pr-labels: |
+            dependencies
+            automated
+          pr-assignees: valbeat
+
+      # A pull request opened with GITHUB_TOKEN does not trigger pull_request
+      # workflows; start the build check explicitly on the update branch.
+      - name: Run the build check on the update
+        if: steps.update.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run nix-build.yml --ref flake-update

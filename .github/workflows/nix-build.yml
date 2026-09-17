@@ -2,6 +2,10 @@ name: Nix Build Check
 
 on:
   pull_request:
+  # Dispatched by flake-update.yml: pull requests opened with GITHUB_TOKEN do
+  # not trigger pull_request workflows, but workflow_dispatch runs do, and their
+  # check runs show up on the pull request's head commit.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,7 +22,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: DeterminateSystems/nix-installer-action@v16
+      # Same Nix distribution as the host (Determinate Nix 3).
+      - uses: DeterminateSystems/determinate-nix-action@v3
+
+      # flake.lock health: warns when nixpkgs is old or not a supported branch.
+      - uses: DeterminateSystems/flake-checker-action@v14
+        with:
+          send-statistics: false
 
       # orca-automations is a private repository. The public check does not
       # fetch it: it is replaced with a stub, so no credentials are needed.
