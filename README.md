@@ -35,9 +35,10 @@ The remaining `Brewfile` holds only entries the module cannot express:
 VS Code extensions (`brew bundle --file=Brewfile`) and a commented-out
 go/npm install memo.
 
-## Claude Code / Gemini settings
+## Claude Code / Antigravity CLI settings
 
-`~/.claude/settings.json` and `~/.gemini/settings.json` are **not tracked**.
+`~/.claude/settings.json` and `~/.gemini/antigravity-cli/settings.json` are **not tracked**
+(`~/.gemini/settings.json` belonged to Gemini CLI and is no longer managed).
 Claude Code writes runtime state into its file (`/model`, `/config`, auto
 mode's per-project `autoMode` block, plugin installs) and Orca injects its
 agent-status hooks into both on every launch, so committing the live file
