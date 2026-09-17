@@ -174,11 +174,11 @@ let
       };
       valbeat-plugins.source = {
         source = "github";
-        repo = "valbeat/claude-plugins";
+        repo = "valbeat/agent-plugins";
       };
       valbeat-plugins-private.source = {
         source = "github";
-        repo = "valbeat/claude-plugins-private";
+        repo = "valbeat/agent-plugins-private";
       };
       vladikk-modularity.source = {
         source = "github";

@@ -63,11 +63,11 @@ you can port them to `darwin/claude.nix` first. It compares against the
 All skills live in two plugin marketplaces. This repo has no
 `.claude/skills/`:
 
-- [valbeat/claude-plugins-private](https://github.com/valbeat/claude-plugins-private)
+- [valbeat/agent-plugins-private](https://github.com/valbeat/agent-plugins-private)
   (private, the default home) — `personal-tools` (including the
   environment-coupled skills such as `review`, `rate-pace`, `worktree-gc`,
   `iterm2`, `hunk-review`), `skill-management`
-- [valbeat/claude-plugins](https://github.com/valbeat/claude-plugins)
+- [valbeat/agent-plugins](https://github.com/valbeat/agent-plugins)
   (public, for generalized skills) — `writing`, `design`, `git-workflow`,
   `dev-workflow`, `skill-tools`
 
@@ -90,8 +90,8 @@ and Claude Code picks them up on next launch. If plugins do not install
 automatically:
 
 ```shell
-claude plugin marketplace add valbeat/claude-plugins
-claude plugin marketplace add valbeat/claude-plugins-private
+claude plugin marketplace add valbeat/agent-plugins
+claude plugin marketplace add valbeat/agent-plugins-private
 claude plugin install writing@valbeat-plugins        # repeat for the rest
 claude plugin list                                   # verify all 7 enabled
 ```
@@ -99,7 +99,7 @@ claude plugin list                                   # verify all 7 enabled
 ### Updating skills
 
 Edit skills in the marketplace clones
-(`~/src/github.com/valbeat/claude-plugins{,-private}`), not here. After
+(`~/src/github.com/valbeat/agent-plugins{,-private}`), not here. After
 pushing, sync each machine with:
 
 ```shell
