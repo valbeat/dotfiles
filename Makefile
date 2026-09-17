@@ -13,9 +13,9 @@ patches: ## Apply claude -p replacement patches to plugin caches
 
 .PHONY: hunk-skill
 hunk-skill: ## Re-sync the hunk-review skill in claude-plugins-private from the installed hunk
-	@cp "$$(hunk skill path)" $(PLUGINS_PRIVATE)/plugins/personal-tools/skills/hunk-review/SKILL.md
-	@echo "Synced personal-tools/skills/hunk-review/SKILL.md from $$(hunk --version)"
-	@echo "Bump personal-tools version in claude-plugins-private and open a PR to ship it."
+	@cp "$$(hunk skill path)" $(PLUGINS_PRIVATE)/plugins/portable-tools/skills/hunk-review/SKILL.md
+	@echo "Synced portable-tools/skills/hunk-review/SKILL.md from $$(hunk --version)"
+	@echo "Bump portable-tools version (both .claude-plugin and .codex-plugin plugin.json) in claude-plugins-private and open a PR to ship it."
 
 .PHONY: test
 test: ## Run repo tests (tools/tests/*.sh)

@@ -155,6 +155,7 @@ let
       "git-workflow@valbeat-plugins" = true;
       "modularity@vladikk-modularity" = true;
       "personal-tools@valbeat-plugins-private" = true;
+      "portable-tools@valbeat-plugins-private" = true;
       "skill-management@valbeat-plugins-private" = true;
       "ralph-loop@claude-plugins-official" = true;
       "skill-tools@valbeat-plugins" = true;
