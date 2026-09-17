@@ -20,5 +20,8 @@ jobs:
 
       - uses: DeterminateSystems/nix-installer-action@v16
 
+      # orca-automations is a private repository. The public check does not
+      # fetch it: it is replaced with a stub, so no credentials are needed.
+      # Its own contents are tested in valbeat/orca-automations.
       - name: Dry-run build
-        run: nix run .#build
+        run: nix run .#build -- --override-input orca-automations "path:$PWD/ci/orca-automations-stub"
