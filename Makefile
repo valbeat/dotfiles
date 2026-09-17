@@ -3,7 +3,7 @@
 # Only tasks with no nix equivalent remain here.
 DOTPATH := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 # Skills live in the private plugin marketplace, not in this repo.
-PLUGINS_PRIVATE ?= $(HOME)/src/github.com/valbeat/claude-plugins-private
+PLUGINS_PRIVATE ?= $(HOME)/src/github.com/valbeat/agent-plugins-private
 
 .DEFAULT_GOAL := help
 
@@ -12,10 +12,10 @@ patches: ## Apply claude -p replacement patches to plugin caches
 	@bash $(DOTPATH)/tools/patches/apply.sh
 
 .PHONY: hunk-skill
-hunk-skill: ## Re-sync the hunk-review skill in claude-plugins-private from the installed hunk
+hunk-skill: ## Re-sync the hunk-review skill in agent-plugins-private from the installed hunk
 	@cp "$$(hunk skill path)" $(PLUGINS_PRIVATE)/plugins/portable-tools/skills/hunk-review/SKILL.md
 	@echo "Synced portable-tools/skills/hunk-review/SKILL.md from $$(hunk --version)"
-	@echo "Bump portable-tools version (both .claude-plugin and .codex-plugin plugin.json) in claude-plugins-private and open a PR to ship it."
+	@echo "Bump portable-tools version (both .claude-plugin and .codex-plugin plugin.json) in agent-plugins-private and open a PR to ship it."
 
 .PHONY: test
 test: ## Run repo tests (tools/tests/*.sh)
