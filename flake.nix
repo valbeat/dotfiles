@@ -18,7 +18,13 @@
   };
 
   outputs =
-    { self, nixpkgs, nix-darwin, home-manager, orca-automations }:
+    {
+      self,
+      nixpkgs,
+      nix-darwin,
+      home-manager,
+      orca-automations,
+    }:
     {
       # One entry per host; the attribute name must match `scutil --get LocalHostName`.
       # Forks: add your own host here. For Intel, set `system = "x86_64-darwin"`
@@ -39,6 +45,10 @@
           }
         ];
       };
+
+      # `nix fmt` formats every .nix file with nixfmt (RFC 166 style); CI runs
+      # `nix fmt -- --ci` to fail on unformatted files.
+      formatter.aarch64-darwin = nixpkgs.legacyPackages.aarch64-darwin.nixfmt-tree;
 
       apps.aarch64-darwin =
         let
