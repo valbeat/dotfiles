@@ -20,20 +20,8 @@ jobs:
 
       - uses: DeterminateSystems/nix-installer-action@v16
 
-      # The orca-automations flake input is a private repository fetched as
-      # git+ssh locally. CI has no SSH key, so rewrite that URL to HTTPS with a
-      # fine-grained, read-only token scoped to that one repository.
-      - name: Allow fetching the private orca-automations input
-        env:
-          ORCA_AUTOMATIONS_TOKEN: ${{ secrets.ORCA_AUTOMATIONS_TOKEN }}
-        run: |
-          if [ -z "$ORCA_AUTOMATIONS_TOKEN" ]; then
-            echo "::error::secret ORCA_AUTOMATIONS_TOKEN is not set (read-only token for valbeat/orca-automations)"
-            exit 1
-          fi
-          git config --global \
-            url."https://x-access-token:${ORCA_AUTOMATIONS_TOKEN}@github.com/valbeat/orca-automations".insteadOf \
-            "ssh://git@github.com/valbeat/orca-automations"
-
+      # orca-automations is a private repository. The public check does not
+      # fetch it: it is replaced with a stub, so no credentials are needed.
+      # Its own contents are tested in valbeat/orca-automations.
       - name: Dry-run build
-        run: nix run .#build
+        run: nix run .#build -- --override-input orca-automations "path:$PWD/ci/orca-automations-stub"

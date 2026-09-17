@@ -9,8 +9,8 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Orca automation definitions (private). Fetched over SSH with the user's
-    # key; CI rewrites the URL to HTTPS with a read-only token
-    # (.github/workflows/nix-build.yml). See darwin/orca.nix.
+    # key. CI does not fetch it: it overrides this input with
+    # ci/orca-automations-stub (.github/workflows/nix-build.yml). See darwin/orca.nix.
     orca-automations = {
       url = "git+ssh://git@github.com/valbeat/orca-automations.git";
       flake = false;
