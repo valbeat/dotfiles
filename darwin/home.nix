@@ -13,11 +13,8 @@ let
   # Mirrors the Makefile's DOTFILES list: every `.??*` entry in the repo root
   # except .DS_Store, .git, .gitmodules, and .github.
   dotfiles = [
-    ".claude"
     ".coderabbit.yaml"
-    ".codex"
     ".config"
-    ".gemini"
     ".gitconfig"
     ".gitconfig.local" # machine-local override, intentionally untracked
     ".gitconfig.osx"
@@ -32,6 +29,22 @@ let
     ".vimrc"
     ".zshrc"
   ];
+
+  # The agent home directories (~/.claude, ~/.codex, ~/.gemini) are NOT linked
+  # as directories: the tools write gigabytes of runtime state (sessions,
+  # plugins, logs) into whatever directory they find there, and linking the
+  # directory puts all of it in this working tree. Only the files this
+  # repository owns are linked, so the surrounding directory stays a real one
+  # under $HOME. tools/migrate-agent-dirs.sh converts an existing whole-directory
+  # link. (#143 / #115)
+  agentFiles = [
+    ".claude/CLAUDE.md"
+    ".claude/agents"
+    ".claude/hooks"
+    ".claude/statusline.sh"
+    ".codex/AGENTS.md"
+    ".gemini/GEMINI.md"
+  ];
 in
 {
   imports = [
@@ -43,7 +56,7 @@ in
     map (name: {
       inherit name;
       value.source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/${name}";
-    }) dotfiles
+    }) (dotfiles ++ agentFiles)
   );
 
   # Used for backwards compatibility of stateful data. Bump only with care.
