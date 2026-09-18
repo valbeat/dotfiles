@@ -60,11 +60,11 @@
     "orca-automations": {
       "flake": false,
       "locked": {
-        "lastModified": 1789719097,
-        "narHash": "sha256-Hl7NlNM3DJ1OrxYU+ajCSZ08j/KXjvW0nNlwFibtENo=",
+        "lastModified": 1789720234,
+        "narHash": "sha256-kTGz7N3BSx+cf6Y0mWikg72AMDYdCoVdIEF5hlBxpIE=",
         "ref": "refs/heads/main",
-        "rev": "0c7ee8f963795e52d1842da176130588f0caafaa",
-        "revCount": 17,
+        "rev": "9149f3d4e5294b0c0f042b088c014404c59b9a5c",
+        "revCount": 19,
         "type": "git",
         "url": "ssh://git@github.com/valbeat/orca-automations.git"
       },
