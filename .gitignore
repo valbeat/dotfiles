@@ -70,28 +70,15 @@ result-*
 # nix develop + direnv cache (.envrc is ignored in .gitignore_global)
 .direnv/
 
-# settings.json is intentionally untracked: Claude Code, auto mode and Orca
-# write runtime state into it. The managed keys live in darwin/claude.nix and
-# are merged into the live file by `nix run .#switch`.
-.claude/*
-!.claude/CLAUDE.md
-!.claude/agents/
-!.claude/hooks/
-!.claude/statusline.sh
+# The agents' runtime state (settings.json, sessions, plugins, logs) lives under
+# $HOME, not here: darwin/home.nix links .claude / .codex / .gemini entry by
+# entry instead of linking the directories (#143), so no allow-list is needed.
 
-# settings.json: same treatment as .claude/settings.json (see darwin/claude.nix)
-.gemini/*
-!.gemini/GEMINI.md
-
-# Codex local artifacts
-# config.toml is intentionally untracked: codex CLI writes machine-local
-# state (project trust entries, notice flags) into it on every run.
-.codex/*
-!.codex/AGENTS.md
 # local-only agent (project-specific content, not for the public repo)
 .claude/agents/github-issue-manager.md
 
-# Codex desktop's external-agent import mirrors .claude/ into .agents/.
-# Because ~/.claude is a symlink into this repo, that mirror lands here too.
-# It is generated output, not source — skills live in the plugin marketplaces.
+# Codex desktop's external-agent import mirrors .claude/ into .agents/. It no
+# longer lands here (~/.claude is a real directory since #143), but keep the
+# rule: it is generated output, not source — skills live in the plugin
+# marketplaces.
 .agents/
