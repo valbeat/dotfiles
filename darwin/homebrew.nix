@@ -129,7 +129,10 @@
       # Tool for exploring each layer in a docker image
       "dive"
       # Lightweight DNS forwarder and DHCP server
-      { name = "dnsmasq"; restart_service = "changed"; }
+      {
+        name = "dnsmasq";
+        restart_service = "changed";
+      }
       # Docker Credential Helper for Amazon ECR
       "docker-credential-helper-ecr"
       # Emoji on the command-line :scream:
@@ -345,7 +348,10 @@
       # Command-line translator using Google Translate and more
       "translate-shell"
       # CLI tool that moves files or folder to the trash
-      { name = "trash"; link = true; }
+      {
+        name = "trash";
+        link = true;
+      }
       # Display directories as trees (with optional color/HTML output)
       "tree"
       # Command-line unarchiving tools supporting multiple formats

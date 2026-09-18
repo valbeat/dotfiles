@@ -18,7 +18,13 @@
   home.activation.orcaAutomations = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [[ -n "''${DRY_RUN:-}" ]]; then
       echo "would apply Orca automations from ${orca-automations}"
-    elif ! PATH="${lib.makeBinPath [ pkgs.jq pkgs.git pkgs.coreutils ]}:$PATH" \
+    elif ! PATH="${
+      lib.makeBinPath [
+        pkgs.jq
+        pkgs.git
+        pkgs.coreutils
+      ]
+    }:$PATH" \
         ORCA_AUTOMATIONS_ROOT="${orca-automations}" \
         ${pkgs.bash}/bin/bash "${orca-automations}/scripts/apply.sh"; then
       echo "orca-automations: not applied (see above). The rest of the switch continued." >&2
