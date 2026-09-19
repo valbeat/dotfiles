@@ -1,5 +1,5 @@
 # Homebrew packages, declaratively managed by nix-darwin's homebrew module.
-# Converted from the former Brewfile (`make brew`). `nix run .#switch` runs
+# Converted from the former Brewfile. `nix run .#switch` runs
 # `brew bundle` against this set during activation; Homebrew itself must
 # already be installed. Activation defaults are conservative: no auto
 # update/upgrade, and packages missing from this file are left untouched

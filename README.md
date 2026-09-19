@@ -49,12 +49,12 @@ preferences) live in `darwin/claude.nix`. `nix run .#switch` merges them
 into the live files with `darwin/claude/merge.jq`: managed keys win, keys the
 module does not name pass through, and hooks are unioned so runtime-injected
 entries survive. The merge is idempotent and covered by
-`make test` (`tools/tests/test-merge-settings.sh`).
+`nix run .#test` (`tools/tests/test-merge-settings.sh`).
 
 To change a setting, edit `darwin/claude.nix` and run `nix run .#switch`.
 Editing `~/.claude/settings.json` directly still works for anything the
 module does not manage; managed keys are reset on the next switch. Before
-switching, `make settings-diff` shows exactly what would be reset (managed
+switching, `nix run .#settings-diff` shows exactly what would be reset (managed
 keys changed locally via `/config`, `claude plugin install`, hand edits) so
 you can port them to `darwin/claude.nix` first. It compares against the
 `settings.nix.json` copy the last switch left beside each live file.

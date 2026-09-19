@@ -233,7 +233,7 @@ let
   # Seeds an empty target, refuses to touch a target that is not valid JSON,
   # and only rewrites the file when the merge actually changes it. A copy of
   # the managed JSON is left beside the target as <name>.nix.json so
-  # `make settings-diff` can show local drift without evaluating Nix.
+  # `nix run .#settings-diff` can show local drift without evaluating Nix.
   mergeInto =
     target: managed:
     let

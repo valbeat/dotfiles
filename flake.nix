@@ -88,6 +88,44 @@
             git pull origin main
             git submodule update --init --remote
           '';
+
+          # `nix run .#test` — run the repo tests (tools/tests/test-*.sh).
+          # Replaces `make test`. The scripts come from the flake source, so a
+          # *new* test file must be `git add`ed before it is picked up
+          # (modifications to tracked files are seen without committing).
+          test = app "repo-tests" ''
+            status=0
+            for t in ${self}/tools/tests/test-*.sh; do
+              echo "== $(basename "$t")"
+              bash "$t" || status=1
+            done
+            exit $status
+          '';
+
+          # `nix run .#settings-diff` — show which managed keys the next switch
+          # would reset in the live settings.json files. Replaces
+          # `make settings-diff`.
+          settings-diff = app "settings-diff" ''
+            exec bash "${self}/tools/settings-diff.sh" "$@"
+          '';
+
+          # `nix run .#patches` — apply the `claude -p` replacement patches to
+          # the plugin caches (idempotent). Replaces `make patches`.
+          patches = app "apply-patches" ''
+            exec bash "${self}/tools/patches/apply.sh" "$@"
+          '';
+
+          # `nix run .#hunk-skill` — re-sync the vendored hunk-review skill into
+          # agent-plugins-private from the installed hunk. Replaces
+          # `make hunk-skill`.
+          hunk-skill = app "sync-hunk-skill" ''
+            set -euo pipefail
+            plugins=''${PLUGINS_PRIVATE:-$HOME/src/github.com/valbeat/agent-plugins-private}
+            dest=$plugins/plugins/portable-tools/skills/hunk-review/SKILL.md
+            cp "$(hunk skill path)" "$dest"
+            echo "Synced $dest from $(hunk --version)"
+            echo "Bump portable-tools version (both .claude-plugin and .codex-plugin plugin.json) in agent-plugins-private and open a PR to ship it."
+          '';
         };
     };
 }
