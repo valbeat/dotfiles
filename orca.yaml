@@ -4,11 +4,12 @@
 #
 # dotfiles worktrees need no dependency install; the setup step only proves the
 # checkout is sane (jq present, settings merge filter green) before an agent
-# starts working in it.
+# starts working in it. `nix run .#test` evaluates the flake, so it also needs
+# the locked inputs in the store (see darwin/orca.nix for the private one).
 scripts:
-  setup: make test
+  setup: nix run .#test
 setupAgentStartupPolicy: wait-for-setup
 defaultTabs:
   - title: shell
   - title: tests
-    command: make test
+    command: nix run .#test
