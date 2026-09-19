@@ -38,13 +38,25 @@ let
   # under $HOME. tools/migrate-agent-dirs.sh converts an existing whole-directory
   # link. (#143 / #115)
   agentFiles = [
-    ".claude/CLAUDE.md"
     ".claude/agents"
     ".claude/hooks"
     ".claude/statusline.sh"
     ".codex/AGENTS.md"
     ".gemini/GEMINI.md"
   ];
+
+  # Linked under a different name than they have in the repository
+  # ($HOME path -> repository path).
+  #
+  # The user-level CLAUDE.md must not sit at .claude/CLAUDE.md here: Claude Code
+  # counts a ./CLAUDE.md or ./.claude/CLAUDE.md as the project's instructions
+  # and then skips AGENTS.md, which is the only project instruction file this
+  # repository keeps.
+  renamedFiles = {
+    ".claude/CLAUDE.md" = ".claude/user-CLAUDE.md";
+  };
+
+  link = path: config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/${path}";
 in
 {
   imports = [
@@ -52,12 +64,14 @@ in
     ./orca.nix
   ];
 
-  home.file = builtins.listToAttrs (
-    map (name: {
-      inherit name;
-      value.source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/${name}";
-    }) (dotfiles ++ agentFiles)
-  );
+  home.file =
+    builtins.listToAttrs (
+      map (name: {
+        inherit name;
+        value.source = link name;
+      }) (dotfiles ++ agentFiles)
+    )
+    // builtins.mapAttrs (_: path: { source = link path; }) renamedFiles;
 
   # Used for backwards compatibility of stateful data. Bump only with care.
   home.stateVersion = "25.05";
