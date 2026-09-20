@@ -14,7 +14,6 @@ let
   # except .DS_Store, .git, .gitmodules, and .github.
   dotfiles = [
     ".coderabbit.yaml"
-    ".config"
     ".gitconfig"
     ".gitconfig.local" # machine-local override, intentionally untracked
     ".gitconfig.osx"
@@ -46,6 +45,19 @@ let
     ".gemini/GEMINI.md"
   ];
 
+  # ~/.config is shared with every other tool that follows the XDG convention
+  # (gh, gcloud, fish, karabiner, git, ...), so it gets the same treatment as
+  # the agent directories above: link the entries this repository owns, never
+  # the directory itself. Linking ~/.config as a whole hides every unmanaged
+  # entry — home-manager moves the real directory to ~/.config.hm-backup — and
+  # tools silently lose their configuration and credentials.
+  # Mirrors the `.config/*` allow-list in .gitignore.
+  configFiles = [
+    ".config/cmux"
+    ".config/ghostty"
+    ".config/yazi"
+  ];
+
   link = path: config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/${path}";
 in
 {
@@ -58,7 +70,7 @@ in
     map (name: {
       inherit name;
       value.source = link name;
-    }) (dotfiles ++ agentFiles)
+    }) (dotfiles ++ agentFiles ++ configFiles)
   );
 
   # Used for backwards compatibility of stateful data. Bump only with care.
