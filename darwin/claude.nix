@@ -161,6 +161,7 @@ let
       "ralph-loop@claude-plugins-official" = true;
       "skill-tools@valbeat-plugins" = true;
       "slack@claude-plugins-official" = true;
+      "typesafe@typesafe-ai" = true;
       "vercel@claude-plugins-official" = true;
       "writing@valbeat-plugins" = true;
       "aws-agents@agent-toolkit-for-aws" = true;
@@ -172,6 +173,10 @@ let
       openai-codex.source = {
         source = "github";
         repo = "openai/codex-plugin-cc";
+      };
+      typesafe-ai.source = {
+        source = "github";
+        repo = "typesafe-ai/skills";
       };
       valbeat-plugins.source = {
         source = "github";
