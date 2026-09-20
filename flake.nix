@@ -41,7 +41,14 @@
             # are renamed with this suffix instead of aborting activation.
             home-manager.backupFileExtension = "hm-backup";
             home-manager.users.takuma = import ./darwin/home.nix;
-            home-manager.extraSpecialArgs = { inherit orca-automations; };
+            home-manager.extraSpecialArgs = {
+              inherit orca-automations;
+              # Which Orca automations this Mac runs (see darwin/orca.nix).
+              # Every host gets its own role: definitions default to "primary",
+              # so two Macs sharing a role would each fire the same automation
+              # and double every PR, comment and report it produces.
+              orcaHostRole = "primary";
+            };
           }
         ];
       };
