@@ -38,12 +38,23 @@ let
   # link. (#143 / #115)
   agentFiles = [
     ".claude/agents"
-    ".claude/CLAUDE.md"
     ".claude/hooks"
     ".claude/statusline.sh"
-    ".codex/AGENTS.md"
-    ".gemini/GEMINI.md"
   ];
+
+  # The user-level instructions are a single file shared by all three agents.
+  # Each tool looks for a different name in a different directory, so the same
+  # source is linked three times ($HOME path -> repository path).
+  #
+  # It deliberately does not live at .claude/CLAUDE.md in this repository:
+  # Claude Code counts a ./CLAUDE.md or ./.claude/CLAUDE.md in the checkout as
+  # *this repository's* project instructions and then never falls back to
+  # ./AGENTS.md, which is the only project instruction file this repo keeps.
+  globalInstructions = {
+    ".claude/CLAUDE.md" = "agents/AGENTS.md";
+    ".codex/AGENTS.md" = "agents/AGENTS.md";
+    ".gemini/GEMINI.md" = "agents/AGENTS.md";
+  };
 
   # ~/.config is shared with every other tool that follows the XDG convention
   # (gh, gcloud, fish, karabiner, git, ...), so it gets the same treatment as
@@ -66,12 +77,14 @@ in
     ./orca.nix
   ];
 
-  home.file = builtins.listToAttrs (
-    map (name: {
-      inherit name;
-      value.source = link name;
-    }) (dotfiles ++ agentFiles ++ configFiles)
-  );
+  home.file =
+    builtins.listToAttrs (
+      map (name: {
+        inherit name;
+        value.source = link name;
+      }) (dotfiles ++ agentFiles ++ configFiles)
+    )
+    // builtins.mapAttrs (_: path: { source = link path; }) globalInstructions;
 
   # Used for backwards compatibility of stateful data. Bump only with care.
   home.stateVersion = "25.05";
