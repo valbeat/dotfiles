@@ -40,7 +40,7 @@ reviews:
       instructions: "Claude Code hook の終了コード規約 (0=allow, 2=deny) と stdin から渡される JSON の扱いを確認する。"
     - path: "tools/patches/**"
       instructions: "冪等性 (再実行で二重適用されない marker チェック) とロールバック手段の有無を確認する。"
-    - path: "**/*CLAUDE.md"
+    - path: "{AGENTS.md,agents/AGENTS.md,**/*CLAUDE.md}"
       instructions: "ルールが具体的で、ファイル参照や手順が現存するか軽くチェックする。長文化を避ける指摘を優先する。"
   tools:
     shellcheck:
@@ -63,3 +63,4 @@ knowledge_base:
     filePatterns:
       - "**/*CLAUDE.md"
       - "AGENTS.md"
+      - "agents/AGENTS.md"

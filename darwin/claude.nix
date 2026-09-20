@@ -93,7 +93,7 @@ let
     includeCoAuthoredBy = false;
 
     # `model` is deliberately absent: it is chosen per session (see the
-    # Model Selection Policy in .claude/CLAUDE.md), and `/model` writes it
+    # Model Selection Policy in agents/AGENTS.md), and `/model` writes it
     # into the live file, which the merge leaves alone.
     permissions = {
       allow = [
