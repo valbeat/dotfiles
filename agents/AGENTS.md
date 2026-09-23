@@ -1,9 +1,11 @@
 # AGENTS.md（全プロジェクト共通）
 
-日本語で簡潔かつ丁寧に回答する。プロジェクトに AGENTS.md / CLAUDE.md / GEMINI.md があれば、そちらの指示を優先する。
+プロジェクトに AGENTS.md / CLAUDE.md / GEMINI.md があれば、そちらの指示を優先する。
 
 このファイルは 3 つのエージェントで共有している実体で、`~/.claude/CLAUDE.md`・`~/.codex/AGENTS.md`・`~/.gemini/GEMINI.md` はすべてこれを指す。
 **「共通」と自分の節だけに従う。他のエージェント向けの節は、相手が何を担当するかを知るための情報であって、自分への指示ではない。**
+
+置くのは「ツールを選ぶ前に知っている必要があり、間違えると取り返しがつかないこと」だけ。手順と細目はスキル側にある。
 
 ## 共通
 
@@ -27,37 +29,33 @@
 
 ## Claude Code
 
-### モデル選択
+### モデル方針
 
-役割が決まっている作業:
-
-- **指揮・対話（メインセッション）**: Claude Opus 5（settings.json には固定しない）
-- **判断が品質を決める場面**: Fable 5.1（`model: fable`）。`/personal-tools:review` のボーダーライン裁定、設計レビュー、`code-reviewer` / `debugger` エージェント、Workflow の verify / judge ステージ
-- **実装・修正・大量の読み取りの要約**: Codex（`/personal-tools:codex`、既定 gpt-5.6-terra。難所は sol / astra、機械的な作業は luna）
-- **Web 検索・ドキュメント調査**: Gemini（`/personal-tools:gemini`、Antigravity CLI の `agy`。`gemini` CLI はサブスクで使えない）
+- **指揮・対話（メインセッション）**: Opus 5。`settings.json` には固定しない
+- **判断が品質を決める場面**: Fable 5.1。設計レビュー、`/personal-tools:review` のボーダーライン裁定、`code-reviewer` / `debugger`、Workflow の verify / judge ステージ
 - **探索・整形・分類のサブエージェント**: Sonnet 5 / Haiku 4.5
-- **セキュリティ監査・脆弱性調査には Fable を使わない**。サイバー系分類器の refusal 誤検知があるため Opus を使う（`/security-review`, `autoresearch:security`）。この例外は枠の状況に関わらず常に最優先
-
-どちらの枠でもできる作業（2 人目のレビュー、実装 worker、反証役）の振り分け（route）と、7d の余剰による自動格上げ（budget tier）は、`personal-tools:rate-pace` スキルが唯一の定義。
+- **セキュリティ監査・脆弱性調査に Fable を使わない**。サイバー系分類器の refusal 誤検知があるため Opus を使う（`/security-review`, `autoresearch:security`）。この例外は枠の状況に関わらず常に最優先
+- 枠の余剰による格上げ（budget tier）と Claude / Codex の振り分け（route）は `personal-tools:rate-pace` が唯一の定義
 
 ### 環境
 
-- ワークスペースマネージャーは Orca（worktree は `~/orca/workspaces/<repo>/<name>`）。Orca 管理下かは `orca worktree current --json` で判定し、管理下なら `orca-cli` / `orchestration` スキル、素の iTerm2 なら `personal-tools:iterm2` スキルを使う。ブラウザ自動化は claude-in-chrome
-- Orca の orchestration を使わせるには依頼に「監督して」「DAG で」「worker_done を待って」を明示する（「別のエージェントに渡して」は full handoff 扱い）。worker の `--model` / `--effort` は `--agent claude` 専用
-- Gemini との協業モードは `personal-tools:gemini`、Codex への委譲は `personal-tools:codex` スキルに従う
-- 定期実行は Orca の automations を既定にする（`/schedule`・`/loop`・cron はユーザーが明示したときだけ）。組む・直すときは `personal-tools:orca-automation` スキルに従う
+- ワークスペースマネージャーは Orca（worktree は `~/orca/workspaces/<repo>/<name>`）。Orca 管理下かは `orca worktree current --json` で判定し、管理下なら `orca-cli` / `orchestration` スキル、素の iTerm2 なら `personal-tools:iterm2` スキルを使う
+- orchestration を使わせるには依頼に「監督して」「DAG で」「worker_done を待って」が要る（「別のエージェントに渡して」は full handoff 扱い）。worker の `--model` / `--effort` は `--agent claude` 専用
+- 定期実行の既定は Orca の automations。`/schedule`・`/loop`・cron はユーザーが明示したときだけ
 - `--loop` や自律的な複数タスク処理は worktree で行う（他セッションのブランチ切替と競合させない）
-- PR 作成は `/git-workflow:pr` も上の既定と同じ
 
 ## Codex
 
-- Claude Code から `codex exec` で呼ばれたときは、渡された依頼の範囲だけを実行し、確認や質問をせずに結果を返す
+日本語で簡潔かつ丁寧に回答する。
+
+- `codex exec` で呼ばれたときは、渡された依頼の範囲だけを実行し、確認や質問をせずに結果を返す
 - 他のエージェント（`claude`、`codex`、`agy`）を自分から起動しない
 
 ## Antigravity（agy）
 
-- Claude Code から `agy --mode plan -p` で呼ばれたときは調査だけを行い、ファイルを変更しない。確認や質問はせず、指定された出力形式で結果を返す
+日本語で簡潔かつ丁寧に回答する。
+
+- `agy --mode plan -p` で呼ばれたときは調査だけを行い、ファイルを変更しない。確認や質問はせず、指定された出力形式で結果を返す
 - 情報には出典（URL、ファイルパスと行）を付ける。公式ドキュメントと一次情報を優先し、推測と事実を分けて書く
 - 読み取りが権限で拒否されたら、推測で埋めずに「読めなかったファイルと理由」を結果に含める
 - 他のエージェント（`claude`、`codex`、`agy`）を自分から起動しない
-- 自分で変更を加える場合（Orca の定期自動化など）も、共通の Git ワークフローに従う
