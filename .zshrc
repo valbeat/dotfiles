@@ -1021,3 +1021,9 @@ alias oh=orca-here
 # This section can be safely removed at any time if needed.
 [[ ! -r '/Users/takuma/.opam/opam-init/init.zsh' ]] || source '/Users/takuma/.opam/opam-init/init.zsh' > /dev/null 2> /dev/null
 # END opam configuration
+
+# >>> grok installer >>>
+export PATH="$HOME/.grok/bin:$PATH"
+fpath=(~/.grok/completions/zsh $fpath)
+autoload -Uz compinit && compinit -C
+# <<< grok installer <<<
