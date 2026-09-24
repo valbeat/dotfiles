@@ -35,10 +35,7 @@ jobs:
 
       # Checks every flake output (apps, darwinConfigurations) evaluates.
       - name: nix flake check
-        run: nix flake check --no-build --override-input orca-automations "path:$PWD/ci/orca-automations-stub"
+        run: nix flake check --no-build
 
-      # orca-automations is a private repository. The public check does not
-      # fetch it: it is replaced with a stub, so no credentials are needed.
-      # Its own contents are tested in valbeat/orca-automations.
       - name: Dry-run build
-        run: nix run .#build -- --override-input orca-automations "path:$PWD/ci/orca-automations-stub"
+        run: nix run .#build
