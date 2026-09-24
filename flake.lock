@@ -57,28 +57,11 @@
         "type": "github"
       }
     },
-    "orca-automations": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1790232652,
-        "narHash": "sha256-51rLI1b3zX4MYvEjKaLCPXvHdUuTb6Bvq7ezkcwsWOU=",
-        "ref": "refs/heads/main",
-        "rev": "3d934b9a75122c9be139d6acddf4ba6ab3f66305",
-        "revCount": 50,
-        "type": "git",
-        "url": "ssh://git@github.com/valbeat/orca-automations.git"
-      },
-      "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/valbeat/orca-automations.git"
-      }
-    },
     "root": {
       "inputs": {
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
-        "nixpkgs": "nixpkgs",
-        "orca-automations": "orca-automations"
+        "nixpkgs": "nixpkgs"
       }
     }
   },
