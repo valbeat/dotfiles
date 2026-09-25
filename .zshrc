@@ -743,6 +743,8 @@ function git-root() {
 }
 
 # ワークツリーを作成して移動する (git wt)
+# 置き場所は ~/worktree/<host>/<owner>/<repo>/<branch>。Orca もリポジトリごとの
+# worktreeBasePath で同じ階層に作る（orca project setup-update --worktree-base-path）。
 function git-worktree-new() {
   local branch_name="$1"
 
@@ -752,7 +754,10 @@ function git-worktree-new() {
   fi
 
   local directory_name="${branch_name//\//__}"
-  local repository_key="$(git remote get-url origin | sed -E 's#^(git@|https://|ssh://)([^:/]+)(:[0-9]+)?[:/](.+)\.git$#\2/\4#' | tr ':' '-')"
+  # origin の URL を <host>/<owner>/<repo> にする。Orca の worktree 作成先
+  # （リポジトリごとの worktreeBasePath = ~/worktree/<host>/<owner>）と同じ規則。
+  # 対応する形: git@host:o/r(.git) / ssh://git@host(:port)/o/r(.git) / https://host/o/r(.git)
+  local repository_key="$(git remote get-url origin | sed -E 's#^[a-z+]+://##; s#^[^@/]+@##; s#:[0-9]+/#/#; s#:#/#; s#\.git$##')"
   local worktree_path="$HOME/worktree/$repository_key/$directory_name"
 
   # リポジトリのデフォルトブランチを取得
