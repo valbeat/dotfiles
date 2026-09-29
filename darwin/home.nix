@@ -65,6 +65,8 @@ let
   # Mirrors the `.config/*` allow-list in .gitignore.
   configFiles = [
     ".config/cmux"
+    # Only the preferences file: hosts.yml beside it is gh's login state.
+    ".config/gh/config.yml"
     ".config/ghostty"
     ".config/yazi"
   ];

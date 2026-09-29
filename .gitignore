@@ -55,6 +55,9 @@ credentials
 # Ignore configs
 .config/*
 !.config/cmux/
+!.config/gh/
+.config/gh/*
+!.config/gh/config.yml
 !.config/ghostty/
 !.config/yazi/
 .vscode
