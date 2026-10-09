@@ -40,6 +40,7 @@ let
     ".claude/agents"
     ".claude/hooks"
     ".claude/statusline.sh"
+    ".codex/keybindings.json"
   ];
 
   # The user-level instructions are a single file shared by all three agents.

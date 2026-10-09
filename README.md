@@ -59,6 +59,19 @@ keys changed locally via `/config`, `claude plugin install`, hand edits) so
 you can port them to `darwin/claude.nix` first. It compares against the
 `settings.nix.json` copy the last switch left beside each live file.
 
+## Codex desktop shortcuts
+
+`.codex/keybindings.json` disables the Mini shortcut (`Option + Space`) by
+setting the `openAvatarOverlay` binding's `key` to `null`. Home Manager links
+only this file to `~/.codex/keybindings.json`; the surrounding directory stays
+local.
+
+After merging and pulling `main`, run `nix run .#switch` and fully quit and
+reopen the ChatGPT/Codex desktop app. An existing local file is backed up as
+`keybindings.json.hm-backup`; port any other shortcuts you want to keep into
+the tracked file before switching. Subsequent shortcut changes made in the
+app write through the link and appear as changes in this repository.
+
 ## Claude Code plugins
 
 All skills live in two plugin marketplaces. This repo has no
