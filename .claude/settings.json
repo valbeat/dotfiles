@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(//Users/takuma/src/github.com/valbeat/memo/**)",
+      "Read(//Users/takuma/src/github.com/valbeat/dashboard/memo/**)",
+      "Read(//Users/takuma/src/github.com/valbeat/dashboard/data/**)",
+      "Read(//Users/takuma/src/github.com/valbeat/dashboard/projects/**)",
+      "Read(//Users/takuma/src/github.com/valbeat/dashboard/goals/**)",
+      "Read(//Users/takuma/src/github.com/valbeat/dashboard/reports/**)",
+      "Read(//Users/takuma/src/github.com/valbeat/dashboard/topics/**)"
+    ]
+  }
+}
