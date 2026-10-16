@@ -39,7 +39,7 @@
 
 ### 環境
 
-- ワークスペースマネージャーは Orca（worktree は `~/orca/workspaces/<repo>/<name>`）。Orca 管理下かは `orca worktree current --json` で判定し、管理下なら `orca-cli` / `orchestration` スキル、素の iTerm2 なら `personal-tools:iterm2` スキルを使う
+- ワークスペースマネージャーは Orca（worktree は `~/worktree/<host>/<owner>/<repo>/<name>`、`git wt` と同じ階層）。Orca 管理下かは `orca worktree current --json` で判定し、管理下なら `orca-cli` / `orchestration` スキル、素の iTerm2 なら `personal-tools:iterm2` スキルを使う
 - orchestration を使わせるには依頼に「監督して」「DAG で」「worker_done を待って」が要る（「別のエージェントに渡して」は full handoff 扱い）。worker の `--model` / `--effort` は `--agent claude` 専用
 - 定期実行の既定は Orca の automations。`/schedule`・`/loop`・cron はユーザーが明示したときだけ
 - `--loop` や自律的な複数タスク処理は worktree で行う（他セッションのブランチ切替と競合させない）
