@@ -399,6 +399,8 @@
       "blackhole-16ch"
       # Free and open-source web browser
       "chromium"
+      # OpenAI Codex CLI (git c のコミットメッセージ生成で使う。volta から移行)
+      "codex"
       # Ghostty-based terminal with vertical tabs and notifications for AI coding agents
       "font-symbols-only-nerd-font"
       # Set of tools to manage resources and applications hosted on Google Cloud
