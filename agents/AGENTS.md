@@ -31,9 +31,9 @@ Antigravity（Gemini）は 2026-10-26 に使うのをやめた（調査の依頼
 
 ### モデル方針
 
-- **指揮・対話（メインセッション）**: Opus 5。`settings.json` には固定しない
+- **指揮・対話（メインセッション）**: Opus。版も `settings.json` も固定しない
 - **判断が品質を決める場面**: Fable 5.1。設計レビュー、`/personal-tools:review` のボーダーライン裁定、`code-reviewer` / `debugger`、Workflow の verify / judge ステージ
-- **探索・整形・分類のサブエージェント**: Sonnet 5 / Haiku 4.5
+- **探索・整形・分類のサブエージェント**: Sonnet / Haiku
 - **セキュリティ監査・脆弱性調査に Fable を使わない**。サイバー系分類器の refusal 誤検知があるため Opus を使う（`/security-review`, `autoresearch:security`）。この例外は枠の状況に関わらず常に最優先
 - 枠の余剰による格上げ（budget tier）と Claude / Codex の振り分け（route）は `personal-tools:rate-pace` が唯一の定義
 
@@ -49,5 +49,5 @@ Antigravity（Gemini）は 2026-10-26 に使うのをやめた（調査の依頼
 日本語で簡潔かつ丁寧に回答する。
 
 - `codex exec` で呼ばれたときは、渡された依頼の範囲だけを実行し、確認や質問をせずに結果を返す
-- 他のエージェント（`claude`、`codex`、`agy`）を自分から起動しない
+- 他のエージェント（`claude`、`codex`）を自分から起動しない
 
