@@ -2,7 +2,7 @@
 
 プロジェクトに AGENTS.md / CLAUDE.md / GEMINI.md があれば、そちらの指示を優先する。
 
-このファイルは Claude Code と Codex で共有している実体で、`~/.claude/CLAUDE.md`・`~/.codex/AGENTS.md` はこれを指す（`~/.gemini/GEMINI.md` も同じ実体を指すが、Antigravity は 2026-10-26 から使っていない）。
+このファイルは Claude Code と Codex で共有している実体で、`~/.claude/CLAUDE.md`・`~/.codex/AGENTS.md` はこれを指す。
 **「共通」と自分の節だけに従う。他のエージェント向けの節は、相手が何を担当するかを知るための情報であって、自分への指示ではない。**
 
 置くのは「ツールを選ぶ前に知っている必要があり、間違えると取り返しがつかないこと」だけ。手順と細目はスキル側にある。
@@ -13,7 +13,6 @@
 
 サブスクで使う AI エージェントは Claude Code・Codex の 2 つ。
 制約はコストではなくレート制限で、従量課金の API キーは使わない。枠は **Codex > Claude** の順に大きく、7d 枠は繰り越されないので使い残しは損。
-Antigravity（Gemini）は 2026-10-26 に使うのをやめた（調査の依頼が権限拒否と時間切れで結果を返さなかった）。`agy` に作業を渡さない
 
 - **Claude Code**: 指揮・対話・設計判断・Web 検索・ドキュメント調査
 - **Codex**: 実装・修正・レビュー・大量の読み取りの要約・コードベースの読み取り調査
@@ -31,9 +30,9 @@ Antigravity（Gemini）は 2026-10-26 に使うのをやめた（調査の依頼
 
 ### モデル方針
 
-- **指揮・対話（メインセッション）**: Opus 5。`settings.json` には固定しない
+- **指揮・対話（メインセッション）**: Opus。版も `settings.json` も固定しない
 - **判断が品質を決める場面**: Fable 5.1。設計レビュー、`/personal-tools:review` のボーダーライン裁定、`code-reviewer` / `debugger`、Workflow の verify / judge ステージ
-- **探索・整形・分類のサブエージェント**: Sonnet 5 / Haiku 4.5
+- **探索・整形・分類のサブエージェント**: Sonnet / Haiku
 - **セキュリティ監査・脆弱性調査に Fable を使わない**。サイバー系分類器の refusal 誤検知があるため Opus を使う（`/security-review`, `autoresearch:security`）。この例外は枠の状況に関わらず常に最優先
 - 枠の余剰による格上げ（budget tier）と Claude / Codex の振り分け（route）は `personal-tools:rate-pace` が唯一の定義
 
@@ -49,5 +48,5 @@ Antigravity（Gemini）は 2026-10-26 に使うのをやめた（調査の依頼
 日本語で簡潔かつ丁寧に回答する。
 
 - `codex exec` で呼ばれたときは、渡された依頼の範囲だけを実行し、確認や質問をせずに結果を返す
-- 他のエージェント（`claude`、`codex`、`agy`）を自分から起動しない
+- 他のエージェント（`claude`、`codex`）を自分から起動しない
 
