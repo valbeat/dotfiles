@@ -106,8 +106,8 @@
       "coreutils"
       # Tool for browsing source code
       "cscope"
-      # Reimplementation of ctags(1)
-      "ctags"
+      # Maintained ctags implementation (owns bin/ctags; conflicts with "ctags")
+      "universal-ctags"
       # Top-like interface for container metrics
       "ctop"
       # High-level C binding for ZeroMQ
@@ -360,8 +360,6 @@
       "uv"
       # HTTP load testing tool and library
       "vegeta"
-      # Command-line interface for Vercel
-      "vercel-cli"
       # Image processing library
       "vips"
       # Executes a program periodically, showing output fullscreen
@@ -415,6 +413,8 @@
       "neovide-app"
       # Replacement for Docker Desktop
       "orbstack"
+      # Command-line interface for Vercel (formerly the vercel-cli formula)
+      "vercel"
     ];
   };
 }
