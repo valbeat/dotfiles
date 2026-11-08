@@ -116,6 +116,12 @@ let
         # `nix run .#switch` would run the `switch` app of whatever flake is in
         # the current directory, e.g. an untrusted clone, as root.
         "Bash(nix run ${home}/src/github.com/valbeat/dotfiles#switch)"
+        # PR の運用（2026-11-08 にユーザーが許可）: 別文脈のレビューを経た PR に
+        # 自分でラベル（reviewed / verified）を付け、ready・マージまで進める。
+        "Bash(gh pr comment:*)"
+        "Bash(gh pr edit:*)"
+        "Bash(gh pr ready:*)"
+        "Bash(gh pr merge:*)"
       ];
       deny = [
         "Bash(sudo rm -rf *)"
