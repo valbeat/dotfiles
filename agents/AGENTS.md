@@ -33,6 +33,7 @@
 - ベースブランチに直接コミットしない。フィーチャーブランチを切る。これは既定で、リポジトリの指示ファイルが main 直接コミットと書いていればそちらに従う
 - コミットメッセージは Conventional Commit 形式（`feat:`, `fix:`, `chore:`）
 - PR は `gh pr create --assignee @me --draft`
+- 個人のリポジトリ（`valbeat/*`）の PR は、すべてのチェックが成功（conclusion がすべて SUCCESS）し `mergeStateStatus` が CLEAN なら、確認せずに ready 化してマージしてよい（2026-11-18 本人の決定）。会社のリポジトリ（`TechBowl-japan/*` など）は、そのリポジトリの指示ファイルのマージ条件に従う
 - マージ済み・クローズ済みの PR のブランチには push しない。新しいブランチと PR を作る
 - 強制 push しない。pre-commit フック（lefthook 等）を無効化しない
 - 異なるタスクを始めるときはベースブランチに戻る
