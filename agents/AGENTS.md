@@ -45,7 +45,7 @@
 ### モデル方針
 
 - **指揮・対話（メインセッション）**: Opus。版も `settings.json` も固定しない
-- **判断が品質を決める場面**: Fable 5.1。設計レビュー、`/personal-tools:review` のボーダーライン裁定、`code-reviewer` / `debugger`、Workflow の verify / judge ステージ
+- **判断が品質を決める場面**: Fable 5.1。設計レビュー、`/personal-tools:interrogate` のボーダーライン裁定、`code-reviewer` / `debugger`、Workflow の verify / judge ステージ
 - **探索・整形・分類のサブエージェント**: Sonnet / Haiku
 - **セキュリティ監査・脆弱性調査に Fable を使わない**。サイバー系分類器の refusal 誤検知があるため Opus を使う（`/security-review`, `autoresearch:security`）。この例外は枠の状況に関わらず常に最優先
 - 枠の余剰による格上げ（budget tier）と Claude / Codex の振り分け（route）は `personal-tools:rate-pace` が唯一の定義

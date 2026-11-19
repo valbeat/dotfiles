@@ -79,13 +79,13 @@ All skills live in two plugin marketplaces. This repo has no
 
 - [valbeat/agent-plugins-private](https://github.com/valbeat/agent-plugins-private)
   (private, the default home) — `personal-tools` (including the
-  environment-coupled skills such as `review`, `rate-pace`, `worktree-gc`,
+  environment-coupled skills such as `interrogate`, `rate-pace`, `worktree-cleanup`,
   `iterm2`, `hunk-review`), `skill-management`
 - [valbeat/agent-plugins](https://github.com/valbeat/agent-plugins)
   (public, for generalized skills) — `writing`, `design`, `git-workflow`,
   `dev-workflow`, `skill-tools`
 
-Skills are invoked with plugin namespaces (e.g. `/personal-tools:review`,
+Skills are invoked with plugin namespaces (e.g. `/personal-tools:interrogate`,
 `/git-workflow:commit`). Where a new skill goes and how to inventory existing
 ones is defined in `/skill-management:skill-inventory`.
 
