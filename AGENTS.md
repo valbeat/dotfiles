@@ -13,7 +13,7 @@
 - `tools/` keeps the non-nix helpers: `patches/` (plugin-cache patches), `settings-diff.sh`, and `tests/` (`test-*.sh`). They are run through the flake apps (`nix run .#test` and friends); there is no `Makefile`.
 
 ## Build, Test, and Development Commands
-- `nix run .#build`: dry-run build of the darwin system; CI runs this on every PR. Run it after touching `darwin/` or `flake.nix`.
+- `nix run .#build`: dry-run build of the darwin system; CI runs this on every PR except one that changes only `flake.lock` (the weekly update is checked by a dispatched run; for a hand-made one, run `gh workflow run nix-build.yml --ref <branch>`). Run it after touching `darwin/` or `flake.nix`.
 - `nix run .#switch`: builds and activates (system defaults + symlinks + Homebrew + settings.json merge; runs as root). An agent can run it only after the user runs `sudo -v` in a real terminal: the sudo timestamp is shared per user for 15 minutes (`darwin/configuration.nix`). Ask for that instead of handing the command back, and run it by the expanded absolute path (`nix run /Users/<user>/src/github.com/valbeat/dotfiles#switch`; the allowlist in `darwin/claude.nix` matches that exact text, not `~` or `.#switch`) so the flake in the current directory is never the one activated.
 - `nix run .#update`: pulls latest `main` and updates git submodules. The public flake inputs (nixpkgs, nix-darwin, home-manager) are updated by `.github/workflows/flake-update.yml` every Monday as a pull request.
 - `nix fmt`: formats all `.nix` files with nixfmt; CI fails on unformatted files (`nix fmt -- --ci`) and also runs `nix flake check --no-build`.
