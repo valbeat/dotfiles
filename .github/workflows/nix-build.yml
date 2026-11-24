@@ -2,6 +2,15 @@ name: Nix Build Check
 
 on:
   pull_request:
+    # The weekly flake-update PR changes only flake.lock and is opened by
+    # github-actions[bot], so its pull_request run waits for approval with no
+    # jobs and leaves the PR UNSTABLE. A trigger filter stops that run from
+    # being created at all (a job-level `if` cannot: approval comes first).
+    # Its build is checked by the workflow_dispatch run below instead; for a
+    # hand-made flake.lock-only PR, run
+    # `gh workflow run nix-build.yml --ref <branch>`.
+    paths-ignore:
+      - flake.lock
   # Dispatched by flake-update.yml: pull requests opened with GITHUB_TOKEN do
   # not trigger pull_request workflows, but workflow_dispatch runs do, and their
   # check runs show up on the pull request's head commit.
