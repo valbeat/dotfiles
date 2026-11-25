@@ -392,7 +392,7 @@
       # Securely stores and accesses AWS credentials in a development environment
       "aws-vault-binary"
       # Audio utility
-      "background-music-pre"
+      "background-music"
       # Virtual Audio Driver
       "blackhole-16ch"
       # Free and open-source web browser
